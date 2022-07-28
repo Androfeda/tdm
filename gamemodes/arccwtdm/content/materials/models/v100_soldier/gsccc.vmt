@@ -1,0 +1,11 @@
+VertexLitGeneric
+{
+	"$basetexture"	"models/V100_Soldier/gsccc"	
+	 "$bumpmap" "models/V100_Soldier/gsccc_n"
+ 	"$phong" "1"
+	"$phongalbedotint" "1"
+	"$phongboost"	"10"
+	"$phongfresnelranges" "[0.2 .5 10]"
+	"$model" "1"
+									// Boost for ambient cube component of rim lighting
+}

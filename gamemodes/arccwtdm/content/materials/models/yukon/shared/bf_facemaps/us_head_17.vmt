@@ -1,0 +1,21 @@
+vertexlitgeneric
+{
+$baseTexture "models\yukon\shared\BF_facemaps\us_head_17"
+$bumpmap "models\yukon\shared\BF_facemaps\us_head_nml"
+$lightwarptexture "models\yukon\shared\BF_facemaps\Base_M_caucasian_wrp"
+$nocull 1
+
+$phong 1
+$phongboost "2"
+$phongexponent 10
+$phongtint "[.85 .85 1]"
+$phongfresnelranges "[.2 .5 5]"
+ 
+$ambientocclusion 1
+$halflambert 0
+$diffuseexp "1.5"
+	"$detail" "models\yukon\shared\skin_detail"
+	"$detailscale"        "8"
+	"$detailblendfactor"  ".7"
+	"$detailblendmode"    "0"
+}

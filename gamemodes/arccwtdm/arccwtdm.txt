@@ -1,0 +1,28 @@
+"arccwtdm"
+{
+	"base"			"sandbox"
+	"title"			"ArcCW TDM"
+	"maps"			"^arc_"
+	"category"		"pvp"
+	"menusystem"	"1"
+
+	"settings"
+	{
+		1
+		{
+			"name"			"arccwtdm_gamemode"
+			"text"			"Game Type"
+			"help"			"Modes like TDM, CTF, FFA"
+			"type"			"Text"
+			"default"		"sandbox"
+		}
+		2
+		{
+			"name"			"arccwtdm_friendlyfire"
+			"text"			"Friendly fire"
+			"help"			"Enable friendly fire"
+			"type"			"CheckBox"
+			"default"		"0"
+		}
+	}
+}
