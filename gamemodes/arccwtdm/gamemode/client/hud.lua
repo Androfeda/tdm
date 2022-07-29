@@ -189,8 +189,8 @@ hook.Add( "HUDPaint", "HUDPaint_DrawABox", function()
 		surface.DrawOutlinedRect( (c*128) + (c*4), h - (c*46) + (c*4), (c*200), (c*18), (c*4) )
 
 		if P:Health() != 100 then
-		surface.SetDrawColor(CLR_B2)
-		surface.DrawRect( (c*128) + (c*4), h - (c*46) + (c*8), (c*200)*(P:Health()/P:GetMaxHealth()), (c*10) )
+			surface.SetDrawColor(CLR_B2)
+			surface.DrawRect( (c*128) + (c*4), h - (c*46) + (c*8), (c*200)*(P:Health()/P:GetMaxHealth()), (c*10) )
 		end
 
 		surface.SetDrawColor(CLR_W)
@@ -198,6 +198,23 @@ hook.Add( "HUDPaint", "HUDPaint_DrawABox", function()
 
 		surface.SetDrawColor(CLR_W)
 		surface.DrawRect( (c*128), h - (c*46), (c*200)*(P:Health()/P:GetMaxHealth()), (c*18) )
+
+
+		-- stamina
+
+		if P.GetStamina_Run and P:GetStamina_Run() < 1 then
+			surface.SetDrawColor(CLR_B2)
+			surface.DrawRect( (c*128) + (c*4), h - (c*46) + (c*22) + (c*4), (c*200), (c*4) )
+			surface.SetDrawColor(CLR_W)
+			surface.DrawRect( (c*128), h - (c*46) + (c*22), (c*200)*(P:GetStamina_Run()/1), (c*4) )
+		end
+
+		if P.GetNextJump and P:GetNextJump() < 1 then
+			surface.SetDrawColor(CLR_B2)
+			surface.DrawRect( (c*128) + (c*4), h - (c*46) - (c*8) + (c*4), (c*200), (c*4) )
+			surface.SetDrawColor(CLR_W)
+			surface.DrawRect( (c*128), h - (c*46) - (c*8), (c*200)*(P:GetNextJump()), (c*4) )
+		end
 
 		if PW then
 			local str1 = ( PW:Clip1() .. " | " .. P:GetAmmoCount(PW:GetPrimaryAmmoType()) )

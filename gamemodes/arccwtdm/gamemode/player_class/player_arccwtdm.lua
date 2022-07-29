@@ -7,11 +7,11 @@ PLAYER.DisplayName			= "ArcCW TDM Player Class"
 
 PLAYER.SlowWalkSpeed		= 180		-- How fast to move when slow-walking (+WALK)
 PLAYER.WalkSpeed			= 250		-- How fast to move when not running
-PLAYER.RunSpeed				= 320		-- How fast to move when running
-PLAYER.CrouchedWalkSpeed	= 0.3		-- Multiply move speed by this when crouching
+PLAYER.RunSpeed				= 300		-- How fast to move when running
+PLAYER.CrouchedWalkSpeed	= 0.5		-- Multiply move speed by this when crouching
 PLAYER.DuckSpeed			= 0.4		-- How fast to go from not ducking, to ducking
 PLAYER.UnDuckSpeed			= 0.4		-- How fast to go from ducking, to not ducking
-PLAYER.JumpPower			= 250		-- How powerful our jump should be
+PLAYER.JumpPower			= 170		-- How powerful our jump should be
 PLAYER.CanUseFlashlight		= true		-- Can we use the flashlight
 PLAYER.MaxHealth			= 100		-- Max health we can have
 PLAYER.MaxArmor				= 0			-- Max armor we can have
@@ -29,6 +29,13 @@ PLAYER.UseVMHands			= true		-- Uses viewmodel hands
 -- Ret1:
 --
 function PLAYER:SetupDataTables()
+	self.Player:NetworkVar("Float", 0, "Stamina_Run")
+	self.Player:NetworkVar("Float", 1, "Stamina_Jump")
+	self.Player:NetworkVar("Float", 2, "NextJump")
+
+	self.Player:SetStamina_Run(1)
+	self.Player:SetStamina_Jump(1)
+	self.Player:SetNextJump(1)
 end
 
 --
@@ -47,6 +54,9 @@ end
 -- Ret1:
 --
 function PLAYER:Spawn()
+	self.Player:SetStamina_Run(1)
+	self.Player:SetStamina_Jump(1)
+	self.Player:SetNextJump(1)
 end
 
 --
