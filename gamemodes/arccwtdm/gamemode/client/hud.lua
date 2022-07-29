@@ -99,6 +99,7 @@ function CGHUD_FT( text, font, x, y, ax, ay )
 	surface.DrawText(text)
 end
 
+local CLR_R = Color(255, 200, 200, 255)
 local CLR_B = Color(0, 0, 0, 255)
 local CLR_B2 = Color(0, 0, 0, 127)
 local CLR_W = Color(255, 255, 255, 255)
@@ -112,6 +113,61 @@ local function qt(text, font, x, y, color, color2, t, l, glow)
 	end
 	draw.SimpleText(text, font, x, y, color, t, l)
 end
+
+local am_pi = Material("tdm/pistol.png", "smooth")
+local am_ri = Material("tdm/rifle.png", "smooth")
+local am_sg = Material("tdm/shotgun.png", "smooth")
+local am_gr = Material("tdm/grenade.png", "smooth")
+local am_fr = Material("tdm/frag.png", "smooth")
+
+local toop = {
+	["rifle"] = {
+		Texture = am_ri,
+		gap_hor = 8,
+		gap_ver = 32,
+		rep = 31,
+		size = 32,
+	},
+	["pistol"] = {
+		Texture = am_pi,
+		gap_hor = 12,
+		gap_ver = 32,
+		rep = 20,
+		size = 32,
+	},
+	["shotgun"] = {
+		Texture = am_sg,
+		gap_hor = 12,
+		gap_ver = 32,
+		rep = 13,
+		size = 32,
+	},
+	["grenade"] = {
+		Texture = am_gr,
+		gap_hor = 64,
+		gap_ver = 32,
+		rep = 30,
+		size = 32,
+	},
+	["frag"] = {
+		Texture = am_fr,
+		gap_hor = 64,
+		gap_ver = 32,
+		rep = 30,
+		size = 32,
+	},
+}
+local refer = {
+	["AR2"] = toop.rifle,
+	["SMG1"] = toop.rifle,
+	["SniperPenetratedRound"] = toop.rifle,
+	["SniperRound"] = toop.rifle,
+	["Pistol"] = toop.pistol,
+	["357"] = toop.pistol,
+	["Buckshot"] = toop.shotgun,
+	["Grenade"] = toop.frag,
+	["SMG1_Grenade"] = toop.grenade,
+}
 
 hook.Add( "HUDPaint", "HUDPaint_DrawABox", function()
 	local w, h = ScrW(), ScrH()
@@ -147,7 +203,6 @@ hook.Add( "HUDPaint", "HUDPaint_DrawABox", function()
 			local str1 = ( PW:Clip1() .. " | " .. P:GetAmmoCount(PW:GetPrimaryAmmoType()) )
 			local str2 = ( PW:Clip2() .. " | " .. P:GetAmmoCount(PW:GetSecondaryAmmoType()) )
 
-
 			if PW:GetPrimaryAmmoType() == -1 and PW:Clip1() <= 0 then
 				str1 = ""
 			elseif PW:Clip1() == -1 then
@@ -164,8 +219,117 @@ hook.Add( "HUDPaint", "HUDPaint_DrawABox", function()
 				str2 = PW:Clip2()
 			end
 
-			qt(str1, "CGHUD_2", w - (c*16), h - (c*16), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
-			qt(str2, "CGHUD_2", w - (c*16), h - (c*16*4), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+
+			local si = 32
+			local lg = 8 -- lr distance
+			local hg = 34 -- ud distance
+			local rep = 30 -- repeating
+
+			local dat = refer[game.GetAmmoName( PW:GetPrimaryAmmoType() )] or toop.frag
+			if dat then
+				si = dat.size
+				rep = dat.rep
+				lg = dat.gap_hor
+				hg = dat.gap_ver
+				surface.SetMaterial(dat.Texture)
+			end
+
+			local ind = 0
+			if PW.GetFiremodeName then
+				qt(PW:GetFiremodeName(), "CGHUD_4", w - (c*28), h - (c*16) - (c*ind), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+				ind = ind + 26
+			end
+
+			local ax, ay = (w) - (c*16) - (c*si), (h) - (c*16) - (c*si) - (c*ind)
+
+			local li = 0 -- leftright
+			local hi = 0 -- updown
+			for i=1, math.max(PW:GetCapacity(), PW:Clip1()) do
+				surface.SetDrawColor(CLR_B2)
+				surface.DrawTexturedRect(ax - (c*li*lg) + (c*4), ay - (c*hi*hg) + (c*4), (c*si), (c*si))
+				if i != math.max(PW:GetCapacity(), PW:Clip1()) and (i % rep == 0) then
+					hi = hi + 1
+					li = -1
+				end
+				li = li + 1
+			end
+
+			do
+				local si = 32
+				local lg = 8
+				local hg = 34
+				local rep = 30
+
+				local dat = refer[game.GetAmmoName( PW:GetSecondaryAmmoType() )] or toop.pistol
+				if dat then
+					si = dat.size
+					rep = dat.rep
+					lg = dat.gap_hor
+					hg = dat.gap_ver
+					surface.SetMaterial(dat.Texture)
+				end
+
+				local li = 0
+				local hi = hi + 1
+				for i=1, math.max(PW:GetMaxClip2(), PW:Clip2()) do
+					surface.SetDrawColor(CLR_B2)
+					surface.DrawTexturedRect(ax - (c*li*lg) + (c*4), ay - (c*hi*hg) + (c*4), (c*si), (c*si))
+					if i % rep == 0 then
+						hi = hi + 1
+						li = -1
+					end
+					li = li + 1
+				end
+				li = 0
+				for i=1, PW:Clip2() do
+					if (PW:Clip2()-i) >= PW:GetMaxClip2() then
+						surface.SetDrawColor(CLR_R)
+					elseif (PW:Clip2()-i) % 2 == 0 then 
+						surface.SetDrawColor(CLR_W)
+					else
+						surface.SetDrawColor(CLR_W2)
+					end
+					surface.DrawTexturedRect(ax - (c*li*lg), ay - (c*hi*hg), (c*si), (c*si))
+					if i % rep == 0 then
+						hi = hi + 1
+						li = -1
+					end
+					li = li + 1
+				end
+			end
+			
+			surface.SetMaterial(dat.Texture)
+			li = 0
+			hi = 0
+			for i=1, PW:Clip1() do
+				if (PW:Clip1()-i) >= PW:GetCapacity() then
+					surface.SetDrawColor(CLR_R)
+				elseif (PW:Clip1()-i) % 2 == 0 then 
+					surface.SetDrawColor(CLR_W)
+				else
+					surface.SetDrawColor(CLR_W2)
+				end
+				surface.DrawTexturedRect(ax - (c*li*lg), ay - (c*hi*hg), (c*si), (c*si))
+				if i % rep == 0 then
+					hi = hi + 1
+					li = -1
+				end
+				li = li + 1
+			end
+
+--			local ind = 0
+--			if str1 != "" then
+--				qt("Ammo", "CGHUD_5", w - (c*16), h - (c*16) - (c*ind), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+--				ind = ind + 12
+--				qt(str1, "CGHUD_2", w - (c*16), h - (c*16) - (c*ind), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+--				ind = ind + 44
+--			end
+--			if str2 != "" then
+--				qt("Secondary", "CGHUD_5", w - (c*16), h - (c*16) - (c*ind), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+--				ind = ind + 12
+--				qt(str2, "CGHUD_2", w - (c*16), h - (c*16) - (c*ind), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+--				ind = ind + 44
+--			end
 		end
 	end
 end )
@@ -193,6 +357,7 @@ hook.Add( "HUDDrawScoreBoard", "ArcCWTDM_HUDDrawScoreBoard", function()
 		surface.SetDrawColor(CLR_B2)
 		local yd = 0
 		qt("Score", "CGHUD_3", ax - (c*200), ay + (c*36), CLR_W2, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM, true)
+		qt("K/D", "CGHUD_5", ax + (c*50), ay + (c*36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
 		qt("Frags", "CGHUD_5", ax + (c*100), ay + (c*36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
 		qt("Deaths", "CGHUD_5", ax + (c*150), ay + (c*36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
 		qt("Ping", "CGHUD_5", ax + (c*200), ay + (c*36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
@@ -203,6 +368,12 @@ hook.Add( "HUDDrawScoreBoard", "ArcCWTDM_HUDDrawScoreBoard", function()
 			yd = yd + 26
 			for i, ply in ipairs(team.GetPlayers(teamnum)) do
 				qt(ply:GetName(), "CGHUD_4", ax - (c*200), ay + (c*yd), teamdata.Color, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, true)
+
+				do -- k/d
+					local kd = ply:Frags() / ply:Deaths()
+					qt(kd, "CGHUD_5", ax + (c*50), ay + (c*yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
+				end
+
 				qt(ply:Frags(), "CGHUD_5", ax + (c*100), ay + (c*yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
 				qt(ply:Deaths(), "CGHUD_5", ax + (c*150), ay + (c*yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
 				qt(ply:Ping(), "CGHUD_5", ax + (c*200), ay + (c*yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)

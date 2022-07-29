@@ -5,6 +5,7 @@ GM.Name				= "ArcCW TDM"
 GM.Author			= "Fesiug"
 GM.Email			= "publicfesiug@outlook.com"
 GM.Website			= "example.com"
+GM.TeamBased		= true
 
 DeriveGamemode( "sandbox" )
 
