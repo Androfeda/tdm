@@ -19,24 +19,27 @@ function GM:PlayerNoClip( pl, on )
 	return IsValid( pl ) && pl:Alive()
 end
 
-CreateConVar("arccwtdm_spawn", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Allow sandbox spawning.", 0, 1)
+CreateConVar("tdm_spawn", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Allow sandbox spawning.", 0, 1)
 hook.Add( "PlayerCheckLimit", "ArcCWTDM_PlayerCheckLimit", function( ply, name, cur, max )
-	if GetConVar("arccwtdm_spawn"):GetBool() == false then return false end
+	if GetConVar("tdm_spawn"):GetBool() == false then return false end
 end )
 hook.Add( "PlayerGiveSWEP", "BlockPlayerSWEPs", function( ply, class, swep )
-	if GetConVar("arccwtdm_spawn"):GetBool() == false then return false end
+	if GetConVar("tdm_spawn"):GetBool() == false then return false end
 end )
 
+function GM:CreateTeams()
+	TEAM_HECU = 1
+	team.SetUp( TEAM_HECU, "HECU", Color(175, 205, 120) )
+	team.SetSpawnPoint( TEAM_HECU, "info_player_counterterrorist" )
 
+	TEAM_CMB = 2
+	team.SetUp( TEAM_CMB, "CMB", Color(152, 169, 255) )
+	team.SetSpawnPoint( TEAM_CMB, "info_player_terrorist" )
 
+	team.SetSpawnPoint( TEAM_SPECTATOR, "worldspawn" )
+end
 
-
-hook.Add( "CreateTeams", "ArcCWTDM_CreateTeams", function()
-	team.SetUp(1, "HECU", Color(175, 205, 120))
-	team.SetUp(2, "CMB", Color(152, 169, 255))
-end)
-
-concommand.Add( "arccwtdm_setteam", function( ply, cmd, args )
+concommand.Add( "tdm_setteam", function( ply, cmd, args )
 	local Team = args[1] or 1
 	local ee = args[2] or 1
 	Entity(ee):SetTeam( Team )

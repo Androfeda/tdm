@@ -57,10 +57,49 @@ end
 --
 function PLAYER:Loadout()
 
-	self.Player:Give( "weapon_pistol" )
-	self.Player:GiveAmmo( 255, "Pistol", true )
+	self.Player:GiveAmmo( 9999, "AR2", true )
+	self.Player:GiveAmmo( 9999, "AR2AltFire", true )
+	self.Player:GiveAmmo( 9999, "Pistol", true )
+	self.Player:GiveAmmo( 9999, "SMG1", true )
+	self.Player:GiveAmmo( 9999, "357", true )
+	self.Player:GiveAmmo( 9999, "XBowBolt", true )
+	self.Player:GiveAmmo( 9999, "Buckshot", true )
+	self.Player:GiveAmmo( 9999, "RPGRound", true )
+	self.Player:GiveAmmo( 9999, "SMG1_Grenade", true )
+	self.Player:GiveAmmo( 9999, "Grenade", true )
+	self.Player:GiveAmmo( 9999, "slam", true )
+	self.Player:GiveAmmo( 9999, "AlyxGun", true )
+	self.Player:GiveAmmo( 9999, "SniperRound", true )
+	self.Player:GiveAmmo( 9999, "SniperPenetratedRound", true )
+	self.Player:GiveAmmo( 9999, "Thumper", true )
+	self.Player:GiveAmmo( 9999, "Gravity", true )
+	self.Player:GiveAmmo( 9999, "Battery", true )
+	self.Player:GiveAmmo( 9999, "GaussEnergy", true )
+	self.Player:GiveAmmo( 9999, "CombineCannon", true )
+	self.Player:GiveAmmo( 9999, "AirboatGun", true )
+	self.Player:GiveAmmo( 9999, "StriderMinigun", true )
+	self.Player:GiveAmmo( 9999, "HelicopterGun", true )
+	self.Player:GiveAmmo( 9999, "9mmRound", true )
+	self.Player:GiveAmmo( 9999, "357Round", true )
+	self.Player:GiveAmmo( 9999, "BuckshotHL1", true )
+	self.Player:GiveAmmo( 9999, "XBowBoltHL1", true )
+	self.Player:GiveAmmo( 9999, "MP5_Grenade", true )
+	self.Player:GiveAmmo( 9999, "RPG_Rocket", true )
+	self.Player:GiveAmmo( 9999, "Uranium", true )
+	self.Player:GiveAmmo( 9999, "GrenadeHL1", true )
+	self.Player:GiveAmmo( 9999, "Hornet", true )
+	self.Player:GiveAmmo( 9999, "Snark", true )
+	self.Player:GiveAmmo( 9999, "TripMine", true )
+	self.Player:GiveAmmo( 9999, "Satchel", true )
+	self.Player:GiveAmmo( 9999, "12mmRound", true )
+	self.Player:GiveAmmo( 9999, "StriderMinigunDirect", true )
+	self.Player:GiveAmmo( 9999, "CombineHeavyCannon", true )
+
+	-- uc
+	self.Player:GiveAmmo( 9999, "plinking", true )
 
 end
+
 
 local pmrules = {
 	[1] = {
@@ -175,6 +214,8 @@ function PLAYER:SetModel()
 			end
 		end
 
+		self.Player:SetupHands()
+
 		if string.lower(self.Player:GetModel()) == "models/yukon/hecu/hecu_01_player.mdl" then
 			local roll1 = math.random(0, 2)
 			local balaclava = math.random(0, 1)
@@ -196,7 +237,7 @@ function PLAYER:SetModel()
 
 			local h = self.Player:GetHands()
 			local pl = self.Player
-			
+
 			h:SetModel( "models/weapons/c_arms_hecu_a3.mdl" )
 			h:SetSkin( pl:GetSkin() )
 			h:SetBodyGroups( pl:GetBodygroup(1) .. pl:GetBodygroup(2) .. pl:GetBodygroup(3) .. "000000" )
@@ -213,6 +254,12 @@ function PLAYER:SetModel()
 					self.Player:SetBodygroup( 11, math.random(0, 1) ) -- Night vision
 				end
 			end
+
+			-- The ones it comes with are REALLY BAD
+			local h = self.Player:GetHands()
+			h:SetModel( "models/weapons/c_arms_combine_tdmrecolor.mdl" )
+			h:SetSkin( 0 )
+			h:SetBodyGroups( "000000" )
 		end
 
 

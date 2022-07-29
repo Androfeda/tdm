@@ -8,12 +8,13 @@ function CGSS( size )
 	return size * ( ScrH() / 720 )
 end
 
+local bs = 3
+local bs_shadow = 1
 surface.CreateFont( "CGHUD_1", {
 	font = "Cascadia Mono",
 	size = CGSS(72),
 	weight = 0,
-	scanlines = 2*0,
-	blursize = 5*0,
+	blursize = bs,
 } )
 surface.CreateFont( "CGHUD_2", {
 	font = "Bahnschrift",
@@ -24,7 +25,13 @@ surface.CreateFont( "CGHUD_2_Glow", {
 	font = "Bahnschrift",
 	size = CGSS(48),
 	weight = 0,
-	blursize = 5,
+	blursize = bs,
+} )
+surface.CreateFont( "CGHUD_2_Shadow", {
+	font = "Bahnschrift",
+	size = CGSS(48),
+	weight = 0,
+	blursize = bs_shadow,
 } )
 surface.CreateFont( "CGHUD_3", {
 	font = "Bahnschrift",
@@ -35,29 +42,47 @@ surface.CreateFont( "CGHUD_3_Glow", {
 	font = "Bahnschrift",
 	size = CGSS(36),
 	weight = 0,
-	blursize = 5,
+	blursize = bs,
+} )
+surface.CreateFont( "CGHUD_3_Shadow", {
+	font = "Bahnschrift",
+	size = CGSS(36),
+	weight = 0,
+	blursize = bs_shadow,
 } )
 surface.CreateFont( "CGHUD_4", {
 	font = "Bahnschrift",
 	size = CGSS(24),
 	weight = 0,
 } )
-surface.CreateFont( "CGHUD_5_Glow", {
+surface.CreateFont( "CGHUD_4_Glow", {
 	font = "Bahnschrift",
 	size = CGSS(24),
 	weight = 0,
-	blursize = 5,
+	blursize = bs,
+} )
+surface.CreateFont( "CGHUD_4_Shadow", {
+	font = "Bahnschrift",
+	size = CGSS(24),
+	weight = 0,
+	blursize = bs_shadow,
 } )
 surface.CreateFont( "CGHUD_5", {
 	font = "Bahnschrift",
 	size = CGSS(18),
 	weight = 0,
 } )
-surface.CreateFont( "CGHUD_4_Glow", {
+surface.CreateFont( "CGHUD_5_Glow", {
 	font = "Bahnschrift",
 	size = CGSS(18),
 	weight = 0,
-	blursize = 5,
+	blursize = bs,
+} )
+surface.CreateFont( "CGHUD_5_Shadow", {
+	font = "Bahnschrift",
+	size = CGSS(18),
+	weight = 0,
+	blursize = bs_shadow,
 } )
 
 function CGHUD_FT( text, font, x, y, ax, ay )
@@ -74,13 +99,17 @@ function CGHUD_FT( text, font, x, y, ax, ay )
 	surface.DrawText(text)
 end
 
-local CLR_B = Color(0, 0, 0, 127)
+local CLR_B = Color(0, 0, 0, 255)
 local CLR_B2 = Color(0, 0, 0, 127)
 local CLR_W = Color(255, 255, 255, 255)
 local CLR_W2 = Color(255, 255, 255, 255)
 
-local function qt(text, font, x, y, color, color2, t, l)
-	draw.SimpleText(text, font, x+CGSS(4), y+CGSS(4), color2, t, l)
+local function qt(text, font, x, y, color, color2, t, l, glow)
+	draw.SimpleText(text, font .. "_Shadow", x+CGSS(4), y+CGSS(4), color2, t, l)
+	if glow then
+		draw.SimpleText(text, font .. "_Glow", x, y, CLR_B, t, l)
+		draw.SimpleText(text, font .. "_Glow", x, y, CLR_B, t, l)
+	end
 	draw.SimpleText(text, font, x, y, color, t, l)
 end
 
@@ -119,19 +148,19 @@ hook.Add( "HUDPaint", "HUDPaint_DrawABox", function()
 			local str2 = ( PW:Clip2() .. " | " .. P:GetAmmoCount(PW:GetSecondaryAmmoType()) )
 
 
-			if PW:GetPrimaryAmmoType() == -1 and PW:Clip1() == -1 then
+			if PW:GetPrimaryAmmoType() == -1 and PW:Clip1() <= 0 then
 				str1 = ""
 			elseif PW:Clip1() == -1 then
 				str1 = P:GetAmmoCount(PW:GetPrimaryAmmoType())
-			elseif PW:GetPrimaryAmmoType() == -1 then
+			elseif true or PW:GetPrimaryAmmoType() == -1 then
 				str1 = PW:Clip1()
 			end
 
-			if PW:GetSecondaryAmmoType() == -1 and PW:Clip2() == -1 then
+			if PW:GetSecondaryAmmoType() == -1 and PW:Clip2() <= 0 then
 				str2 = ""
 			elseif PW:Clip2() == -1 then
 				str2 = P:GetAmmoCount(PW:GetSecondaryAmmoType())
-			elseif PW:GetSecondaryAmmoType() == -1 then
+			elseif true or PW:GetSecondaryAmmoType() == -1 then
 				str2 = PW:Clip2()
 			end
 
@@ -163,20 +192,20 @@ hook.Add( "HUDDrawScoreBoard", "ArcCWTDM_HUDDrawScoreBoard", function()
 
 		surface.SetDrawColor(CLR_B2)
 		local yd = 0
-		qt("Score", "CGHUD_3", ax - (c*200), ay + (c*36), CLR_W2, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
-		qt("Frags", "CGHUD_5", ax + (c*100), ay + (c*36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
-		qt("Deaths", "CGHUD_5", ax + (c*150), ay + (c*36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
-		qt("Ping", "CGHUD_5", ax + (c*200), ay + (c*36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+		qt("Score", "CGHUD_3", ax - (c*200), ay + (c*36), CLR_W2, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM, true)
+		qt("Frags", "CGHUD_5", ax + (c*100), ay + (c*36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
+		qt("Deaths", "CGHUD_5", ax + (c*150), ay + (c*36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
+		qt("Ping", "CGHUD_5", ax + (c*200), ay + (c*36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
 		yd = yd + 36
 		for teamnum, teamdata in SortedPairs( team.GetAllTeams() ) do
 			if !tshow[teamnum] then continue end
-			qt(teamdata.Name, "CGHUD_5", ax - (c*200), ay + (c*yd), teamdata.Color, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+			qt(teamdata.Name, "CGHUD_5", ax - (c*200), ay + (c*yd), teamdata.Color, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true)
 			yd = yd + 26
 			for i, ply in ipairs(team.GetPlayers(teamnum)) do
-				qt(ply:GetName(), "CGHUD_4", ax - (c*200), ay + (c*yd), teamdata.Color, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-				qt(ply:Frags(), "CGHUD_5", ax + (c*100), ay + (c*yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
-				qt(ply:Deaths(), "CGHUD_5", ax + (c*150), ay + (c*yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
-				qt(ply:Ping(), "CGHUD_5", ax + (c*200), ay + (c*yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+				qt(ply:GetName(), "CGHUD_4", ax - (c*200), ay + (c*yd), teamdata.Color, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, true)
+				qt(ply:Frags(), "CGHUD_5", ax + (c*100), ay + (c*yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
+				qt(ply:Deaths(), "CGHUD_5", ax + (c*150), ay + (c*yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
+				qt(ply:Ping(), "CGHUD_5", ax + (c*200), ay + (c*yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
 				yd = yd + 24
 			end
 			yd = yd - 8
