@@ -244,10 +244,10 @@ hook.Add( "HUDPaint", "HUDPaint_DrawABox", function()
 
 			local li = 0 -- leftright
 			local hi = 0 -- updown
-			for i=1, math.max(PW:GetCapacity(), PW:Clip1()) do
+			for i=1, math.max(PW:GetMaxClip1(), PW:Clip1()) do
 				surface.SetDrawColor(CLR_B2)
 				surface.DrawTexturedRect(ax - (c*li*lg) + (c*4), ay - (c*hi*hg) + (c*4), (c*si), (c*si))
-				if i != math.max(PW:GetCapacity(), PW:Clip1()) and (i % rep == 0) then
+				if i != math.max(PW:GetMaxClip1(), PW:Clip1()) and (i % rep == 0) then
 					hi = hi + 1
 					li = -1
 				end
@@ -302,7 +302,7 @@ hook.Add( "HUDPaint", "HUDPaint_DrawABox", function()
 			li = 0
 			hi = 0
 			for i=1, PW:Clip1() do
-				if (PW:Clip1()-i) >= PW:GetCapacity() then
+				if (PW:Clip1()-i) >= PW:GetMaxClip1() then
 					surface.SetDrawColor(CLR_R)
 				elseif (PW:Clip1()-i) % 2 == 0 then 
 					surface.SetDrawColor(CLR_W)
