@@ -40,6 +40,7 @@ hook.Add( "PlayerCheckLimit", "ArcCWTDM_PlayerCheckLimit", function( ply, name, 
 end )
 hook.Add( "PlayerGiveSWEP", "BlockPlayerSWEPs", function( ply, class, swep )
 	-- Check if they're based on ArcCW or ARC9 here
+	if weapons.IsBasedOn( class, "arccw_base" ) or weapons.IsBasedOn( class, "arccw_base_melee" ) or weapons.IsBasedOn( class, "arccw_base_nade" ) or weapons.IsBasedOn( class, "arccw_uo_grenade_base" ) or weapons.IsBasedOn( class, "arc9_base" ) then return true end
 	-- Otherwise, no
 	if GetConVar("tdm_spawn"):GetBool() == false then return false end
 end )
