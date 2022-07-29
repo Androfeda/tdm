@@ -15,16 +15,22 @@ function GM:Initialize()
 end
 
 function GM:PlayerNoClip( pl, on )
+	-- Admin check this
+
 	if ( !on ) then return true end
 	-- Allow noclip if we're in single player and living
 	return IsValid( pl ) && pl:Alive()
 end
 
 CreateConVar("tdm_spawn", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Allow sandbox spawning.", 0, 1)
+
 hook.Add( "PlayerCheckLimit", "ArcCWTDM_PlayerCheckLimit", function( ply, name, cur, max )
+	-- This disables spawning or using anything else
 	if GetConVar("tdm_spawn"):GetBool() == false then return false end
 end )
 hook.Add( "PlayerGiveSWEP", "BlockPlayerSWEPs", function( ply, class, swep )
+	-- Check if they're based on ArcCW or ARC9 here
+	-- Otherwise, no
 	if GetConVar("tdm_spawn"):GetBool() == false then return false end
 end )
 

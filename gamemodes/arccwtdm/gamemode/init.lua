@@ -15,10 +15,6 @@ function GM:PlayerInitialSpawn( pl, transiton )
 	end
 end
 
---[[---------------------------------------------------------
-	Name: gamemode:PlayerSpawnAsSpectator()
-	Desc: Player spawns as a spectator
------------------------------------------------------------]]
 function GM:PlayerSpawnAsSpectator( pl )
 	pl:StripWeapons()
 	if ( pl:Team() == TEAM_UNASSIGNED ) then
@@ -30,6 +26,7 @@ function GM:PlayerSpawnAsSpectator( pl )
 end
 
 function GM:PlayerSpawn( pl, transiton )
+	player_manager.SetPlayerClass( pl, "player_arccwtdm" )
 	if pl:Team() == TEAM_SPECTATOR or pl:Team() == TEAM_UNASSIGNED then
 		self:PlayerSpawnAsSpectator( pl )
 		return
