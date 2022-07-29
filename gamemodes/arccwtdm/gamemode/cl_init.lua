@@ -5,5 +5,5 @@ include( "shared.lua" )
 include( "client/hud.lua" )
 
 function GM:ContextMenuOpen()
-	return false
+	return GetConVar("tdm_spawn"):GetBool()
 end
