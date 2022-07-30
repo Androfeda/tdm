@@ -43,3 +43,7 @@ end
 function GM:PlayerLoadout( pl )
 	player_manager.RunClass( pl, "Loadout" )
 end
+
+function GM:PlayerDeathSound(ply)
+	return true -- BEEP BEEP  BEEP BEEP BEEEEEEEEEEEEEEEEEEEEP
+end
