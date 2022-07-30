@@ -39,6 +39,7 @@ CreateConVar( "tdm_stamina_drain", 4, FCVAR_ARCHIVE + FCVAR_REPLICATED, "How lon
 CreateConVar( "tdm_stamina_gain", 3, FCVAR_ARCHIVE + FCVAR_REPLICATED, "How long it takes to regain stamina" )
 CreateConVar( "tdm_stamina_wain", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "How long it takes to start recharging" )
 CreateConVar( "tdm_jump_gain", 0.5, FCVAR_ARCHIVE + FCVAR_REPLICATED, "How long it takes to get full jump" )
+CreateConVar( "tdm_jump_power", 220, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Jump power" )
 
 hook.Add( "PlayerCheckLimit", "ArcCWTDM_PlayerCheckLimit", function( ply, name, cur, max )
 	-- This disables spawning or using anything else
@@ -85,7 +86,7 @@ end
 function GM:StartCommand( ply, cmd )
 	local time = GetConVar("tdm_jump_gain"):GetFloat() -- time to restore full jump
 	ply:SetNextJump( math.Approach( ply:GetNextJump(), 1, FrameTime()/time ) )
-	local tong = Lerp( ply:GetNextJump(), 0, 200 )
+	local tong = Lerp( ply:GetNextJump(), 0, GetConVar("tdm_jump_power"):GetFloat() )
 	if tong <= 50 then tong = 0 end
 	ply:SetJumpPower( tong )
 
