@@ -393,8 +393,8 @@ hook.Add( "HUDDrawScoreBoard", "ArcCWTDM_HUDDrawScoreBoard", function()
 
 				if teamnum != 1002 then
 					do -- k/d
-						local kd = math.max(ply:Frags(), 1) / math.max(ply:Deaths(), 1)
-						
+						local kd = ply:Frags() / ply:Deaths()
+						kd = math.Round(kd, 2)
 						qt(kd, "CGHUD_5", ax + (c*50), ay + (c*yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
 					end
 

@@ -7,7 +7,7 @@ PLAYER.DisplayName			= "ArcCW TDM Player Class"
 
 PLAYER.SlowWalkSpeed		= 180		-- How fast to move when slow-walking (+WALK)
 PLAYER.WalkSpeed			= 250		-- How fast to move when not running
-PLAYER.RunSpeed				= 300		-- How fast to move when running
+PLAYER.RunSpeed				= 340		-- How fast to move when running
 PLAYER.CrouchedWalkSpeed	= 0.5		-- Multiply move speed by this when crouching
 PLAYER.DuckSpeed			= 0.4		-- How fast to go from not ducking, to ducking
 PLAYER.UnDuckSpeed			= 0.4		-- How fast to go from ducking, to not ducking
