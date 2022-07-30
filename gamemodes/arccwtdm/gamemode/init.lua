@@ -8,23 +8,15 @@ AddCSLuaFile( "client/hud.lua" )
 
 
 function GM:PlayerInitialSpawn( pl, transiton )
-	pl:SetTeam( TEAM_UNASSIGNED )
-
-	if ( GAMEMODE.TeamBased ) then
-		pl:ConCommand( "gm_showteam" )
-	end
+	pl:SetTeam(team.BestAutoJoinTeam())
 	pl.DeathTime2 = CurTime()
 end
 
 function GM:PlayerSpawnAsSpectator( pl )
 	pl:StripWeapons()
-	if ( pl:Team() == TEAM_UNASSIGNED ) then
-		pl:Spectate( OBS_MODE_FIXED )
-		return
-	end
-	pl.DeathTime2 = CurTime()
 	pl:SetTeam( TEAM_SPECTATOR )
 	pl:Spectate( OBS_MODE_ROAMING )
+	pl.DeathTime2 = CurTime()
 end
 
 function GM:PlayerSpawn( pl, transiton )

@@ -6,6 +6,7 @@ GM.Author			= "Fesiug"
 GM.Email			= "publicfesiug@outlook.com"
 GM.Website			= "example.com"
 GM.TeamBased		= true
+GM.SecondsBetweenTeamSwitches = 0 -- YOU ARE A WILLY RIDER
 
 DeriveGamemode( "sandbox" )
 
@@ -31,8 +32,8 @@ CreateConVar( "tdm_spawn", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Allow sandbox s
 CreateConVar( "tdm_deathcam", 5, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Deathcam." )
 
 CreateConVar( "tdm_regen_enabled", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Health regen", 0, 1 )
-CreateConVar( "tdm_regen_speed", (100/6), FCVAR_ARCHIVE + FCVAR_REPLICATED, "How much to regenerate in a second" )
-CreateConVar( "tdm_regen_delay", 4, FCVAR_ARCHIVE + FCVAR_REPLICATED, "How long it takes to start regenerating" )
+CreateConVar( "tdm_regen_speed", (100/8), FCVAR_ARCHIVE + FCVAR_REPLICATED, "How much to regenerate in a second" )
+CreateConVar( "tdm_regen_delay", 5, FCVAR_ARCHIVE + FCVAR_REPLICATED, "How long it takes to start regenerating" )
 
 CreateConVar( "tdm_stamina_drain", 4, FCVAR_ARCHIVE + FCVAR_REPLICATED, "How long it takes to drain stamina" )
 CreateConVar( "tdm_stamina_gain", 3, FCVAR_ARCHIVE + FCVAR_REPLICATED, "How long it takes to regain stamina" )

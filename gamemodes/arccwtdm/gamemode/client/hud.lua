@@ -180,9 +180,9 @@ hook.Add( "HUDPaint", "HUDPaint_DrawABox", function()
 
 	if IsValid(P) and P:Health() > 0 then
 		CLR_W = team.GetColor(P:Team())
-		CLR_W.r = (CLR_W.r * 0.25) + (255*0.75)
-		CLR_W.g = (CLR_W.g * 0.25) + (255*0.75)
-		CLR_W.b = (CLR_W.b * 0.25) + (255*0.75)
+		CLR_W.r = (CLR_W.r * 0.5) + (255*0.5)
+		CLR_W.g = (CLR_W.g * 0.5) + (255*0.5)
+		CLR_W.b = (CLR_W.b * 0.5) + (255*0.5)
 		qt("+ " .. P:Health(), "CGHUD_2", 0 + (c*16), h - (c*16), CLR_W, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
 		
 		surface.SetDrawColor(CLR_B2)
@@ -362,7 +362,7 @@ hook.Add( "ScoreboardHide", "ArcCWTDM_ScoreboardHide", function()
 	return true
 end )
 
-local tshow = { [1] = true, [2] = true }
+local tshow = { [1] = true, [2] = true, [1002] = true }
 
 hook.Add( "HUDDrawScoreBoard", "ArcCWTDM_HUDDrawScoreBoard", function()
 	if SHOWSCORE then
@@ -373,6 +373,7 @@ hook.Add( "HUDDrawScoreBoard", "ArcCWTDM_HUDDrawScoreBoard", function()
 
 		surface.SetDrawColor(CLR_B2)
 		local yd = 0
+		qt(GetHostName(), "CGHUD_3", ax, ay + (c*4), CLR_W2, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, true)
 		qt("Score", "CGHUD_3", ax - (c*200), ay + (c*36), CLR_W2, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM, true)
 		qt("K/D", "CGHUD_5", ax + (c*50), ay + (c*36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
 		qt("Frags", "CGHUD_5", ax + (c*100), ay + (c*36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
@@ -381,19 +382,26 @@ hook.Add( "HUDDrawScoreBoard", "ArcCWTDM_HUDDrawScoreBoard", function()
 		yd = yd + 36
 		for teamnum, teamdata in SortedPairs( team.GetAllTeams() ) do
 			if !tshow[teamnum] then continue end
+			if #team.GetPlayers(teamnum) == 0 then continue end
+			if teamnum == 1002 then
+				teamdata.Color = CLR_W2
+			end
 			qt(teamdata.Name, "CGHUD_5", ax - (c*200), ay + (c*yd), teamdata.Color, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true)
 			yd = yd + 26
 			for i, ply in ipairs(team.GetPlayers(teamnum)) do
 				qt(ply:GetName(), "CGHUD_4", ax - (c*200), ay + (c*yd), teamdata.Color, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, true)
 
-				do -- k/d
-					local kd = ply:Frags() / ply:Deaths()
-					qt(kd, "CGHUD_5", ax + (c*50), ay + (c*yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
-				end
+				if teamnum != 1002 then
+					do -- k/d
+						local kd = math.max(ply:Frags(), 1) / math.max(ply:Deaths(), 1)
+						
+						qt(kd, "CGHUD_5", ax + (c*50), ay + (c*yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
+					end
 
-				qt(ply:Frags(), "CGHUD_5", ax + (c*100), ay + (c*yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
-				qt(ply:Deaths(), "CGHUD_5", ax + (c*150), ay + (c*yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
-				qt(ply:Ping(), "CGHUD_5", ax + (c*200), ay + (c*yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
+					qt(ply:Frags(), "CGHUD_5", ax + (c*100), ay + (c*yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
+					qt(ply:Deaths(), "CGHUD_5", ax + (c*150), ay + (c*yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
+					qt(ply:Ping(), "CGHUD_5", ax + (c*200), ay + (c*yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
+				end
 				yd = yd + 24
 			end
 			yd = yd - 8
