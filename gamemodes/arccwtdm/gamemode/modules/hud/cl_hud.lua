@@ -17,6 +17,7 @@ local CLR_B = Color(0, 0, 0, 255)
 local CLR_B2 = Color(0, 0, 0, 127)
 local CLR_W = Color(255, 255, 255, 255)
 local CLR_W2 = Color(255, 255, 255, 255)
+local CLR_R2 = Color(255, 150, 150, 150)
 
 local am_pi = Material("tdm/pistol.png", "smooth")
 local am_ri = Material("tdm/rifle.png", "smooth")
@@ -238,7 +239,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 				for i = 1, PW:Clip1() do
 					if (PW:Clip1() - i) >= PW:GetMaxClip1() then
 						surface.SetDrawColor(CLR_R)
-					elseif (PW:Clip1() - i) % 2 == 0 then
+					elseif (PW:Clip1() - i) % 3 == 0 then
 						surface.SetDrawColor(CLR_W)
 					else
 						surface.SetDrawColor(CLR_W2)
@@ -266,6 +267,12 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 				--				GAMEMODE:ShadowText(str2, "CGHUD_2", w - (c*16), h - (c*16) - (c*ind), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
 				--				ind = ind + 44
 				--			end
+			end
+
+			if PW and PW.HeatEnabled and PW:HeatEnabled() then
+				local f = (PW:GetHeat() / PW:GetMaxHeat())
+				surface.SetDrawColor(255, 200 - 150 * f ^ 2, 200 - 150 * f ^ 2, 200)
+				surface.DrawRect(w - c * 268, h - (c * 32) - (c * 8), (c * 240) * math.Clamp(f, 0, 1), c * 4)
 			end
 		end
 
