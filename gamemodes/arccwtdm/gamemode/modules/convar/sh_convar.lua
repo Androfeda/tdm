@@ -9,11 +9,11 @@ CreateConVar("tdm_stamina_wain", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "How long 
 CreateConVar("tdm_jump_gain", 0.5, FCVAR_ARCHIVE + FCVAR_REPLICATED, "How long it takes to get full jump")
 CreateConVar("tdm_jump_power", 220, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Jump power")
 
-CreateConVar("tdm_ff", 0.25, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Friendly fire damage percent (0 is no damage).", 0, 1)
+CreateConVar("tdm_ff", 0.5, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Friendly fire damage percent (0 is no damage).", 0, 1)
 CreateConVar("tdm_ff_reflect", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Excessive friendly fire damage will reflect.", 0, 1)
 CreateConVar("tdm_ff_reflect_threshold", 300, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Amount of friendly damage (after reduction) to trigger reflect.", 0)
 CreateConVar("tdm_ff_reflect_cap", 600, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Maximum amount of friendly damage to track.", 0)
-CreateConVar("tdm_ff_reflect_decay", 150, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Friendly fire threshold decays by this much every minute. When it reaches zero, damage will no longer reflect", 0)
+CreateConVar("tdm_ff_reflect_decay", 150, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Friendly fire threshold decays by this much every minute. When it reaches zero, damage will no longer reflect.", 0)
 
 CreateConVar("tdm_money_starting", 5000, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Starting cash for players.", 0)
-CreateConVar("tdm_money_per_kill", 100, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Passive income per minute.", 0)
+CreateConVar("tdm_money_per_kill", 100, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Base income for killing an enemy gamer.", 0)
