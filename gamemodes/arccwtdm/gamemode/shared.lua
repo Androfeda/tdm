@@ -266,8 +266,8 @@ if CLIENT then
 		local ha = LocalPlayer():Health()/LocalPlayer():GetMaxHealth()
 
 		tab["$pp_colour_mulr"] = Lerp(ha, 0.1, 0)
-		tab["$pp_colour_brightness"] = Lerp(ha, -0.1, 0)
-		tab["$pp_colour_contrast"] = Lerp(ha, 1.1, 1)
+		tab["$pp_colour_brightness"] = Lerp(ha, -0.05, 0)
+		tab["$pp_colour_contrast"] = Lerp(ha, 1.05, 1)
 		tab["$pp_colour_colour"] = Lerp(ha, 0, 1)
 
 		DrawColorModify( tab )
