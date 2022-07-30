@@ -28,6 +28,21 @@ function GM:PlayerNoClip( pl, on )
 	return IsValid( pl ) and pl:Alive() and pl:IsAdmin()
 end
 
+function GM:PlayerShouldTakeDamage( ply, attacker )
+	-- Global godmode, players can't be damaged in any way
+	if ( cvars.Bool( "sbox_godmode", false ) ) then return false end
+
+	-- No player vs player damage
+	if ( attacker:IsValid() and attacker:IsPlayer() and ply != attacker ) then
+		if attacker:Team() == ply:Team() then return false end
+		return cvars.Bool( "sbox_playershurtplayers", true )
+	end
+
+	-- Default, let the player be hurt
+	return true
+
+end
+
 CreateConVar( "tdm_spawn", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Allow sandbox spawning.", 0, 1 )
 CreateConVar( "tdm_deathcam", 5, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Deathcam." )
 
@@ -43,13 +58,13 @@ CreateConVar( "tdm_jump_power", 220, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Jump pow
 
 hook.Add( "PlayerCheckLimit", "ArcCWTDM_PlayerCheckLimit", function( ply, name, cur, max )
 	-- This disables spawning or using anything else
-	if GetConVar("tdm_spawn"):GetBool() == false then return false end
+	if !ply:IsAdmin() and GetConVar("tdm_spawn"):GetBool() == false then return false end
 end )
 hook.Add( "PlayerGiveSWEP", "BlockPlayerSWEPs", function( ply, class, swep )
 	-- Check if they're based on ArcCW or ARC9 here
 	if weapons.IsBasedOn( class, "arccw_base" ) or weapons.IsBasedOn( class, "arccw_base_melee" ) or weapons.IsBasedOn( class, "arccw_base_nade" ) or weapons.IsBasedOn( class, "arccw_uo_grenade_base" ) or weapons.IsBasedOn( class, "arc9_base" ) then return true end
 	-- Otherwise, no
-	if GetConVar("tdm_spawn"):GetBool() == false then return false end
+	if !ply:IsAdmin() and GetConVar("tdm_spawn"):GetBool() == false then return false end
 end )
 
 function GM:CreateTeams()
@@ -83,16 +98,12 @@ function GM:OnPlayerHitGround( ply, inWater, onFloater, speed )
 	ply:SetNextJump(0)
 end
 
-function GM:StartCommand( ply, cmd )
+hook.Add("StartCommand", "TDM_StartCommand", function( ply, cmd )
 	local time = GetConVar("tdm_jump_gain"):GetFloat() -- time to restore full jump
 	ply:SetNextJump( math.Approach( ply:GetNextJump(), 1, FrameTime()/time ) )
 	local tong = Lerp( ply:GetNextJump(), 0, GetConVar("tdm_jump_power"):GetFloat() )
 	if tong <= 50 then tong = 0 end
 	ply:SetJumpPower( tong )
-
-	if !ply:OnGround() then
-		cmd:RemoveKey(IN_DUCK)
-	end
 
 	local actio = ply:GetMoveType() != MOVETYPE_NOCLIP and ply:GetAbsVelocity():Length2D() > 0 and ply:OnGround()
 
@@ -106,11 +117,12 @@ function GM:StartCommand( ply, cmd )
 	elseif ply:GetStamina_Jump() <= CurTime() then -- it's actually just delay
 		ply:SetStamina_Run( math.Approach( ply:GetStamina_Run(), 1, FrameTime()/GetConVar("tdm_stamina_gain"):GetFloat() ) )
 	end
-end
+end)
 
-function GM:HandlePlayerJumping( ply, velocity )
+hook.Add("HandlePlayerJumping", "TDM_HandlePlayerJumping", function( ply, velocity )
 	-- yeah
-end
+	return true
+end)
 
 hook.Add( "Think", "TDM_HealthRegen", function()
 	local enabled = GetConVarNumber( "tdm_regen_enabled" ) > 0

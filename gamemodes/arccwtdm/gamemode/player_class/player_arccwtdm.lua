@@ -5,10 +5,10 @@ local PLAYER = {}
 
 PLAYER.DisplayName			= "ArcCW TDM Player Class"
 
-PLAYER.SlowWalkSpeed		= 180		-- How fast to move when slow-walking (+WALK)
-PLAYER.WalkSpeed			= 250		-- How fast to move when not running
-PLAYER.RunSpeed				= 340		-- How fast to move when running
-PLAYER.CrouchedWalkSpeed	= 0.5		-- Multiply move speed by this when crouching
+PLAYER.SlowWalkSpeed		= 130		-- How fast to move when slow-walking (+WALK)
+PLAYER.WalkSpeed			= 220		-- How fast to move when not running
+PLAYER.RunSpeed				= 350		-- How fast to move when running
+PLAYER.CrouchedWalkSpeed	= 0.4		-- Multiply move speed by this when crouching
 PLAYER.DuckSpeed			= 0.4		-- How fast to go from not ducking, to ducking
 PLAYER.UnDuckSpeed			= 0.4		-- How fast to go from ducking, to not ducking
 PLAYER.JumpPower			= 170		-- How powerful our jump should be
@@ -57,6 +57,7 @@ function PLAYER:Spawn()
 	self.Player:SetStamina_Run(1)
 	self.Player:SetStamina_Jump(1)
 	self.Player:SetNextJump(1)
+	self.Player:AddEFlags(EFL_NO_DAMAGE_FORCES)
 end
 
 --
