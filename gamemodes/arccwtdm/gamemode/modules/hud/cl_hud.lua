@@ -2,10 +2,6 @@
 local C_W = Color(255, 255, 255, 255)
 local C_B = Color(0, 0, 0, 127)
 
-function CGSS(size)
-	return size * (ScrH() / 720)
-end
-
 function CGHUD_FT(text, font, x, y, ax, ay)
 	surface.SetFont(font)
 	local zx, zy = surface.GetTextSize(text)
