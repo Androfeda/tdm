@@ -85,6 +85,11 @@ end
 
 hook.Add("DoPlayerDeath", "tdm_money", function(ply, attacker, dmginfo)
 	if attacker:IsPlayer() and attacker ~= ply and attacker:Team() ~= ply:Team() and GetConVar("tdm_money_per_kill"):GetInt() > 0 then
-		attacker:AddMoney(GetConVar("tdm_money_per_kill"):GetInt())
+		local reward = GetConVar("tdm_money_per_kill"):GetInt()
+		local class = dmginfo:GetInflictor():IsWeapon() and dmginfo:GetInflictor():GetClass() or attacker:GetActiveWeapon():GetClass()
+
+		reward = reward * (GAMEMODE.WeaponRewardMultipliers[class] or 1)
+
+		attacker:AddMoney(reward)
 	end
 end)

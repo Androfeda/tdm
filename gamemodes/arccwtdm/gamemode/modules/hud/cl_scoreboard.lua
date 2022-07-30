@@ -30,9 +30,11 @@ hook.Add("HUDDrawScoreBoard", "ArcCWTDM_HUDDrawScoreBoard", function()
 		local yd = 0
 		GAMEMODE:ShadowText(GetHostName(), "CGHUD_3", ax, ay + (c * 4), CLR_W2, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, true)
 		-- GAMEMODE:ShadowText("Score", "CGHUD_3", ax - (c * 200), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM, true)
-		GAMEMODE:ShadowText("K/D", "CGHUD_6", ax + (c * 50), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
+		GAMEMODE:ShadowText("Earnings", "CGHUD_6", ax + (c * 10), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
+
+		GAMEMODE:ShadowText("KDR", "CGHUD_6", ax + (c * 50), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
 		GAMEMODE:ShadowText("Frags", "CGHUD_6", ax + (c * 100), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
-		GAMEMODE:ShadowText("Deaths", "CGHUD_6", ax + (c * 150), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
+		GAMEMODE:ShadowText("Deaths", "CGHUD_6", ax + (c * 160), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
 		GAMEMODE:ShadowText("Ping", "CGHUD_6", ax + (c * 200), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
 		yd = yd + 36
 
@@ -65,9 +67,9 @@ hook.Add("HUDDrawScoreBoard", "ArcCWTDM_HUDDrawScoreBoard", function()
 						kd = math.Round(kd, 2)
 					end
 					GAMEMODE:ShadowText(kd, "CGHUD_6", ax + (c * 50), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
-
+					GAMEMODE:ShadowText(GAMEMODE:FormatMoney(ply:GetEarnings()), "CGHUD_6", ax + (c * 10), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
 					GAMEMODE:ShadowText(ply:Frags(), "CGHUD_6", ax + (c * 100), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
-					GAMEMODE:ShadowText(ply:Deaths(), "CGHUD_6", ax + (c * 150), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
+					GAMEMODE:ShadowText(ply:Deaths(), "CGHUD_6", ax + (c * 160), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
 					GAMEMODE:ShadowText(ply:Ping(), "CGHUD_6", ax + (c * 200), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
 				end
 
