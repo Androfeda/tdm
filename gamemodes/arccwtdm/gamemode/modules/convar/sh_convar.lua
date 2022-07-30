@@ -12,4 +12,5 @@ CreateConVar("tdm_jump_power", 220, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Jump powe
 CreateConVar("tdm_ff", 0.25, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Friendly fire damage percent (0 is no damage).", 0, 1)
 CreateConVar("tdm_ff_reflect", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Excessive friendly fire damage will reflect.", 0, 1)
 CreateConVar("tdm_ff_reflect_threshold", 300, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Amount of (pre-reduced) friendly damage to trigger reflect.", 0)
-CreateConVar("tdm_ff_reflect_decay", 5, FCVAR_ARCHIVE + FCVAR_REPLICATED, "FF threshold decays by this much every minute.", 0)
+CreateConVar("tdm_ff_reflect_cap", 600, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Maximum amount of friendly damage to track.", 0)
+CreateConVar("tdm_ff_reflect_decay", 150, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Friendly fire threshold decays by this much every minute. When it reaches zero, damage will no longer reflect", 0)
