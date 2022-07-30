@@ -1,114 +1,444 @@
-local timelastlived = CurTime()
-local lasteyes = vector_origin
-local lasteyesa = angle_zero
-local deead = lasteyes
-local rgel = vector_origin
+-- HUD
+local C_W = Color(255, 255, 255, 255)
+local C_B = Color(0, 0, 0, 127)
 
-hook.Add("CalcView", "GH3_DeadCam", function(ply, pos, angles, fov)
-	if GetConVar("tdm_deathcam"):GetBool() then
-		if not ply:Alive() then
-			local view = {
-				origin = pos, --pos - ( angles:Forward() * 100 ),
-				angles = angles,
-				fov = fov,
-				drawviewer = true
-			}
+function CGSS(size)
+	return size * (ScrH() / 720)
+end
 
-			if IsValid(ply:GetRagdollEntity()) then
-				local rge = ply:GetRagdollEntity()
-				rgel = rge:GetPos() + rge:OBBCenter()
+local bs = 3
+local bs_shadow = 1
+
+surface.CreateFont("CGHUD_1", {
+	font = "Cascadia Mono",
+	size = CGSS(72),
+	weight = 0,
+	blursize = bs,
+})
+
+surface.CreateFont("CGHUD_2", {
+	font = "Bahnschrift",
+	size = CGSS(48),
+	weight = 0,
+})
+
+surface.CreateFont("CGHUD_2_Glow", {
+	font = "Bahnschrift",
+	size = CGSS(48),
+	weight = 0,
+	blursize = bs,
+})
+
+surface.CreateFont("CGHUD_2_Shadow", {
+	font = "Bahnschrift",
+	size = CGSS(48),
+	weight = 0,
+	blursize = bs_shadow,
+})
+
+surface.CreateFont("CGHUD_3", {
+	font = "Bahnschrift",
+	size = CGSS(36),
+	weight = 0,
+})
+
+surface.CreateFont("CGHUD_3_Glow", {
+	font = "Bahnschrift",
+	size = CGSS(36),
+	weight = 0,
+	blursize = bs,
+})
+
+surface.CreateFont("CGHUD_3_Shadow", {
+	font = "Bahnschrift",
+	size = CGSS(36),
+	weight = 0,
+	blursize = bs_shadow,
+})
+
+surface.CreateFont("CGHUD_4", {
+	font = "Bahnschrift",
+	size = CGSS(24),
+	weight = 0,
+})
+
+surface.CreateFont("CGHUD_4_Glow", {
+	font = "Bahnschrift",
+	size = CGSS(24),
+	weight = 0,
+	blursize = bs,
+})
+
+surface.CreateFont("CGHUD_4_Shadow", {
+	font = "Bahnschrift",
+	size = CGSS(24),
+	weight = 0,
+	blursize = bs_shadow,
+})
+
+surface.CreateFont("CGHUD_5", {
+	font = "Bahnschrift",
+	size = CGSS(18),
+	weight = 0,
+})
+
+surface.CreateFont("CGHUD_5_Glow", {
+	font = "Bahnschrift",
+	size = CGSS(18),
+	weight = 0,
+	blursize = bs,
+})
+
+surface.CreateFont("CGHUD_5_Shadow", {
+	font = "Bahnschrift",
+	size = CGSS(18),
+	weight = 0,
+	blursize = bs_shadow,
+})
+
+surface.CreateFont("CGHUD_32_Unscaled", {
+	font = "Bahnschrift",
+	size = 32,
+	weight = 0,
+})
+
+surface.CreateFont("CGHUD_32_Unscaled_Shadow", {
+	font = "Bahnschrift",
+	size = 32,
+	weight = 0,
+	blursize = bs_shadow,
+})
+
+surface.CreateFont("CGHUD_32_Unscaled_Glow", {
+	font = "Bahnschrift",
+	size = 32,
+	weight = 0,
+	blursize = bs,
+})
+
+
+function CGHUD_FT(text, font, x, y, ax, ay)
+	surface.SetFont(font)
+	local zx, zy = surface.GetTextSize(text)
+	local tx, ty = Lerp(ax, x, y - zx), Lerp(ay, y, y - zy)
+	--surface.SetDrawColor( 0, 0, 0, 127)
+	--surface.DrawRect(tx, ty, zx, zy)
+	surface.SetTextPos(tx, ty)
+	surface.DrawText(text)
+end
+
+local CLR_R = Color(255, 200, 200, 255)
+local CLR_B = Color(0, 0, 0, 255)
+local CLR_B2 = Color(0, 0, 0, 127)
+local CLR_W = Color(255, 255, 255, 255)
+local CLR_W2 = Color(255, 255, 255, 255)
+
+local am_pi = Material("tdm/pistol.png", "smooth")
+local am_ri = Material("tdm/rifle.png", "smooth")
+local am_sg = Material("tdm/shotgun.png", "smooth")
+local am_gr = Material("tdm/grenade.png", "smooth")
+local am_fr = Material("tdm/frag.png", "smooth")
+
+local toop = {
+	["rifle"] = {
+		Texture = am_ri,
+		gap_hor = 8,
+		gap_ver = 32,
+		rep = 31,
+		size = 32,
+	},
+	["pistol"] = {
+		Texture = am_pi,
+		gap_hor = 12,
+		gap_ver = 32,
+		rep = 20,
+		size = 32,
+	},
+	["shotgun"] = {
+		Texture = am_sg,
+		gap_hor = 12,
+		gap_ver = 32,
+		rep = 13,
+		size = 32,
+	},
+	["grenade"] = {
+		Texture = am_gr,
+		gap_hor = 64,
+		gap_ver = 32,
+		rep = 30,
+		size = 32,
+	},
+	["frag"] = {
+		Texture = am_fr,
+		gap_hor = 64,
+		gap_ver = 32,
+		rep = 30,
+		size = 32,
+	},
+}
+
+local refer = {
+	["AR2"] = toop.rifle,
+	["SMG1"] = toop.rifle,
+	["SniperPenetratedRound"] = toop.rifle,
+	["SniperRound"] = toop.rifle,
+	["Pistol"] = toop.pistol,
+	["357"] = toop.pistol,
+	["Buckshot"] = toop.shotgun,
+	["Grenade"] = toop.frag,
+	["SMG1_Grenade"] = toop.grenade,
+}
+
+hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
+	local w, h = ScrW(), ScrH()
+	local c = CGSS(1)
+	local P = LocalPlayer()
+	local PW = LocalPlayer():GetActiveWeapon()
+
+	if not IsValid(PW) then
+		PW = false
+	end
+
+	if IsValid(P) and P:Health() > 0 then
+		CLR_W = team.GetColor(P:Team())
+		CLR_W.r = (CLR_W.r * 0.5) + (255 * 0.5)
+		CLR_W.g = (CLR_W.g * 0.5) + (255 * 0.5)
+		CLR_W.b = (CLR_W.b * 0.5) + (255 * 0.5)
+		GAMEMODE:ShadowText("+ " .. P:Health(), "CGHUD_2", 0 + (c * 16), h - (c * 16), CLR_W, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+		surface.SetDrawColor(CLR_B2)
+		surface.DrawOutlinedRect((c * 128) + (c * 4), h - (c * 46) + (c * 4), c * 200, c * 18, c * 4)
+
+		if P:Health() ~= 100 then
+			surface.SetDrawColor(CLR_B2)
+			surface.DrawRect((c * 128) + (c * 4), h - (c * 46) + (c * 8), (c * 200) * (P:Health() / P:GetMaxHealth()), c * 10)
+		end
+
+		surface.SetDrawColor(CLR_W)
+		surface.DrawOutlinedRect(c * 128, h - (c * 46), c * 200, c * 18, c * 4)
+		surface.SetDrawColor(CLR_W)
+		surface.DrawRect(c * 128, h - (c * 46), (c * 200) * (P:Health() / P:GetMaxHealth()), c * 18)
+
+		-- stamina
+		if P.GetStamina_Run and P:GetStamina_Run() < 1 then
+			surface.SetDrawColor(CLR_B2)
+			surface.DrawRect((c * 128) + (c * 4), h - (c * 46) + (c * 22) + (c * 4), c * 200, c * 4)
+			surface.SetDrawColor(CLR_W)
+			surface.DrawRect(c * 128, h - (c * 46) + (c * 22), (c * 200) * (P:GetStamina_Run() / 1), c * 4)
+		end
+
+		if P.GetNextJump and P:GetNextJump() < 1 then
+			surface.SetDrawColor(CLR_B2)
+			surface.DrawRect((c * 128) + (c * 4), h - (c * 46) - (c * 8) + (c * 4), c * 200, c * 4)
+			surface.SetDrawColor(CLR_W)
+			surface.DrawRect(c * 128, h - (c * 46) - (c * 8), (c * 200) * P:GetNextJump(), c * 4)
+		end
+
+		if PW then
+			local str1 = PW:Clip1() .. " | " .. P:GetAmmoCount(PW:GetPrimaryAmmoType())
+			local str2 = PW:Clip2() .. " | " .. P:GetAmmoCount(PW:GetSecondaryAmmoType())
+
+			if PW:GetPrimaryAmmoType() == -1 and PW:Clip1() <= 0 then
+				str1 = ""
+			elseif PW:Clip1() == -1 then
+				str1 = P:GetAmmoCount(PW:GetPrimaryAmmoType())
+			elseif true or PW:GetPrimaryAmmoType() == -1 then
+				str1 = PW:Clip1()
 			end
 
-			local heuh = CurTime() - timelastlived
-			local hooh = math.min(math.Remap(heuh, 0, 6, 0, 1), 1)
-
-			local tr = util.TraceLine({
-				start = rgel,
-				endpos = rgel + view.angles:Forward() * (-1 * Lerp(hooh, 24, 128)) + LerpVector(hooh, vector_origin, Vector(0, 0, 32)),
-				filter = {ply, ply:GetRagdollEntity()},
-			})
-
-			view.origin = LerpVector(math.pow(math.sin(hooh * math.pi * 0.5), 4), deead or vector_origin, tr.HitPos)
-			deead = LerpVector(FrameTime() * 2, deead, tr.HitPos)
-			view.fov = fov + Lerp(math.pow(math.sin(hooh * math.pi * 0.5), 4), 0, -30)
-
-			return view
-		else
-			timelastlived = CurTime()
-			local eyes = ply:GetAttachment(ply:LookupAttachment("eyes"))
-
-			if eyes then
-				lasteyes = eyes.Pos --LocalPlayer():EyePos()
-				lasteyesa = eyes.Ang --LocalPlayer():EyeAngles()
-				deead = lasteyes
+			if PW:GetSecondaryAmmoType() == -1 and PW:Clip2() <= 0 then
+				str2 = ""
+			elseif PW:Clip2() == -1 then
+				str2 = P:GetAmmoCount(PW:GetSecondaryAmmoType())
+			elseif true or PW:GetSecondaryAmmoType() == -1 then
+				str2 = PW:Clip2()
 			end
+
+			local si = 32
+			local lg = 8 -- lr distance
+			local hg = 34 -- ud distance
+			local rep = 30 -- repeating
+			local dat = refer[game.GetAmmoName(PW:GetPrimaryAmmoType())] or toop.frag
+
+			if dat then
+				si = dat.size
+				rep = dat.rep
+				lg = dat.gap_hor
+				hg = dat.gap_ver
+				surface.SetMaterial(dat.Texture)
+			end
+
+			local ind = 0
+
+			if PW.GetFiremodeName then
+				GAMEMODE:ShadowText(PW:GetFiremodeName(), "CGHUD_4", w - (c * 28), h - (c * 16) - (c * ind), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+				ind = ind + 26
+			end
+
+			local ax, ay = w - (c * 16) - (c * si), h - (c * 16) - (c * si) - (c * ind)
+			local li = 0 -- leftright
+			local hi = 0 -- updown
+
+			for i = 1, math.max(PW:GetMaxClip1(), PW:Clip1()) do
+				surface.SetDrawColor(CLR_B2)
+				surface.DrawTexturedRect(ax - (c * li * lg) + (c * 4), ay - (c * hi * hg) + (c * 4), c * si, c * si)
+
+				if i ~= math.max(PW:GetMaxClip1(), PW:Clip1()) and (i % rep == 0) then
+					hi = hi + 1
+					li = -1
+				end
+
+				li = li + 1
+			end
+
+			do
+				local si = 32
+				local lg = 8
+				local hg = 34
+				local rep = 30
+				local dat = refer[game.GetAmmoName(PW:GetSecondaryAmmoType())] or toop.pistol
+
+				if dat then
+					si = dat.size
+					rep = dat.rep
+					lg = dat.gap_hor
+					hg = dat.gap_ver
+					surface.SetMaterial(dat.Texture)
+				end
+
+				local li = 0
+				local hi = hi + 1
+
+				for i = 1, math.max(PW:GetMaxClip2(), PW:Clip2()) do
+					surface.SetDrawColor(CLR_B2)
+					surface.DrawTexturedRect(ax - (c * li * lg) + (c * 4), ay - (c * hi * hg) + (c * 4), c * si, c * si)
+
+					if i % rep == 0 then
+						hi = hi + 1
+						li = -1
+					end
+
+					li = li + 1
+				end
+
+				li = 0
+
+				for i = 1, PW:Clip2() do
+					if (PW:Clip2() - i) >= PW:GetMaxClip2() then
+						surface.SetDrawColor(CLR_R)
+					elseif (PW:Clip2() - i) % 2 == 0 then
+						surface.SetDrawColor(CLR_W)
+					else
+						surface.SetDrawColor(CLR_W2)
+					end
+
+					surface.DrawTexturedRect(ax - (c * li * lg), ay - (c * hi * hg), c * si, c * si)
+
+					if i % rep == 0 then
+						hi = hi + 1
+						li = -1
+					end
+
+					li = li + 1
+				end
+			end
+
+			surface.SetMaterial(dat.Texture)
+			li = 0
+			hi = 0
+
+			for i = 1, PW:Clip1() do
+				if (PW:Clip1() - i) >= PW:GetMaxClip1() then
+					surface.SetDrawColor(CLR_R)
+				elseif (PW:Clip1() - i) % 2 == 0 then
+					surface.SetDrawColor(CLR_W)
+				else
+					surface.SetDrawColor(CLR_W2)
+				end
+
+				surface.DrawTexturedRect(ax - (c * li * lg), ay - (c * hi * hg), c * si, c * si)
+
+				if i % rep == 0 then
+					hi = hi + 1
+					li = -1
+				end
+
+				li = li + 1
+			end
+			--			local ind = 0
+			--			if str1 != "" then
+			--				GAMEMODE:ShadowText("Ammo", "CGHUD_5", w - (c*16), h - (c*16) - (c*ind), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+			--				ind = ind + 12
+			--				GAMEMODE:ShadowText(str1, "CGHUD_2", w - (c*16), h - (c*16) - (c*ind), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+			--				ind = ind + 44
+			--			end
+			--			if str2 != "" then
+			--				GAMEMODE:ShadowText("Secondary", "CGHUD_5", w - (c*16), h - (c*16) - (c*ind), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+			--				ind = ind + 12
+			--				GAMEMODE:ShadowText(str2, "CGHUD_2", w - (c*16), h - (c*16) - (c*ind), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+			--				ind = ind + 44
+			--			end
 		end
 	end
 end)
 
--- pain
-local pain_sobel = 5
-local strength = 0
-local lasthealth = 100
-gameevent.Listen("player_spawn")
-
-hook.Add("player_spawn", "BEEP!", function(data)
-	if GetConVar("tdm_deathcam"):GetBool() and data.userid == LocalPlayer():UserID() then
-		LocalPlayer():ScreenFade(SCREENFADE.IN, Color(0, 0, 0, 255), 0.25, 0.06)
-		pain_sobel = 5
-		strength = 0
-	end
-end)
-
-hook.Add("Think", "TDM_Pain", function()
-	pain_sobel = math.Approach(pain_sobel, 5, FrameTime() / 0.5)
-	strength = math.Approach(strength, 0, FrameTime() / 3)
-	local ply = LocalPlayer()
-	local health = ply:Health()
-
-	if health < (lasthealth or 0) then
-		pain_sobel = Lerp((lasthealth - health) / 400, 0.5, -0.02)
-		strength = Lerp((lasthealth - health) / 200, 0, 5)
-	end
-
-	lasthealth = ply:Health()
-end)
-
-local tab = {
-	["$pp_colour_addr"] = 0,
-	["$pp_colour_addg"] = 0,
-	["$pp_colour_addb"] = 0,
-	["$pp_colour_brightness"] = -0.1,
-	["$pp_colour_contrast"] = 1.2,
-	["$pp_colour_colour"] = 1,
-	["$pp_colour_mulr"] = 0.1,
-	["$pp_colour_mulg"] = 0,
-	["$pp_colour_mulb"] = 0
+local hide = {
+	["CHudHealth"] = true,
+	["CHudBattery"] = false,
+	["CHudDamageIndicator"] = true,
+	["CHudAmmo"] = true,
+	["CHudSecondaryAmmo"] = true,
 }
 
-hook.Add("RenderScreenspaceEffects", "TDM_Pain_RenderScreenspaceEffects", function()
-	if pain_sobel < 5 then
-		DrawSobel(pain_sobel)
-	end
-
-	if strength > 0 then
-		DrawSharpen(math.sin(CurTime() * 2) * strength, math.sin(CurTime() * 1) * 10)
-	end
-
-	local ha = LocalPlayer():Health() / LocalPlayer():GetMaxHealth()
-	tab["$pp_colour_mulr"] = Lerp(ha, 0.1, 0)
-	tab["$pp_colour_brightness"] = Lerp(ha, -0.1, 0)
-	tab["$pp_colour_contrast"] = Lerp(ha, 1.1, 1)
-	tab["$pp_colour_colour"] = Lerp(ha, 0, 1)
-	DrawColorModify(tab)
+hook.Add("HUDShouldDraw", "CG_HUDShouldDraw", function(name)
+	if hide[name] then return false end
 end)
 
-hook.Add("GetMotionBlurValues", "GetNewMotionBlurValues", function(horizontal, vertical, forward, rotational)
-	local ha = LocalPlayer():Health() / LocalPlayer():GetMaxHealth()
+function GM:HUDDrawTargetID()
+	local tr = util.GetPlayerTrace(LocalPlayer())
+	local trace = util.TraceLine(tr)
+	if not trace.Hit then return end
+	if not trace.HitNonWorld then return end
+	local text = "ERROR"
+	local font = "CGHUD_32_Unscaled"
 
-	if ha < 1 then
-		forward = Lerp(ha, -0.05, 0)
-
-		return horizontal, vertical, forward, rotational
+	if trace.Entity:IsPlayer() and trace.Entity:Team() == LocalPlayer():Team() then
+		text = trace.Entity:Nick()
+	else
+		return
 	end
-end)
+
+	--text = trace.Entity:GetClass()
+	surface.SetFont(font)
+	local w, h = surface.GetTextSize(text)
+	local MouseX, MouseY = gui.MousePos()
+
+	if MouseX == 0 and MouseY == 0 then
+		MouseX = ScrW() / 2
+		MouseY = ScrH() / 2
+	end
+
+	local x = MouseX
+	local y = MouseY
+	x = x - w / 2
+	y = y + 64
+
+	local clr = self:GetTeamColor(trace.Entity)
+	clr.a = 255
+
+	GAMEMODE:ShadowText(text, font, x, y, clr, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true)
+
+	local f = trace.Entity:Health() / trace.Entity:GetMaxHealth()
+
+	surface.SetDrawColor(CLR_B2)
+	surface.DrawOutlinedRect(MouseX - 64, MouseY + 100, 128, 8, 2)
+
+	if trace.Entity:Health() ~= 100 then
+		surface.SetDrawColor(CLR_B2)
+		surface.DrawRect(MouseX - 64, MouseY + 100, 128 * f, 8)
+	end
+
+	surface.SetDrawColor(clr)
+	surface.DrawOutlinedRect(MouseX - 64, MouseY + 100, 128, 8, 2)
+	surface.SetDrawColor(clr)
+	surface.DrawRect(MouseX - 64, MouseY + 100, 128 * f, 8)
+end

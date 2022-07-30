@@ -4,8 +4,6 @@
 AddCSLuaFile( "shared.lua" )
 include( "shared.lua" )
 
-AddCSLuaFile( "client/hud.lua" )
-
 
 function GM:PlayerInitialSpawn( pl, transiton )
 	pl:SetTeam(team.BestAutoJoinTeam())
