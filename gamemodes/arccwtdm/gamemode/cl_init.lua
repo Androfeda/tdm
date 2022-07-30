@@ -3,10 +3,6 @@
 
 include( "shared.lua" )
 
-function CGSS(size)
-	return size * (ScrH() / 720)
-end
-
 function GM:ContextMenuOpen()
 	return GetConVar("tdm_spawn"):GetBool()
 end

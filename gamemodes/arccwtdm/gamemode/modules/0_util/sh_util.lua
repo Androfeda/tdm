@@ -32,3 +32,7 @@ function GM:FormatMoney(amt, short)
 	end
 	return "$" .. amt
 end
+
+function CGSS(size)
+	return size * (ScrH() / 720)
+end
