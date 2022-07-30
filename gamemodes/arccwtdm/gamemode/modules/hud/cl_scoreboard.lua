@@ -23,9 +23,28 @@ local tshow = {
 
 hook.Add("HUDDrawScoreBoard", "ArcCWTDM_HUDDrawScoreBoard", function()
 	if SHOWSCORE then
+		local plycnt = player.GetCount()
+
+		-- line size is reduced with high player count
+		local font, font2 = "CGHUD_5", "CGHUD_6"
+		local add = 24
+		local y_offset = 196
+		if plycnt >= 64 then
+			font, font2 = "CGHUD_8", "CGHUD_9"
+			add = 10
+			y_offset = 256
+		elseif plycnt >= 32 then
+			font, font2 = "CGHUD_7", "CGHUD_8"
+			add = 12
+			y_offset = 256
+		elseif plycnt >= 16 then
+			font, font2 = "CGHUD_6", "CGHUD_7"
+			add = 18
+		end
+
 		local w, h = ScrW(), ScrH()
 		local c = CGSS(1)
-		local ax, ay = w / 2, (h / 2) - (c * 196)
+		local ax, ay = w / 2, (h / 2) - (c * y_offset)
 		surface.SetDrawColor(CLR_B2)
 		local yd = 0
 		GAMEMODE:ShadowText(GetHostName(), "CGHUD_3", ax, ay + (c * 4), CLR_W2, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, true)
@@ -37,6 +56,7 @@ hook.Add("HUDDrawScoreBoard", "ArcCWTDM_HUDDrawScoreBoard", function()
 		GAMEMODE:ShadowText("Deaths", "CGHUD_6", ax + (c * 160), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
 		GAMEMODE:ShadowText("Ping", "CGHUD_6", ax + (c * 200), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
 		yd = yd + 36
+
 
 		for teamnum, teamdata in SortedPairs(team.GetAllTeams()) do
 			if not tshow[teamnum] then continue end
@@ -56,7 +76,7 @@ hook.Add("HUDDrawScoreBoard", "ArcCWTDM_HUDDrawScoreBoard", function()
 			yd = yd + 30 + CGSS(2)
 
 			for i, ply in ipairs(team.GetPlayers(teamnum)) do
-				GAMEMODE:ShadowText(ply:GetName(), "CGHUD_5", ax - (c * 200), ay + (c * yd), teamdata.Color, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, true)
+				GAMEMODE:ShadowText(ply:GetName(), font, ax - (c * 200), ay + (c * yd), teamdata.Color, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, true)
 
 				if teamnum ~= 1002 then
 					-- k/d
@@ -66,17 +86,17 @@ hook.Add("HUDDrawScoreBoard", "ArcCWTDM_HUDDrawScoreBoard", function()
 					else
 						kd = math.Round(kd, 2)
 					end
-					GAMEMODE:ShadowText(kd, "CGHUD_6", ax + (c * 50), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
-					GAMEMODE:ShadowText(GAMEMODE:FormatMoney(ply:GetEarnings()), "CGHUD_6", ax + (c * 10), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
-					GAMEMODE:ShadowText(ply:Frags(), "CGHUD_6", ax + (c * 100), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
-					GAMEMODE:ShadowText(ply:Deaths(), "CGHUD_6", ax + (c * 160), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
-					GAMEMODE:ShadowText(ply:Ping(), "CGHUD_6", ax + (c * 200), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
+					GAMEMODE:ShadowText(kd, font2, ax + (c * 50), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
+					GAMEMODE:ShadowText(GAMEMODE:FormatMoney(ply:GetEarnings()), font2, ax + (c * 10), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
+					GAMEMODE:ShadowText(ply:Frags(), font2, ax + (c * 100), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
+					GAMEMODE:ShadowText(ply:Deaths(), font2, ax + (c * 160), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
+					GAMEMODE:ShadowText(ply:Ping(), font2, ax + (c * 200), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
 				end
 
-				yd = yd + 24
+				yd = yd + add
 			end
 
-			yd = yd - 8
+			yd = yd
 		end
 	end
 end)

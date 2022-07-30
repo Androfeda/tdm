@@ -46,7 +46,7 @@ hook.Add("PlayerDisconnected", "tdm_money", function(ply)
 	ply:SaveMoney()
 end)
 
-hook.Add("ShutDown", function()
+hook.Add("ShutDown", "tdm_money", function()
 	for _, ply in ipairs(player.GetAll()) do
 		ply:SaveMoney()
 	end
