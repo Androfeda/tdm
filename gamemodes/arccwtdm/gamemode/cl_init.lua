@@ -14,6 +14,8 @@ hook.Add( "SpawnMenuEnabled", "TDM_SpawnMenuEnabled", function()
 		spawnmenu.GetCreationTabs()["#spawnmenu.category.saves"] = nil
 		spawnmenu.GetCreationTabs()["#spawnmenu.category.npcs"] = nil
 		spawnmenu.GetCreationTabs()["#spawnmenu.category.vehicles"] = nil
+		spawnmenu.GetCreationTabs()["#spawnmenu.category.entities"] = nil
+		spawnmenu.GetCreationTabs()["#spawnmenu.category.postprocess"] = nil
 		spawnmenu.GetCreationTabs()["#spawnmenu.content_tab"] = nil
 	end
 end)

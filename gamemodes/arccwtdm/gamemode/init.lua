@@ -13,6 +13,7 @@ function GM:PlayerInitialSpawn( pl, transiton )
 	if ( GAMEMODE.TeamBased ) then
 		pl:ConCommand( "gm_showteam" )
 	end
+	pl.DeathTime2 = CurTime()
 end
 
 function GM:PlayerSpawnAsSpectator( pl )
@@ -21,6 +22,7 @@ function GM:PlayerSpawnAsSpectator( pl )
 		pl:Spectate( OBS_MODE_FIXED )
 		return
 	end
+	pl.DeathTime2 = CurTime()
 	pl:SetTeam( TEAM_SPECTATOR )
 	pl:Spectate( OBS_MODE_ROAMING )
 end
@@ -31,6 +33,7 @@ function GM:PlayerSpawn( pl, transiton )
 		self:PlayerSpawnAsSpectator( pl )
 		return
 	end
+	pl.DeathTime2 = CurTime()
 
 	-- Stop observer mode
 	pl:UnSpectate()
