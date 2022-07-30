@@ -34,6 +34,11 @@ CreateConVar( "tdm_regen_enabled", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Health 
 CreateConVar( "tdm_regen_speed", (100/6), FCVAR_ARCHIVE + FCVAR_REPLICATED, "How much to regenerate in a second" )
 CreateConVar( "tdm_regen_delay", 4, FCVAR_ARCHIVE + FCVAR_REPLICATED, "How long it takes to start regenerating" )
 
+CreateConVar( "tdm_stamina_drain", 4, FCVAR_ARCHIVE + FCVAR_REPLICATED, "How long it takes to drain stamina" )
+CreateConVar( "tdm_stamina_gain", 3, FCVAR_ARCHIVE + FCVAR_REPLICATED, "How long it takes to regain stamina" )
+CreateConVar( "tdm_stamina_wain", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "How long it takes to start recharging" )
+CreateConVar( "tdm_jump_gain", 0.5, FCVAR_ARCHIVE + FCVAR_REPLICATED, "How long it takes to get full jump" )
+
 hook.Add( "PlayerCheckLimit", "ArcCWTDM_PlayerCheckLimit", function( ply, name, cur, max )
 	-- This disables spawning or using anything else
 	if GetConVar("tdm_spawn"):GetBool() == false then return false end
@@ -77,7 +82,7 @@ function GM:OnPlayerHitGround( ply, inWater, onFloater, speed )
 end
 
 function GM:StartCommand( ply, cmd )
-	local time = 0.5 -- time to restore full jump
+	local time = GetConVar("tdm_jump_gain"):GetFloat() -- time to restore full jump
 	ply:SetNextJump( math.Approach( ply:GetNextJump(), 1, FrameTime()/time ) )
 	local tong = Lerp( ply:GetNextJump(), 0, 200 )
 	if tong <= 50 then tong = 0 end
@@ -91,13 +96,13 @@ function GM:StartCommand( ply, cmd )
 
 	if cmd:KeyDown(IN_SPEED) and actio then
 		if ply:GetStamina_Run() == 0 then cmd:RemoveKey(IN_SPEED) end
-		ply:SetStamina_Jump( CurTime() + 1 )
+		ply:SetStamina_Jump( CurTime() + GetConVar("tdm_stamina_wain"):GetFloat() )
 	end
 
 	if ply:IsSprinting() and actio then
-		ply:SetStamina_Run( math.Approach( ply:GetStamina_Run(), 0, FrameTime()/3 ) )
+		ply:SetStamina_Run( math.Approach( ply:GetStamina_Run(), 0, FrameTime()/GetConVar("tdm_stamina_drain"):GetFloat() ) )
 	elseif ply:GetStamina_Jump() <= CurTime() then -- it's actually just delay
-		ply:SetStamina_Run( math.Approach( ply:GetStamina_Run(), 1, FrameTime()/3 ) )
+		ply:SetStamina_Run( math.Approach( ply:GetStamina_Run(), 1, FrameTime()/GetConVar("tdm_stamina_gain"):GetFloat() ) )
 	end
 end
 
