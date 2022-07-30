@@ -61,6 +61,9 @@ hook.Add("EntityTakeDamage", "TeamDamage", function(ply, dmg)
 	if ply ~= attacker and ply:Team() == attacker:Team() then
 		local mult = GetConVar("tdm_ff"):GetFloat()
 		if mult > 0 then
+
+			dmg:ScaleDamage(math.Clamp(mult, 0, 1))
+
 			if GetConVar("tdm_ff_reflect"):GetBool() then
 				local thres = GetConVar("tdm_ff_reflect_threshold"):GetInt()
 				attacker.FFDealt = (attacker.FFDealt or 0)
@@ -73,17 +76,15 @@ hook.Add("EntityTakeDamage", "TeamDamage", function(ply, dmg)
 				attacker.FFDealt = math.min(GetConVar("tdm_ff_reflect_cap"):GetFloat(), attacker.FFDealt + dmg:GetDamage())
 				if attacker.FFReflect then
 					-- Can't create a new DamageInfo here.
+					attacker:SetHealth(attacker:Health() - dmg:GetDamage())
 					mult = mult * 0.5
-					attacker:SetHealth(attacker:Health() - dmg:GetDamage() * mult)
 					if attacker:Alive() and attacker:Health() <= 0 then
 						attacker:Kill()
 					else
 						attacker.HealthRegenNext = CurTime() + GetConVar("tdm_regen_delay"):GetFloat()
 					end
 				end
-				print(attacker.FFDealt, attacker.FFReflect)
 			end
-			dmg:ScaleDamage(math.Clamp(mult, 0, 1))
 		else
 			return true
 		end
