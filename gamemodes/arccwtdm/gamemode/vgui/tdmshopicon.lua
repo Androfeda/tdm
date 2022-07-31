@@ -8,6 +8,7 @@ AccessorFunc(PANEL, "m_SpawnName", "SpawnName")
 AccessorFunc(PANEL, "m_NPCWeapon", "NPCWeapon")
 AccessorFunc(PANEL, "m_bAdminOnly", "AdminOnly")
 AccessorFunc(PANEL, "m_bIsNPCWeapon", "IsNPCWeapon")
+--AccessorFunc(PANEL, "m_ItemTbl", "ItemTable")
 AccessorFunc(PANEL, "m_Price", "Price", FORCE_NUMBER)
 
 function PANEL:Init()
@@ -25,6 +26,17 @@ function PANEL:Init()
 	self.Border = 0
 end
 
+function PANEL:GetItemTable()
+	return self.m_ItemTable or {}
+end
+
+function PANEL:SetItemTable(tbl)
+	self.m_ItemTable = tbl
+	self:SetName(tbl.Name)
+	self:SetDescription(tbl.Description, tbl.Description2)
+	self:SetMaterial(tbl.Icon or "entities/" .. tbl.SpawnName .. ".png")
+end
+
 function PANEL:SetName( name )
 	self:SetTooltip(name)
 	self.m_NiceName = name
@@ -35,7 +47,6 @@ function PANEL:SetDescription( desc, desc2 )
 	self.Description = desc
 	self.Description2 = desc2
 end
-
 
 function PANEL:SetMaterial(name)
 	self.m_MaterialName = name
@@ -51,6 +62,10 @@ function PANEL:SetMaterial(name)
 	-- Couldn't find any material.. just return
 	if not mat or mat:IsError() then return end
 	self.Image:SetMaterial(mat)
+end
+
+function PANEL:GetPrice()
+	return self:GetItemTable().Price or 0
 end
 
 function PANEL:DoRightClick()
@@ -70,6 +85,9 @@ function PANEL:OnDepressionChanged(b)
 end
 
 function PANEL:Paint(w, h)
+
+	local itemtbl = self:GetItemTable()
+
 	if self.Depressed and not self.Dragging then
 		if self.Border ~= 8 then
 			self.Border = 8
@@ -101,14 +119,26 @@ function PANEL:Paint(w, h)
 	end
 
 	-- Price
-	local price = GAMEMODE:FormatMoney(self:GetPrice() or 0)
-	surface.SetFont("TDMShopicon2")
-	surface.SetTextPos((128 + 16) + 2, (14 + 32) + 2)
-	surface.SetTextColor(c_s)
-	surface.DrawText(price)
-	surface.SetTextPos(128 + 16, 14 + 32)
-	surface.SetTextColor(LocalPlayer():GetMoney() > self:GetPrice() and color_white or c_r)
-	surface.DrawText(price)
+	if itemtbl.EntityClass and LocalPlayer():HasWeapon(itemtbl.EntityClass) and not itemtbl.AmmoOnRebuy then
+		local owned = "OWNED"
+		surface.SetFont("TDMShopicon2")
+		surface.SetTextPos((128 + 16) + 2, (14 + 32) + 2)
+		surface.SetTextColor(c_s)
+		surface.DrawText(owned)
+		surface.SetTextPos(128 + 16, 14 + 32)
+		surface.SetTextColor(color_white)
+		surface.DrawText(owned)
+	else
+		local price = GAMEMODE:FormatMoney(self:GetPrice() or 0)
+		surface.SetFont("TDMShopicon2")
+		surface.SetTextPos((128 + 16) + 2, (14 + 32) + 2)
+		surface.SetTextColor(c_s)
+		surface.DrawText(price)
+		surface.SetTextPos(128 + 16, 14 + 32)
+		surface.SetTextColor(LocalPlayer():GetMoney() > self:GetPrice() and color_white or c_r)
+		surface.DrawText(price)
+	end
+
 
 	if self.Description then
 		surface.SetFont("TDMShopicon3")
@@ -167,10 +197,7 @@ end
 function PANEL:Copy()
 	local copy = vgui.Create("ContentIcon", self:GetParent())
 	copy:SetSpawnName(self:GetSpawnName())
-	copy:SetName(self.m_NiceName)
-	copy:SetMaterial(self.m_MaterialName)
-	copy:SetNPCWeapon(self:GetNPCWeapon())
-	copy:SetAdminOnly(self:GetAdminOnly())
+	copy:SetItemTable(self:GetItemTable())
 	copy:CopyBase(self)
 	copy.DoClick = self.DoClick
 	copy.OpenMenu = self.OpenMenu

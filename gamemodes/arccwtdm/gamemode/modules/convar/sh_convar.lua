@@ -18,3 +18,28 @@ CreateConVar("tdm_ff_reflect_decay", 150, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Fri
 
 CreateConVar("tdm_money_starting", 5000, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Starting cash for players.", 0)
 CreateConVar("tdm_money_per_kill", 100, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Base income for killing an enemy gamer.", 0)
+
+local function set_cvar(cvar, value)
+	if GetConVar(cvar) then
+		if isbool(value) then
+			GetConVar(cvar):SetBool(value)
+		elseif isstring(value) then
+			GetConVar(cvar):SetString(value)
+		elseif isnumber(value) then
+			if math.floor(value) == value then
+				GetConVar(cvar):SetInt(value)
+			else
+				GetConVar(cvar):SetFloat(value)
+			end
+		end
+	end
+end
+hook.Add("Initialize", "tdm_convars", function()
+
+	-- for bought weapons (we don't clear ammo so don't give any extra)
+	set_cvar("arccw_mult_defaultammo", 0)
+
+	-- handled by us
+	set_cvar("arccw_mult_infiniteammo", 0)
+
+end)

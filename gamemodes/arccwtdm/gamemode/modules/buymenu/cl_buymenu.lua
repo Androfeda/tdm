@@ -46,10 +46,7 @@ hook.Add("PopulateShop", "AddShopContent", function(pnlContent, tree, _)
 				local icon = vgui.Create("TDMShopIcon", node)
 				self.PropPanel:Add(icon)
 				icon:SetSpawnName(ent.SpawnName)
-				icon:SetName(ent.Name)
-				icon:SetDescription(ent.Description, ent.Description2)
-				icon:SetMaterial(ent.Icon or "entities/" .. ent.SpawnName .. ".png")
-				icon:SetPrice(ent.Price or 0)
+				icon:SetItemTable(ent)
 				icon:SetColor(Color(135, 206, 250, 255))
 			end
 		end
@@ -77,10 +74,25 @@ spawnmenu.AddCreationTab("Shop", function()
 	return ctrl
 end, "icon16/money.png", 20)
 
-
 concommand.Add("tdm_buy", function(ply, cmd, args, argStr)
 	local itemtbl = GAMEMODE.Buyables[args[1]]
 	if not itemtbl then return end
+
+	if ply:GetMoney() < (itemtbl.Price or 0) then
+		surface.PlaySound("items/medshotno1.wav")
+		return
+	end
+	if itemtbl.EntityClass and ply:HasWeapon(itemtbl.EntityClass) and not itemtbl.AmmoOnRebuy then
+		input.SelectWeapon(ply:GetWeapon(itemtbl.EntityClass))
+		return
+	end
+	if itemtbl.CanBuy and itemtbl:CanBuy(ply) then
+		surface.PlaySound("items/medshotno1.wav")
+		return
+	end
+
+
+	surface.PlaySound("items/ammopickup.wav")
 	net.Start("tdm_buy")
 		net.WriteString(args[1])
 	net.SendToServer()

@@ -68,6 +68,7 @@ end
 --
 function PLAYER:Loadout()
 
+	--[[]
 	self.Player:GiveAmmo( 9999, "AR2", true )
 	self.Player:GiveAmmo( 9999, "AR2AltFire", true )
 	self.Player:GiveAmmo( 9999, "Pistol", true )
@@ -108,6 +109,7 @@ function PLAYER:Loadout()
 
 	-- uc
 	self.Player:GiveAmmo( 9999, "plinking", true )
+	]]
 
 end
 

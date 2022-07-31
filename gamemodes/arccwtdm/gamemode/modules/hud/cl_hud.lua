@@ -139,8 +139,8 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 			end
 
 			if PW then
-				local str1 = PW:Clip1() .. " | " .. P:GetAmmoCount(PW:GetPrimaryAmmoType())
-				local str2 = PW:Clip2() .. " | " .. P:GetAmmoCount(PW:GetSecondaryAmmoType())
+				--local str1 = PW:Clip1() .. " | " .. P:GetAmmoCount(PW:GetPrimaryAmmoType())
+				--local str2 = PW:Clip2() .. " | " .. P:GetAmmoCount(PW:GetSecondaryAmmoType())
 
 				if PW:GetPrimaryAmmoType() == -1 and PW:Clip1() <= 0 then
 					str1 = ""
@@ -195,8 +195,21 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 					li = li + 1
 				end
 
-				do
+				surface.SetFont("CGHUD_5")
+				local fml = surface.GetTextSize(PW:GetFiremodeName())
 
+				local off = math.max(math.min(30, PW:GetMaxClip1(), PW:Clip1()) * lg * c + c * 24, fml + c * 24)
+				if not GAMEMODE:WeaponHasInfiniteAmmo(PW) then
+					GAMEMODE:ShadowText(P:GetAmmoCount(PW:GetPrimaryAmmoType()), "CGHUD_2", ax - off, h - (c * ind), CLR_W, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+					GAMEMODE:ShadowText("Reserve", "CGHUD_6", ax - off, h - (c * 8) - (c * ind), CLR_W, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+				end
+
+				if PW:GetMaxClip2() > 0 and GAMEMODE.AmmoBlacklist[string.lower(game.GetAmmoName(PW:GetSecondaryAmmoType()))] then
+					GAMEMODE:ShadowText(P:GetAmmoCount(PW:GetSecondaryAmmoType()), "CGHUD_2v", ax - off, h - (c * ind), CLR_W, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+					GAMEMODE:ShadowText("Alt. Reserve", "CGHUD_7", ax - off, h - (c * 4) - (c * ind), CLR_W, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+				end
+
+				do
 					li = 0
 					hi = hi + 0
 					if PW.HeatEnabled and PW:HeatEnabled() then
@@ -205,10 +218,10 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 						surface.SetMaterial(am_he)
 
 						surface.SetDrawColor(CLR_B2)
-						surface.DrawTexturedRect(w - (c * 72) + (c * 4), h - (c * 108) - (c * hi * hg) + (c * 4), (c * 48), (c * 48))
+						surface.DrawTexturedRect(w - (c * 72) + (c * 4), h - (c * 108) - (c * hi * hg) + (c * 4), c * 48, c * 48)
 
 						surface.SetDrawColor(255, 200 - 150 * f ^ 2, 200 - 150 * f ^ 2, 255)
-						surface.DrawTexturedRectUV(w - (c * 72), h - (c * 108) - (c * hi * hg) + (c * 48 * (1-f)), (c * 48), (c * 48 * f), 0, 1*(1-f), 1, 1)
+						surface.DrawTexturedRectUV(w - (c * 72), h - (c * 108) - (c * hi * hg) + (c * 48 * (1-f)), c * 48, c * 48 * f, 0, 1 - f, 1, 1)
 						hi = hi + 1.1
 					end
 
@@ -294,16 +307,9 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 
 		if money_last_t + 7 > CurTime() then
 
-			-- if money_last_t + 2 > CurTime() then
-			-- 	local f = 1 - math.Clamp((CurTime() - money_last_t - 0.5) / 1.5, 0, 1)
-			-- 	CLR_W.a = f * 255
-			-- 	CLR_B2.a = f * 127
-			-- 	local str = (money_last_amt > 0 and "+" or "-") .. "$" .. math.Round(money_last_amt)
-			-- 	GAMEMODE:ShadowText(str, "CGHUD_4", 0 + CGSS(16), h - CGSS(80) - f * CGSS(16), CLR_W, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
-			-- end
 			local display_money
 			for k, v in pairs(money_updates) do
-				if v[1] + 2 > CurTime() and v[1] <= CurTime() then
+				if v[1] + 2 > CurTime() then
 					if not display_money then display_money = v[3] end
 					local f = 1 - math.Clamp((CurTime() - v[1] - 0.5) / 1.5, 0, 1)
 					CLR_W.a = f * 255
@@ -328,8 +334,13 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 end)
 
 net.Receive("tdm_updatemoney", function()
-	local t = math.max(CurTime(), money_last_t + 0.25)
-	table.insert(money_updates, {t, net.ReadInt(32), net.ReadInt(32)})
+	local t = CurTime()
+	if money_updates[#money_updates] and t - money_updates[#money_updates][1] <= 0.5 then
+		local add, new = net.ReadInt(32), net.ReadInt(32)
+		money_updates[#money_updates] = {t, money_updates[#money_updates][2] + add, money_updates[#money_updates][3]}
+	else
+		table.insert(money_updates, {t, net.ReadInt(32), net.ReadInt(32)})
+	end
 	money_last_t = t
 end)
 

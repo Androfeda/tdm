@@ -1,6 +1,20 @@
-GM.EntityBlacklist = {
-    ["arccw_ud_m79"] = true,
-}
+GM.EntityBlacklist = {["arccw_uo_m67"] = true}
+
+function GM:IsSpawnableWeapon(class)
+
+	if self.EntityBlacklist[class] then return false end
+	if self.BuyableEntities[class] then return false end
+
+	if not (weapons.IsBasedOn(class, "arccw_base") or
+		weapons.IsBasedOn(class, "arccw_base_melee") or
+		weapons.IsBasedOn(class, "arccw_base_nade") or
+		weapons.IsBasedOn(class, "arccw_uo_grenade_base") or
+		weapons.IsBasedOn(class, "arc9_base")) then
+		return false
+	end
+
+	return true
+end
 
 hook.Add("PlayerCheckLimit", "ArcCWTDM_PlayerCheckLimit", function(ply, name, cur, max)
 	-- This disables spawning or using anything else
@@ -8,25 +22,9 @@ hook.Add("PlayerCheckLimit", "ArcCWTDM_PlayerCheckLimit", function(ply, name, cu
 end)
 
 hook.Add("PlayerGiveSWEP", "BlockPlayerSWEPs", function(ply, class, swep)
-	-- Use the blacklist
-	if GAMEMODE.EntityBlacklist[class] then return false end
 
-	-- Check if they're based on ArcCW or ARC9 here
-	if	weapons.IsBasedOn(class, "arccw_base") or
-		weapons.IsBasedOn(class, "arccw_base_melee") or
-		weapons.IsBasedOn(class, "arccw_base_nade") or
-		weapons.IsBasedOn(class, "arccw_uo_grenade_base") or
-		weapons.IsBasedOn(class, "arc9_base") then
+	if not ply:IsAdmin() and not GAMEMODE:IsSpawnableWeapon(class) then return false end
 
-		timer.Simple(0.8, function()
-			if ply:GetWeapon(class) and IsValid(ply:GetWeapon(class)) then
-				local swep = ply:GetWeapon(class)
-				swep:SetClip1( swep:GetCapacity() )
-			end
-		end)
-		return true
-	end
-	-- Otherwise, no
 	if not ply:IsAdmin() and GetConVar("tdm_spawn"):GetBool() == false then return false end
 end)
 
