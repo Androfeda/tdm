@@ -1,9 +1,16 @@
+GM.EntityBlacklist = {
+    ["arccw_ud_m79"] = true,
+}
+
 hook.Add("PlayerCheckLimit", "ArcCWTDM_PlayerCheckLimit", function(ply, name, cur, max)
     -- This disables spawning or using anything else
     if not ply:IsAdmin() and GetConVar("tdm_spawn"):GetBool() == false then return false end
 end)
 
 hook.Add("PlayerGiveSWEP", "BlockPlayerSWEPs", function(ply, class, swep)
+
+    if GAMEMODE.EntityBlacklist[class] then return false end
+
     -- Check if they're based on ArcCW or ARC9 here
     if weapons.IsBasedOn(class, "arccw_base") or weapons.IsBasedOn(class, "arccw_base_melee") or weapons.IsBasedOn(class, "arccw_base_nade") or weapons.IsBasedOn(class, "arccw_uo_grenade_base") or weapons.IsBasedOn(class, "arc9_base") then return true end
     -- Otherwise, no
