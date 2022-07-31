@@ -48,6 +48,7 @@ end
 
 TOOL.TeamMode = TEAM_HECU
 function TOOL:Reload(tr)
+	if not IsFirstTimePredicted() then return end
 	self.TeamMode = (self.TeamMode == TEAM_HECU and TEAM_CMB) or TEAM_HECU
 
 	if CLIENT then surface.PlaySound("garrysmod/content_downloaded.wav") end

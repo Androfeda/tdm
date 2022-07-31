@@ -42,8 +42,9 @@ hook.Add("PopulateShop", "AddShopContent", function(pnlContent, tree, _)
 			self.PropPanel:SetVisible(false)
 			self.PropPanel:SetTriggerSpawnlistChange(false)
 
-			for k, ent in SortedPairsByMemberValue(v, "Name") do
-				local icon = vgui.Create("TDMShopIcon", self.PropPanel)
+			for k, ent in SortedPairsByMemberValue(v, "Price") do
+				local icon = vgui.Create("TDMShopIcon", node)
+				self.PropPanel:Add(icon)
 				icon:SetSpawnName(ent.SpawnName)
 				icon:SetName(ent.Name)
 				icon:SetDescription(ent.Description, ent.Description2)
@@ -75,3 +76,18 @@ spawnmenu.AddCreationTab("Shop", function()
 
 	return ctrl
 end, "icon16/money.png", 20)
+
+
+concommand.Add("tdm_buy", function(ply, cmd, args, argStr)
+	local itemtbl = GAMEMODE.Buyables[args[1]]
+	if not itemtbl then return end
+	net.Start("tdm_buy")
+		net.WriteString(args[1])
+	net.SendToServer()
+end, function(cmd, args)
+	local ret = {}
+	for k, _ in pairs(GAMEMODE.Buyables) do
+		table.insert(ret, "tdm_buy " .. k)
+	end
+	return ret
+end, "Buy the specified item.")

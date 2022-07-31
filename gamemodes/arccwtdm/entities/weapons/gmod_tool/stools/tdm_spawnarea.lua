@@ -77,6 +77,8 @@ end
 
 TOOL.TeamMode = TEAM_CMB
 function TOOL:Reload(tr)
+	if not IsFirstTimePredicted() then return end
+
 	if self:GetOwner():KeyDown(IN_USE) then
 		self:SetOperation((self:GetOperation() + 1) % 2)
 		-- self:SetStage(0)
