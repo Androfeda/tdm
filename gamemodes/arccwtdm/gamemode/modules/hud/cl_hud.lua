@@ -24,6 +24,7 @@ local am_ri = Material("tdm/rifle.png", "smooth")
 local am_sg = Material("tdm/shotgun.png", "smooth")
 local am_gr = Material("tdm/grenade.png", "smooth")
 local am_fr = Material("tdm/frag.png", "smooth")
+local am_he = Material("tdm/flame.png", "smooth")
 
 local money_updates = {}
 local money_last_t = 0
@@ -181,6 +182,22 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 				end
 
 				do
+
+					li = 0
+					hi = hi + 0
+					if PW.HeatEnabled and PW:HeatEnabled() then
+						hi = hi + 0.5
+						local f = (PW:GetHeat() / PW:GetMaxHeat())
+						surface.SetMaterial(am_he)
+
+						surface.SetDrawColor(CLR_B2)
+						surface.DrawTexturedRect(w - (c * 72) + (c * 4), h - (c * 108) - (c * hi * hg) + (c * 4), (c * 48), (c * 48))
+
+						surface.SetDrawColor(255, 200 - 150 * f ^ 2, 200 - 150 * f ^ 2, 255)
+						surface.DrawTexturedRectUV(w - (c * 72), h - (c * 108) - (c * hi * hg) + (c * 48 * (1-f)), (c * 48), (c * 48 * f), 0, 1*(1-f), 1, 1)
+						hi = hi + 1.1
+					end
+
 					local si = 32
 					local lg = 8
 					local hg = 34
@@ -254,25 +271,6 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 
 					li = li + 1
 				end
-				--			local ind = 0
-				--			if str1 != "" then
-				--				GAMEMODE:ShadowText("Ammo", "CGHUD_6", w - (c*16), h - (c*16) - (c*ind), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
-				--				ind = ind + 12
-				--				GAMEMODE:ShadowText(str1, "CGHUD_2", w - (c*16), h - (c*16) - (c*ind), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
-				--				ind = ind + 44
-				--			end
-				--			if str2 != "" then
-				--				GAMEMODE:ShadowText("Secondary", "CGHUD_6", w - (c*16), h - (c*16) - (c*ind), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
-				--				ind = ind + 12
-				--				GAMEMODE:ShadowText(str2, "CGHUD_2", w - (c*16), h - (c*16) - (c*ind), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
-				--				ind = ind + 44
-				--			end
-			end
-
-			if PW and PW.HeatEnabled and PW:HeatEnabled() then
-				local f = (PW:GetHeat() / PW:GetMaxHeat())
-				surface.SetDrawColor(255, 200 - 150 * f ^ 2, 200 - 150 * f ^ 2, 200)
-				surface.DrawRect(w - c * 268, h - (c * 32) - (c * 8), (c * 240) * math.Clamp(f, 0, 1), c * 4)
 			end
 		end
 

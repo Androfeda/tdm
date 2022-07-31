@@ -1,5 +1,6 @@
 CreateConVar("tdm_spawn", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Allow sandbox spawning.", 0, 1)
 CreateConVar("tdm_deathcam", 5, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Deathcam.")
+CreateConVar("tdm_gamemode", "tdm", FCVAR_ARCHIVE + FCVAR_REPLICATED, "Gamemode.")
 CreateConVar("tdm_regen_enabled", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Health regen", 0, 1)
 CreateConVar("tdm_regen_speed", 100 / 8, FCVAR_ARCHIVE + FCVAR_REPLICATED, "How much to regenerate in a second")
 CreateConVar("tdm_regen_delay", 5, FCVAR_ARCHIVE + FCVAR_REPLICATED, "How long it takes to start regenerating")

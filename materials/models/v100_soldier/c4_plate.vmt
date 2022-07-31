@@ -1,7 +1,0 @@
-VertexLitGeneric
-{
-	"$basetexture"	"models/V100_Soldier/c4_plate"
-	"$envmap" "env_cubemap"
-	"$envmapmask" "models/V100_Soldier/panels_ref"
-}
-
