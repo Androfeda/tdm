@@ -44,6 +44,20 @@ local toop = {
 		rep = 20,
 		size = 32,
 	},
+	["pistol"] = {
+		Texture = am_pi,
+		gap_hor = 12,
+		gap_ver = 32,
+		rep = 20,
+		size = 32,
+	},
+	["plinking"] = {
+		Texture = am_pi,
+		gap_hor = 12,
+		gap_ver = 32,
+		rep = 20,
+		size = 32,
+	},
 	["shotgun"] = {
 		Texture = am_sg,
 		gap_hor = 12,
@@ -53,14 +67,14 @@ local toop = {
 	},
 	["grenade"] = {
 		Texture = am_gr,
-		gap_hor = 64,
+		gap_hor = 12,
 		gap_ver = 32,
 		rep = 30,
 		size = 32,
 	},
 	["frag"] = {
 		Texture = am_fr,
-		gap_hor = 64,
+		gap_hor = 12,
 		gap_ver = 32,
 		rep = 30,
 		size = 32,

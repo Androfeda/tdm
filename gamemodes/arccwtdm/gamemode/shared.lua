@@ -65,6 +65,9 @@ if SERVER then
 		["sbox_playershurtplayers"] = 1,
 		["arccw_override_hud_off"] = 1,
 		["arccw_atts_ubglautoload"] = 1,
+		["sv_accelerate"] = 8,
+		["sv_airaccelerate"] = 2,
+		["sv_stopspeed"] = 4,
 	}
 	oldcvs = {}
 end
@@ -95,6 +98,25 @@ function GM:CreateTeams()
 	team.SetUp(TEAM_CMB, "CMB", Color(152, 169, 255))
 	team.SetSpawnPoint(TEAM_CMB, "tdm_spawn_cmb")
 	team.SetSpawnPoint(TEAM_SPECTATOR, "worldspawn")
+end
+function GM:PlayerJoinTeam( ply, teamid )
+
+	local iOldTeam = ply:Team()
+
+	if ( ply:Alive() ) then
+		if ( iOldTeam == TEAM_SPECTATOR || iOldTeam == TEAM_UNASSIGNED ) then
+			ply:KillSilent()
+		else
+			ply:Kill()
+		end
+		ply:SetDeaths( ply:Deaths() - 1 )
+	end
+
+	ply:SetTeam( teamid )
+	ply.LastTeamSwitch = RealTime()
+
+	GAMEMODE:OnPlayerChangedTeam( ply, iOldTeam, teamid )
+
 end
 
 concommand.Add("tdm_setteam", function(ply, cmd, args)
