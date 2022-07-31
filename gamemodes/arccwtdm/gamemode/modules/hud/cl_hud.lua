@@ -174,7 +174,10 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 
 				local ind = 0
 
+				local fml = 0
 				if PW.GetFiremodeName then
+					surface.SetFont("CGHUD_5")
+					fml = surface.GetTextSize(PW:GetFiremodeName())
 					GAMEMODE:ShadowText(PW:GetFiremodeName(), "CGHUD_5", w - (c * 28), h - (c * 16) - (c * ind), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
 					ind = ind + 26
 				end
@@ -194,9 +197,6 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 
 					li = li + 1
 				end
-
-				surface.SetFont("CGHUD_5")
-				local fml = surface.GetTextSize(PW:GetFiremodeName())
 
 				local off = math.max(math.min(rep, PW:GetMaxClip1()) * lg * c + c * 24, fml + c * 24)
 				if not GAMEMODE:WeaponHasInfiniteAmmo(PW) then
