@@ -16,7 +16,7 @@ function GM:WeaponHasInfiniteAmmo(wep)
 		return wep:GetInfiniteAmmo()
 	end
 
-	return false
+	return not GAMEMODE.AmmoBlacklist[string.lower(game.GetAmmoName(wep:GetPrimaryAmmoType()) or "")]
 end
 
 hook.Add("O_Hook_Override_InfiniteAmmo", "tdm_infiniteammo", function(wep, data)
