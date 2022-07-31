@@ -44,11 +44,12 @@ for _, folder in SortedPairs(folders, false) do
 end
 
 -- vgui
-for _, f in SortedPairs(file.Find(path .. "/vgui/*.lua", "LUA"), false) do
-    AddCSLuaFile(path .. "vgui/" .. f)
+local path_vgui = GM.FolderName .. "/gamemode/vgui/"
+for _, f in SortedPairs(file.Find(path_vgui .. "*.lua", "LUA"), false) do
+    AddCSLuaFile(path_vgui .. f)
 
     if CLIENT then
-        include(path .. "vgui/" .. f)
+        include(path_vgui .. f)
     end
 end
 

@@ -29,8 +29,8 @@ function Player:LoadMoney()
 
 	local data = sql.QueryRow("SELECT * FROM tdm_money WHERE sid64 = " .. sid64 .. ";")
 	if data then
-		self:SetNWInt("tdm_money", data.balance)
-		self:SetNWInt("tdm_earnings", data.earnings)
+		self:SetNWInt("tdm_money", tonumber(data.balance))
+		self:SetNWInt("tdm_earnings", tonumber(data.earnings))
 	else
 		self:SetNWInt("tdm_money", GetConVar("tdm_money_starting"):GetInt())
 		self:SetNWInt("tdm_earnings", 0)
