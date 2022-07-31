@@ -96,6 +96,25 @@ function GM:CreateTeams()
 	team.SetSpawnPoint(TEAM_CMB, "tdm_spawn_cmb")
 	team.SetSpawnPoint(TEAM_SPECTATOR, "worldspawn")
 end
+function GM:PlayerJoinTeam( ply, teamid )
+
+	local iOldTeam = ply:Team()
+
+	if ( ply:Alive() ) then
+		if ( iOldTeam == TEAM_SPECTATOR || iOldTeam == TEAM_UNASSIGNED ) then
+			ply:KillSilent()
+		else
+			ply:Kill()
+		end
+		ply:SetDeaths( ply:Deaths() - 1 )
+	end
+
+	ply:SetTeam( teamid )
+	ply.LastTeamSwitch = RealTime()
+
+	GAMEMODE:OnPlayerChangedTeam( ply, iOldTeam, teamid )
+
+end
 
 concommand.Add("tdm_setteam", function(ply, cmd, args)
 	local Team = args[1] or 1
