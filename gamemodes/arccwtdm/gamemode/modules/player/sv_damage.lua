@@ -44,14 +44,17 @@ function GM:PlayerShouldTakeDamage(ply, attacker)
 	-- Global godmode, players can't be damaged in any way
 	if cvars.Bool("sbox_godmode", false) then return false end
 
+	-- spawn protection
+	if ply:SpawnProtection() then return false end
+
 	-- No player vs player damage
 	if attacker:IsValid() and attacker:IsPlayer() and ply ~= attacker then
 		--if attacker:Team() == ply:Team() then return false end
 
 		return cvars.Bool("sbox_playershurtplayers", true)
 	end
-	-- Default, let the player be hurt
 
+	-- Default, let the player be hurt
 	return true
 end
 

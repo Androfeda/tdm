@@ -272,6 +272,10 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 					li = li + 1
 				end
 			end
+
+			if LocalPlayer():GetSpawnArea() == LocalPlayer():Team() then
+				GAMEMODE:ShadowText("[Spawn Protection]", "CGHUD_3", w / 2, h - c * 64, CLR_W, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, true)
+			end
 		end
 
 		if money_last_t + 7 > CurTime() then

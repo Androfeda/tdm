@@ -10,19 +10,11 @@
 	{
 		1
 		{
-			"name"			"arccwtdm_gamemode"
+			"name"			"tdm_gamemode"
 			"text"			"Game Type"
 			"help"			"Modes like TDM, CTF, FFA"
 			"type"			"Text"
-			"default"		"sandbox"
-		}
-		2
-		{
-			"name"			"arccwtdm_friendlyfire"
-			"text"			"Friendly fire"
-			"help"			"Enable friendly fire"
-			"type"			"CheckBox"
-			"default"		"0"
+			"default"		"tdm"
 		}
 	}
 }
