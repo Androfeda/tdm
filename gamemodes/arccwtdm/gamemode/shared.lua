@@ -108,5 +108,5 @@ end)
 --
 player_manager.AddValidModel("ArcCW TDM - CMB", "models/ffcm_player/combine_pm.mdl")
 player_manager.AddValidHands("ArcCW TDM - CMB", "models/ffcm_hands/combine_hands.mdl", 0, "0000000")
-player_manager.AddValidModel("ArcCW TDM - HECU", "models/Yukon/HECU/HECU_01_player.mdl")
-player_manager.AddValidHands("ArcCW TDM - HECU", "models/weapons/c_arms_hecu_a3.mdl", 6, "311")
+player_manager.AddValidModel("ArcCW TDM - HECU", "models/tdm/hecu.mdl")
+player_manager.AddValidHands("ArcCW TDM - HECU", "models/tdm/hecu_arms.mdl", 6, "311")

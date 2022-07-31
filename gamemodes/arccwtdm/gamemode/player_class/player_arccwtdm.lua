@@ -114,7 +114,7 @@ end
 
 local pmrules = {
 	[1] = {
-		Model = "models/Yukon/HECU/HECU_01_player.mdl",
+		Model = "models/tdm/hecu.mdl",
 		Mods = {
 			["skins"] = { -- SKin
 				0,
@@ -227,7 +227,7 @@ function PLAYER:SetModel()
 
 		self.Player:SetupHands()
 
-		if string.lower(self.Player:GetModel()) == "models/yukon/hecu/hecu_01_player.mdl" then
+		if string.lower(self.Player:GetModel()) == "models/tdm/hecu.mdl" then
 			local roll1 = math.random(0, 2)
 			local balaclava = math.random(0, 1)
 			if roll1 == 1 then -- Use headgear
@@ -249,7 +249,7 @@ function PLAYER:SetModel()
 			local h = self.Player:GetHands()
 			local pl = self.Player
 
-			h:SetModel( "models/weapons/c_arms_hecu_a3.mdl" )
+			h:SetModel( "models/tdm/hecu_arms.mdl" )
 			h:SetSkin( pl:GetSkin() )
 			h:SetBodyGroups( pl:GetBodygroup(1) .. pl:GetBodygroup(2) .. pl:GetBodygroup(3) .. "000000" )
 		elseif self.Player:Team() == 2 then
