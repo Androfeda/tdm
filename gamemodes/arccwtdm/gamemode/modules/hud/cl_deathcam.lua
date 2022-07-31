@@ -61,14 +61,14 @@ hook.Add("player_spawn", "BEEP!", function(data)
 end)
 
 hook.Add("Think", "TDM_Pain", function()
-	pain_sobel = math.Approach(pain_sobel, 5, FrameTime() / 0.5)
-	strength = math.Approach(strength, 0, FrameTime() / 3)
+	pain_sobel = math.Approach(pain_sobel, 5, FrameTime() / 3)
+	strength = math.Approach(strength, 0, FrameTime() / 2)
 	local ply = LocalPlayer()
 	local health = ply:Health()
 
 	if health < (lasthealth or 0) then
-		pain_sobel = Lerp((lasthealth - health) / 400, 0.5, -0.02)
-		strength = Lerp((lasthealth - health) / 200, 0, 5)
+		pain_sobel = Lerp((lasthealth - health) / 100, 0.2, 0)
+		strength = Lerp((lasthealth - health) / 100, 0, 3)
 	end
 
 	lasthealth = ply:Health()
@@ -92,7 +92,7 @@ hook.Add("RenderScreenspaceEffects", "TDM_Pain_RenderScreenspaceEffects", functi
 	end
 
 	if strength > 0 then
-		DrawSharpen(math.sin(CurTime() * 2) * strength, math.sin(CurTime() * 1) * 10)
+		DrawSharpen(math.sin(CurTime() * 2) * strength, math.sin(CurTime() * 1) * 10 * strength)
 	end
 
 	local ha = LocalPlayer():Health() / LocalPlayer():GetMaxHealth()
