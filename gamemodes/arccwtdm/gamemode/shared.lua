@@ -58,14 +58,35 @@ end
 
 include("player_class/player_arccwtdm.lua")
 
+if SERVER then
+	tochange = {
+		["mp_falldamage"] = 1,
+		["sbox_godmode"] = 0,
+		["sbox_playershurtplayers"] = 1,
+		["arccw_override_hud_off"] = 1,
+		["arccw_atts_ubglautoload"] = 1,
+	}
+	oldcvs = {}
+end
 function GM:Initialize()
 	if SERVER then
-		RunConsoleCommand("mp_falldamage", "1")
-		RunConsoleCommand("sbox_godmode", "0")
-		RunConsoleCommand("sbox_playershurtplayers", "1")
-
+		-- this could get evil... restore the old convars!!
+		for conname, conval in pairs(tochange) do
+			oldcvs[conname] = GetConVar(conname):GetString()
+			print("Saved old config:", conname, GetConVar(conname):GetString())
+			RunConsoleCommand(conname, conval)
+		end
 		GAMEMODE:LoadSpawnSet(GetConVar("tdm_gamemode"):GetString())
 	end
+end
+
+if SERVER then
+	hook.Add("ShutDown", "TDM_Consave", function()
+		for conname, conval in pairs(oldcvs) do
+			RunConsoleCommand(conname, conval)
+			print("Restored old config:", conname, conval)
+		end
+	end)
 end
 
 function GM:CreateTeams()

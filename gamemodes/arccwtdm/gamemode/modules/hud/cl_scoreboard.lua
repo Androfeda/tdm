@@ -47,14 +47,14 @@ hook.Add("HUDDrawScoreBoard", "ArcCWTDM_HUDDrawScoreBoard", function()
 		local ax, ay = w / 2, (h / 2) - (c * y_offset)
 		surface.SetDrawColor(CLR_B2)
 		local yd = 0
-		GAMEMODE:ShadowText(GetHostName(), "CGHUD_3", ax, ay + (c * 4), CLR_W2, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, true)
+		GAMEMODE:ShadowText(GetHostName(), "CGHUD_3", ax, ay + (c * 0), CLR_W2, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, true)
+		GAMEMODE:ShadowText("Team Deathmatch", "CGHUD_5", ax, ay + (c * 16), CLR_W2, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, true)
 		-- GAMEMODE:ShadowText("Score", "CGHUD_3", ax - (c * 200), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM, true)
-		GAMEMODE:ShadowText("Earnings", "CGHUD_6", ax + (c * 10), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
-
-		GAMEMODE:ShadowText("KDR", "CGHUD_6", ax + (c * 50), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
-		GAMEMODE:ShadowText("Frags", "CGHUD_6", ax + (c * 100), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
-		GAMEMODE:ShadowText("Deaths", "CGHUD_6", ax + (c * 160), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
-		GAMEMODE:ShadowText("Ping", "CGHUD_6", ax + (c * 200), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
+		GAMEMODE:ShadowText("Earnings", "CGHUD_6", ax + (c * 110), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
+		GAMEMODE:ShadowText("KDR", "CGHUD_6", ax + (c * 150), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
+		GAMEMODE:ShadowText("Frags", "CGHUD_6", ax + (c * 200), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
+		GAMEMODE:ShadowText("Deaths", "CGHUD_6", ax + (c * 260), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
+		GAMEMODE:ShadowText("Ping", "CGHUD_6", ax + (c * 300), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
 		yd = yd + 36
 
 
@@ -66,31 +66,31 @@ hook.Add("HUDDrawScoreBoard", "ArcCWTDM_HUDDrawScoreBoard", function()
 				teamdata.Color = CLR_W2
 			end
 
-			GAMEMODE:ShadowText(teamdata.Name, "CGHUD_6", ax - (c * 200), ay + (c * yd), teamdata.Color, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true)
+			GAMEMODE:ShadowText(teamdata.Name, "CGHUD_6", ax - (c * 300), ay + (c * yd), teamdata.Color, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true)
 
 			surface.SetDrawColor(CLR_B2)
-			surface.DrawRect(ax - (c * 200) + CGSS(2), ay + (c * yd) + CGSS(18) + CGSS(2), c * 400, CGSS(2))
+			surface.DrawRect(ax - (c * 300) + CGSS(2), ay + (c * yd) + CGSS(18) + CGSS(2), c * 600, CGSS(2))
 			surface.SetDrawColor(teamdata.Color)
-			surface.DrawRect(ax - (c * 200), ay + (c * yd) + CGSS(18), c * 400, CGSS(2))
+			surface.DrawRect(ax - (c * 300), ay + (c * yd) + CGSS(18), c * 600, CGSS(2))
 
 			yd = yd + 30 + CGSS(2)
 
 			for i, ply in ipairs(team.GetPlayers(teamnum)) do
-				GAMEMODE:ShadowText(ply:GetName(), font, ax - (c * 200), ay + (c * yd), teamdata.Color, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, true)
+				GAMEMODE:ShadowText(ply:GetName(), font, ax - (c * 300), ay + (c * yd), teamdata.Color, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, true)
 
 				if teamnum ~= 1002 then
+					GAMEMODE:ShadowText(GAMEMODE:FormatMoney(ply:GetEarnings()), font2, ax + (c * 110), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
 					-- k/d
 					local kd = ply:Frags() / ply:Deaths()
 					if ply:Deaths() == 0 then
-						kd = ""
+						kd = ply:Frags()
 					else
 						kd = math.Round(kd, 2)
 					end
-					GAMEMODE:ShadowText(kd, font2, ax + (c * 50), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
-					GAMEMODE:ShadowText(GAMEMODE:FormatMoney(ply:GetEarnings()), font2, ax + (c * 10), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
-					GAMEMODE:ShadowText(ply:Frags(), font2, ax + (c * 100), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
-					GAMEMODE:ShadowText(ply:Deaths(), font2, ax + (c * 160), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
-					GAMEMODE:ShadowText(ply:Ping(), font2, ax + (c * 200), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
+					GAMEMODE:ShadowText(kd, font2, ax + (c * 150), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
+					GAMEMODE:ShadowText(ply:Frags(), font2, ax + (c * 200), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
+					GAMEMODE:ShadowText(ply:Deaths(), font2, ax + (c * 260), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
+					GAMEMODE:ShadowText(ply:Ping(), font2, ax + (c * 300), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
 				end
 
 				yd = yd + add
