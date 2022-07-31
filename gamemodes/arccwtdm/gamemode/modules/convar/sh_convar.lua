@@ -39,6 +39,13 @@ hook.Add("Initialize", "tdm_convars", function()
 	-- for bought weapons (we don't clear ammo so don't give any extra)
 	set_cvar("arccw_mult_defaultammo", 0)
 
+	-- bought ammo entities
+	set_cvar("arccw_ammo_autopickup", 1)
+	set_cvar("arccw_mult_ammoamount", 1)
+
+	-- just to be safe
+	set_cvar("arccw_mult_ammohealth", -1)
+
 	-- handled by us
 	set_cvar("arccw_mult_infiniteammo", 0)
 

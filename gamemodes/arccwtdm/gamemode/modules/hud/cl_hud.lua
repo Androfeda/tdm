@@ -205,7 +205,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 				end
 
 				if PW:GetMaxClip2() > 0 and GAMEMODE.AmmoBlacklist[string.lower(game.GetAmmoName(PW:GetSecondaryAmmoType()))] then
-					GAMEMODE:ShadowText(P:GetAmmoCount(PW:GetSecondaryAmmoType()), "CGHUD_2v", ax - off, h - (c * ind), CLR_W, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+					GAMEMODE:ShadowText(P:GetAmmoCount(PW:GetSecondaryAmmoType()), "CGHUD_2", ax - off, h - (c * ind), CLR_W, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
 					GAMEMODE:ShadowText("Alt. Reserve", "CGHUD_7", ax - off, h - (c * 4) - (c * ind), CLR_W, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 				end
 
