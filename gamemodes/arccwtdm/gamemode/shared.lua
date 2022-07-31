@@ -65,6 +65,9 @@ if SERVER then
 		["sbox_playershurtplayers"] = 1,
 		["arccw_override_hud_off"] = 1,
 		["arccw_atts_ubglautoload"] = 1,
+		["sv_accelerate"] = 8,
+		["sv_airaccelerate"] = 2,
+		["sv_stopspeed"] = 4,
 	}
 	oldcvs = {}
 end
