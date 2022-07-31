@@ -62,7 +62,7 @@ end)
 
 hook.Add("Think", "TDM_Pain", function()
 	pain_sobel = math.Approach(pain_sobel, 5, FrameTime() / 3)
-	strength = math.Approach(strength, 0, FrameTime() / 2)
+	strength = math.Approach(strength, 0, FrameTime() / 0.75)
 	local ply = LocalPlayer()
 	local health = ply:Health()
 
