@@ -91,8 +91,6 @@ concommand.Add("tdm_buy", function(ply, cmd, args, argStr)
 		return
 	end
 
-
-	surface.PlaySound("items/ammopickup.wav")
 	net.Start("tdm_buy")
 		net.WriteString(args[1])
 	net.SendToServer()

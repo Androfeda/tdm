@@ -15,6 +15,7 @@ net.Receive("tdm_buy", function(len, ply)
 	end
 
 	ply:AddMoney(-itemtbl.Price)
+	ply:EmitSound("items/ammopickup.wav", 70)
 
 	if itemtbl.EntityClass and not ply:HasWeapon(itemtbl.EntityClass) then
 		ply:Give(itemtbl.EntityClass) -- this actually also works for entities (places it at user's position)
