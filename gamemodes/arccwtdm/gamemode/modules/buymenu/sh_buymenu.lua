@@ -4,7 +4,8 @@ GM.Buyables = {
 		EntityClass = "arccw_ud_m79",
 		Price = 1000,
 
-		Description = "Single-shot grenade launcher",
+		Description = "Break action grenade launcher",
+		Description2 = "Multiple payload types",
 		Category = "Launchers",
 		Icon = nil,
 		CanBuy = nil, -- function(self, ply)

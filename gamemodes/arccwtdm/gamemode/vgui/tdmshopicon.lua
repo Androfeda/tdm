@@ -1,6 +1,7 @@
 local PANEL = {}
-local matOverlay_Normal = Material("gui/ContentIcon-normal.png")
-local matOverlay_Hovered = Material("gui/ContentIcon-hovered.png")
+
+local c_w, c_s = Color(255, 255, 255, 200), Color(0, 0, 0, 127)
+local c_r = Color(255, 100, 100, 255)
 
 AccessorFunc(PANEL, "m_Color", "Color")
 AccessorFunc(PANEL, "m_SpawnName", "SpawnName")
@@ -29,9 +30,10 @@ function PANEL:SetName( name )
 	self.m_NiceName = name
 end
 
-function PANEL:SetDescription( desc )
-	self:SetTooltip(self.m_NiceName .. "\n" .. desc)
+function PANEL:SetDescription( desc, desc2 )
+	self:SetTooltip(self.m_NiceName .. "\n" .. desc .. (desc2 and ("\n" .. desc2) or ""))
 	self.Description = desc
+	self.Description2 = desc2
 end
 
 
@@ -87,11 +89,6 @@ function PANEL:Paint(w, h)
 		surface.DrawTexturedRect(self.Border, self.Border, w, h)
 	end
 
-	--surface.SetMaterial( matOverlay_Normal )
-	--self.Label:Show()
-	local c_w, c_s = Color(255, 255, 255, 200), Color(0, 0, 0, 127)
-	local c_r = Color(255, 255, 100, 200)
-
 	-- Name
 	if assert(self.m_NiceName, "Holy balls no weapon name??") then
 		surface.SetFont("TDMShopicon")
@@ -110,9 +107,8 @@ function PANEL:Paint(w, h)
 	surface.SetTextColor(c_s)
 	surface.DrawText(price)
 	surface.SetTextPos(128 + 16, 14 + 32)
-	surface.SetTextColor(color_white)
+	surface.SetTextColor(LocalPlayer():GetMoney() > self:GetPrice() and color_white or c_r)
 	surface.DrawText(price)
-
 
 	if self.Description then
 		surface.SetFont("TDMShopicon3")
@@ -120,8 +116,17 @@ function PANEL:Paint(w, h)
 		surface.SetTextColor(c_s)
 		surface.DrawText(self.Description)
 		surface.SetTextPos(128 + 16, 14 + 50 + 8)
-		surface.SetTextColor(LocalPlayer():GetMoney() > self:GetPrice() and c_w or c_r)
+		surface.SetTextColor(c_w)
 		surface.DrawText(self.Description)
+	end
+	if self.Description2 then
+		surface.SetFont("TDMShopicon3")
+		surface.SetTextPos((128 + 16) + 2, (14 + 50 + 8 + 20) + 2)
+		surface.SetTextColor(c_s)
+		surface.DrawText(self.Description2)
+		surface.SetTextPos(128 + 16, 14 + 50 + 8 + 20)
+		surface.SetTextColor(c_w)
+		surface.DrawText(self.Description2)
 	end
 
 	render.PushFilterMag(TEXFILTER.ANISOTROPIC)
