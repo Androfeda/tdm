@@ -198,7 +198,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 				surface.SetFont("CGHUD_5")
 				local fml = surface.GetTextSize(PW:GetFiremodeName())
 
-				local off = math.max(math.min(30, PW:GetMaxClip1()) * lg * c + c * 24, fml + c * 24)
+				local off = math.max(math.min(rep, PW:GetMaxClip1()) * lg * c + c * 24, fml + c * 24)
 				if not GAMEMODE:WeaponHasInfiniteAmmo(PW) then
 					GAMEMODE:ShadowText(P:GetAmmoCount(PW:GetPrimaryAmmoType()), "CGHUD_2", ax - off, h - (c * ind), CLR_W, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
 					GAMEMODE:ShadowText("Reserve", "CGHUD_6", ax - off, h - (c * 8) - (c * ind), CLR_W, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)

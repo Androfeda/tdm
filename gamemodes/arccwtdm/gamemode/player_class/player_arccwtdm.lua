@@ -68,6 +68,12 @@ end
 --
 function PLAYER:Loadout()
 
+	for k, v in pairs(game.GetAmmoTypes()) do
+		if not GAMEMODE.AmmoBlacklist[string.lower(v)] then
+			self.Player:GiveAmmo(9999, v, true)
+		end
+	end
+
 	--[[]
 	self.Player:GiveAmmo( 9999, "AR2", true )
 	self.Player:GiveAmmo( 9999, "AR2AltFire", true )
