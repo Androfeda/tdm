@@ -18,7 +18,7 @@ hook.Add("PlayerGiveSWEP", "BlockPlayerSWEPs", function(ply, class, swep)
 		weapons.IsBasedOn(class, "arccw_uo_grenade_base") or
 		weapons.IsBasedOn(class, "arc9_base") then
 
-		timer.Simple(0.5, function()
+		timer.Simple(0.8, function()
 			if ply:GetWeapon(class) and IsValid(ply:GetWeapon(class)) then
 				local swep = ply:GetWeapon(class)
 				swep:SetClip1( swep:GetCapacity() )
