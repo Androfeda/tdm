@@ -56,7 +56,7 @@ end
 function TOOL:RightClick(tr)
 	if self:GetStage() == 0 then
 
-		local pos = tr.HitPos + tr.HitNormal
+		local pos = tr.HitPos + tr.HitNormal * 4
 
 		for i, a in pairs(GAMEMODE.SpawnAreas) do
 			if (isnumber(a[2]) and pos:Distance(a[1]) < a[2]) or

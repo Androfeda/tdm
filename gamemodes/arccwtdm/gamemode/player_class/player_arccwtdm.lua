@@ -68,7 +68,7 @@ end
 --
 function PLAYER:Loadout()
 
-	for k, v in pairs(game.GetAmmoTypes()) do
+	for k, v in ipairs(game.GetAmmoTypes()) do
 		if not GAMEMODE.AmmoBlacklist[string.lower(v)] then
 			self.Player:GiveAmmo(9999, v, true)
 		end
