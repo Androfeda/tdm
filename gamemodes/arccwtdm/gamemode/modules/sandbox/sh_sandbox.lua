@@ -1,4 +1,4 @@
-GM.EntityBlacklist = {["arccw_uo_m67"] = true}
+GM.EntityBlacklist = {["arccw_uo_m67"] = true }
 
 function GM:IsSpawnableWeapon(class)
 
@@ -22,10 +22,7 @@ hook.Add("PlayerCheckLimit", "ArcCWTDM_PlayerCheckLimit", function(ply, name, cu
 end)
 
 hook.Add("PlayerGiveSWEP", "BlockPlayerSWEPs", function(ply, class, swep)
-
-	if not ply:IsAdmin() and not GAMEMODE:IsSpawnableWeapon(class) then return false end
-
-	if not ply:IsAdmin() and GetConVar("tdm_spawn"):GetBool() == false then return false end
+	if not ply:IsAdmin() and (not GetConVar("tdm_spawn"):GetBool() and not GAMEMODE:IsSpawnableWeapon(class)) then return false end
 end)
 
 function GM:PlayerNoClip(pl, on)
