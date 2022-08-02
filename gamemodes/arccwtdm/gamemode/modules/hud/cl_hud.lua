@@ -26,6 +26,9 @@ local am_gr = Material("tdm/grenade.png", "smooth")
 local am_fr = Material("tdm/frag.png", "smooth")
 local am_he = Material("tdm/flame.png", "smooth")
 
+local diamond = Material("tdm/diamond.png", "smooth")
+local skull = Material("tdm/skull.png", "smooth")
+
 local money_updates = {}
 local money_last_t = 0
 
@@ -303,6 +306,31 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 
 			if LocalPlayer():GetSpawnArea() == LocalPlayer():Team() then
 				GAMEMODE:ShadowText("[Spawn Protection]", "CGHUD_3", w / 2, h - c * 64, CLR_W, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, true)
+			end
+
+			local ally_positions = {}
+			cam.Start3D()
+			for _, p in pairs(player.GetAll()) do
+				if p ~= LocalPlayer() and p:Team() == LocalPlayer():Team() then
+					table.insert(ally_positions, {p, (p:GetPos() + Vector(0, 0, 80)):ToScreen()})
+				end
+			end
+			cam.End3D()
+
+			for k, v in pairs(ally_positions) do
+				local ply_dist = EyePos():DistToSqr(v[1]:GetPos() + Vector(0, 0, 80))
+				local s = math.Clamp(1 - ply_dist / 4096 ^ 2, 0.5, 1) * 32
+				local x, y = v[2].x, v[2].y
+
+				local mouse_dist = math.sqrt(math.abs(ScrW() * 0.5 - x) ^ 2 + math.abs(ScrH() * 0.5 - y) ^ 2)
+				local mouse_range = CGSS(math.Clamp(1 - ply_dist / 2048 ^ 2, 0.1, 1) * 256)
+				if mouse_dist < mouse_range then
+					GAMEMODE:ShadowText(v[1]:GetName(), "CGHUD_24_Unscaled", x, y - s / 2, CLR_W, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, true)
+				end
+
+				surface.SetDrawColor(CLR_W.r, CLR_W.g, CLR_W.b, 150)
+				surface.SetMaterial(v[1]:Alive() and diamond or skull)
+				surface.DrawTexturedRect(x - s * 0.5, y - s * 0.5, s, s)
 			end
 		end
 

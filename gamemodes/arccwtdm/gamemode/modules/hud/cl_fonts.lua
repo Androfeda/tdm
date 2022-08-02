@@ -46,7 +46,8 @@ surface.CreateFont("CGHUD_1", {
 })
 
 local fonts_unscaled = {
-	32
+	32,
+	24,
 }
 
 for _, v in pairs(fonts_unscaled) do
