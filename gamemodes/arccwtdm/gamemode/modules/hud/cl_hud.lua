@@ -201,7 +201,8 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 					li = li + 1
 				end
 				if not GAMEMODE:WeaponHasInfiniteAmmo(PW) then
-					GAMEMODE:ShadowText(P:GetAmmoCount(PW:GetPrimaryAmmoType()) .. "+", "CGHUD_5", ax + (c * 18) - (c * li * lg), h - (c * 42) - (c * hi * hg), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+					GAMEMODE:ShadowText(P:GetAmmoCount(PW:GetPrimaryAmmoType()), "CGHUD_5", ax + (c * 1) - (c * li * lg), h - (c * 42) - (c * hi * hg), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+					GAMEMODE:ShadowText("+", "CGHUD_5", ax + (c * 15) - (c * li * lg), h - (c * 42) - (c * hi * hg), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
 				end
 
 				do
@@ -248,7 +249,8 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 						li = li + 1
 					end
 					if PW:GetMaxClip2() > 0 and GAMEMODE.AmmoBlacklist[string.lower(game.GetAmmoName(PW:GetSecondaryAmmoType()))] then
-						GAMEMODE:ShadowText(P:GetAmmoCount(PW:GetSecondaryAmmoType()) .. "+", "CGHUD_4", ax + (c * 18) - (c * li * lg), h - (c * hi * hg) - (c * 42), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+						GAMEMODE:ShadowText(P:GetAmmoCount(PW:GetSecondaryAmmoType()), "CGHUD_5", ax + (c * 1) - (c * li * lg), h - (c * hi * hg) - (c * 42), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+						GAMEMODE:ShadowText("+", "CGHUD_5", ax + (c * 15) - (c * li * lg), h - (c * hi * hg) - (c * 42), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
 					end
 
 					li = 0
