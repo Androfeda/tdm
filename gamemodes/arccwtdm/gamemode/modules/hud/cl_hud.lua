@@ -14,7 +14,7 @@ end
 
 local CLR_R = Color(255, 200, 200, 255)
 local CLR_B = Color(0, 0, 0, 255)
-local CLR_B2 = Color(0, 0, 0, 127)
+local CLR_B2 = Color(0, 0, 0, 100)
 local CLR_W = Color(255, 255, 255, 255)
 local CLR_W2 = Color(255, 255, 255, 255)
 local CLR_R2 = Color(255, 150, 150, 150)
@@ -142,8 +142,8 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 			end
 
 			if PW then
-				--local str1 = PW:Clip1() .. " | " .. P:GetAmmoCount(PW:GetPrimaryAmmoType())
-				--local str2 = PW:Clip2() .. " | " .. P:GetAmmoCount(PW:GetSecondaryAmmoType())
+				local str1 = ""
+				local str2 = ""
 
 				if PW:GetPrimaryAmmoType() == -1 and PW:Clip1() <= 0 then
 					str1 = ""
@@ -200,22 +200,12 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 
 					li = li + 1
 				end
-
-				local off = math.max(math.min(rep, PW:GetMaxClip1()) * lg * c + c * 24, fml + c * 24)
-
 				if not GAMEMODE:WeaponHasInfiniteAmmo(PW) then
-					GAMEMODE:ShadowText(P:GetAmmoCount(PW:GetPrimaryAmmoType()), "CGHUD_2", ax - off, h - (c * 20), CLR_W, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-					GAMEMODE:ShadowText("Reserve", "CGHUD_6", ax - off, h - (c * 8) - (c * 20), CLR_W, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-				end
-
-				if PW:GetMaxClip2() > 0 and GAMEMODE.AmmoBlacklist[string.lower(game.GetAmmoName(PW:GetSecondaryAmmoType()))] then
-					GAMEMODE:ShadowText(P:GetAmmoCount(PW:GetSecondaryAmmoType()), "CGHUD_2", ax - off, h - (c * 20), CLR_W, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
-					GAMEMODE:ShadowText("Alt. Reserve", "CGHUD_7", ax - off, h - (c * 4) - (c * 20), CLR_W, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+					GAMEMODE:ShadowText(P:GetAmmoCount(PW:GetPrimaryAmmoType()) .. "+", "CGHUD_5", ax + (c * 18) - (c * li * lg), h - (c * 42) - (c * hi * hg), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
 				end
 
 				do
 					li = 0
-					hi = hi + 0
 					if PW.HeatEnabled and PW:HeatEnabled() then
 						hi = hi + 0.5
 						local f = (PW:GetHeat() / PW:GetMaxHeat())
@@ -250,12 +240,15 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 						surface.SetDrawColor(CLR_B2)
 						surface.DrawTexturedRect(ax - (c * li * lg) + (c * 4), ay - (c * hi * hg) + (c * 4), c * si, c * si)
 
-						if i % rep == 0 then
+						if i ~= math.max(PW:GetMaxClip2(), PW:Clip2()) and i % rep == 0 then
 							hi = hi + 1
 							li = -1
 						end
 
 						li = li + 1
+					end
+					if PW:GetMaxClip2() > 0 and GAMEMODE.AmmoBlacklist[string.lower(game.GetAmmoName(PW:GetSecondaryAmmoType()))] then
+						GAMEMODE:ShadowText(P:GetAmmoCount(PW:GetSecondaryAmmoType()) .. "+", "CGHUD_4", ax + (c * 18) - (c * li * lg), h - (c * hi * hg) - (c * 42), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
 					end
 
 					li = 0
@@ -305,7 +298,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 			end
 
 			if LocalPlayer():GetSpawnArea() == LocalPlayer():Team() then
-				GAMEMODE:ShadowText("[Spawn Protection]", "CGHUD_3", w / 2, h - c * 64, CLR_W, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, true)
+				GAMEMODE:ShadowText("[ Spawn Protection ]", "CGHUD_3", w / 2, h - c * 64, CLR_W, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, true)
 			end
 
 			local ally_positions = {}
