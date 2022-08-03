@@ -46,61 +46,11 @@ hook.Add("CalcView", "GH3_DeadCam", function(ply, pos, angles, fov)
 	end
 end)
 
--- pain
-local pain_sobel = 5
-local strength = 0
-local lasthealth = 100
 gameevent.Listen("player_spawn")
-
 hook.Add("player_spawn", "BEEP!", function(data)
 	if GetConVar("tdm_deathcam"):GetBool() and data.userid == LocalPlayer():UserID() then
 		LocalPlayer():ScreenFade(SCREENFADE.IN, Color(0, 0, 0, 255), 0.25, 0.06)
-		pain_sobel = 5
-		strength = 0
 	end
-end)
-
-hook.Add("Think", "TDM_Pain", function()
-	pain_sobel = math.Approach(pain_sobel, 5, FrameTime() / 2)
-	strength = math.Approach(strength, 0, FrameTime() / 0.75)
-	local ply = LocalPlayer()
-	local health = ply:Health()
-
-	if health < (lasthealth or 0) then
-		pain_sobel = Lerp((lasthealth - health) / 100, 0.2, 0)
-		strength = Lerp((lasthealth - health) / 100, 0, 3)
-	end
-
-	lasthealth = ply:Health()
-end)
-
-local tab = {
-	["$pp_colour_addr"] = 0,
-	["$pp_colour_addg"] = 0,
-	["$pp_colour_addb"] = 0,
-	["$pp_colour_brightness"] = -0.1,
-	["$pp_colour_contrast"] = 1.2,
-	["$pp_colour_colour"] = 1,
-	["$pp_colour_mulr"] = 0.1,
-	["$pp_colour_mulg"] = 0,
-	["$pp_colour_mulb"] = 0
-}
-
-hook.Add("RenderScreenspaceEffects", "TDM_Pain_RenderScreenspaceEffects", function()
-	if pain_sobel < 5 then
-		DrawSobel(pain_sobel)
-	end
-
-	if strength > 0 then
-		DrawSharpen(math.sin(CurTime() * 2) * strength, math.sin(CurTime() * 1) * 10 * strength)
-	end
-
-	local ha = LocalPlayer():Health() / LocalPlayer():GetMaxHealth()
-	tab["$pp_colour_mulr"] = Lerp(ha, 0.1, 0)
-	tab["$pp_colour_brightness"] = Lerp(ha, -0.1, 0)
-	tab["$pp_colour_contrast"] = Lerp(ha, 1.1, 1)
-	tab["$pp_colour_colour"] = Lerp(ha, 0, 1)
-	DrawColorModify(tab)
 end)
 
 hook.Add("GetMotionBlurValues", "GetNewMotionBlurValues", function(horizontal, vertical, forward, rotational)
