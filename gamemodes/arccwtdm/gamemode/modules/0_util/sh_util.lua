@@ -1,7 +1,7 @@
 local CLR_B = Color(0, 0, 0, 255)
 
 function GM:ShadowText(text, font, x, y, color, color2, t, l, glow)
-	draw.SimpleText(text, font .. "_Shadow", x + CGSS(2), y + CGSS(2), color2, t, l)
+	draw.SimpleText(text, font .. "_Shadow", x + CGSS(4), y + CGSS(4), color2, t, l)
 
 	if glow then
 		draw.SimpleText(text, font .. "_Glow", x, y, CLR_B, t, l)
