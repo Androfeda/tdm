@@ -30,6 +30,64 @@ GM.Buyables = {
 		Description2 = "Use with grenade launchers",
 		Category = "Explosives",
 	},
+
+	-- M9K
+	["m9k_minigun"] = {
+		EntityClass = "m9k_minigun",
+		Price = 1000,
+
+		Description = "Rotary barrel minigun",
+		Description2 = "High recoil",
+		Category = "M9K",
+	},
+	["m9k_sl8"] = {
+		EntityClass = "m9k_sl8",
+		Price = 1000,
+
+		Description = "Automatic sniper",
+		Description2 = "Fast damage",
+		Category = "M9K",
+	},
+	["m9k_usas"] = {
+		EntityClass = "m9k_usas",
+		Price = 800,
+
+		Description = "Automatic shotgun",
+		Description2 = "Extreme lethality",
+		Category = "M9K",
+	},
+	["m9k_striker12"] = {
+		EntityClass = "m9k_striker12",
+		Price = 700,
+
+		Description = "Semi-automatic shotgun",
+		Description2 = "Long reload",
+		Category = "M9K",
+	},
+	["m9k_jackhammer"] = {
+		EntityClass = "m9k_jackhammer",
+		Price = 700,
+
+		Description = "Magazine-fed shotgun",
+		Description2 = "",
+		Category = "M9K",
+	},
+	["m9k_browningauto5"] = {
+		EntityClass = "m9k_browningauto5",
+		Price = 600,
+
+		Description = "Autoloading shotgun",
+		Description2 = "",
+		Category = "M9K",
+	},
+	["m9k_spas12"] = {
+		EntityClass = "m9k_spas12",
+		Price = 600,
+
+		Description = "Semi-automatic shotgun",
+		Description2 = "",
+		Category = "M9K",
+	},
 }
 
 GM.BuyableEntities = {}

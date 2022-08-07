@@ -6,6 +6,9 @@ function GM:IsSpawnableWeapon(class)
 	if self.BuyableEntities[class] then return false end
 
 	if not (weapons.IsBasedOn(class, "arccw_base") or
+		weapons.IsBasedOn(class, "bobs_gun_base") or
+		weapons.IsBasedOn(class, "bobs_scoped_base") or
+		weapons.IsBasedOn(class, "bobs_shotty_base") or
 		weapons.IsBasedOn(class, "arccw_base_melee") or
 		weapons.IsBasedOn(class, "arccw_base_nade") or
 		weapons.IsBasedOn(class, "arccw_uo_grenade_base") or
