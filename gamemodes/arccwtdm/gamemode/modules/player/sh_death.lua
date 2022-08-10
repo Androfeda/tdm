@@ -57,3 +57,16 @@ hook.Add("PlayerDeathThink", "BEEP!_PlayerDeathThink", function(pl)
 		end
 	end
 end)
+
+function GM:DoPlayerDeath(ply, attacker, dmginfo)
+	ply:CreateRagdoll()
+	ply:AddDeaths(1)
+
+	if attacker:IsValid() and attacker:IsPlayer() then
+		if attacker == ply or attacker:Team() == ply:Team() then
+			attacker:AddFrags(-1)
+		else
+			attacker:AddFrags(1)
+		end
+	end
+end
