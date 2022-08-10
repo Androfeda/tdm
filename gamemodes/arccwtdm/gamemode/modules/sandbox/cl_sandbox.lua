@@ -1,9 +1,9 @@
 function GM:ContextMenuOpen()
-	return GetConVar("tdm_spawn"):GetBool()
+	return !LocalPlayer():IsAdmin() and GetConVar("tdm_spawn"):GetBool()
 end
 
 hook.Add("SpawnMenuEnabled", "TDM_SpawnMenuEnabled", function()
-	if not GetConVar("tdm_spawn"):GetBool() then
+	if !LocalPlayer():IsAdmin() and !GetConVar("tdm_spawn"):GetBool() then
 		spawnmenu.GetCreationTabs()["#spawnmenu.category.dupes"] = nil
 		spawnmenu.GetCreationTabs()["#spawnmenu.category.saves"] = nil
 		spawnmenu.GetCreationTabs()["#spawnmenu.category.npcs"] = nil
@@ -22,7 +22,7 @@ hook.Add("PopulateWeapons", "AddWeaponContent", function(pnlContent, tree, node)
 
 	-- Build into categories
 	for k, weapon in pairs(Weapons) do
-		if not weapon.Spawnable or (not GetConVar("tdm_spawn"):GetBool() and not GAMEMODE:IsSpawnableWeapon(weapon.ClassName)) then continue end
+		if not weapon.Spawnable or (!LocalPlayer():IsAdmin() and !GetConVar("tdm_spawn"):GetBool() and not GAMEMODE:IsSpawnableWeapon(weapon.ClassName)) then continue end
 		local Category = weapon.Category or "Other2"
 
 		if not isstring(Category) then
