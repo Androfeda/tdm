@@ -34,18 +34,34 @@ GM.Buyables = {
 	-- M9K
 	["m9k_minigun"] = {
 		EntityClass = "m9k_minigun",
-		Price = 1000,
+		Price = 3000,
 
 		Description = "Rotary barrel minigun",
 		Description2 = "High recoil",
 		Category = "M9K",
 	},
-	["m9k_sl8"] = {
-		EntityClass = "m9k_sl8",
+	["m9k_barret_m82"] = {
+		EntityClass = "m9k_barret_m82",
 		Price = 1000,
 
-		Description = "Automatic sniper",
-		Description2 = "Fast damage",
+		Description = "Powerful sniper",
+		Description2 = "One shot one kill",
+		Category = "M9K",
+	},
+	["m9k_dragunov"] = {
+		EntityClass = "m9k_dragunov",
+		Price = 1000,
+
+		Description = "Powerful sniper",
+		Description2 = "Deadly",
+		Category = "M9K",
+	},
+	["m9k_svu"] = {
+		EntityClass = "m9k_svu",
+		Price = 1000,
+
+		Description = "Powerful sniper",
+		Description2 = "Deadly",
 		Category = "M9K",
 	},
 	["m9k_usas"] = {
