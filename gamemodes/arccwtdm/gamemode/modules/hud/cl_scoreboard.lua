@@ -75,7 +75,11 @@ hook.Add("HUDDrawScoreBoard", "ArcCWTDM_HUDDrawScoreBoard", function()
 
 			yd = yd + 30 + CGSS(2)
 
-			for i, ply in ipairs(team.GetPlayers(teamnum)) do
+			local players = team.GetPlayers(teamnum)
+
+			table.sort(players, function(a, b) return a:Frags() > b:Frags() end)
+
+			for i, ply in ipairs(players) do
 				GAMEMODE:ShadowText(ply:GetName(), font, ax - (c * 300), ay + (c * yd), teamdata.Color, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, true)
 
 				if teamnum ~= 1002 then
