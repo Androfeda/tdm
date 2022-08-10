@@ -41,47 +41,60 @@ GM.VehiclePadTypes = {
 		Name = "Transport Vehicle",
 		Model = "models/hunter/plates/plate4x6.mdl",
 		Icon = Material("tdm/vehicle_pad/vehicle_unarmed.png", "smooth mips"),
+		Cooldown = 60,
 	},
 	[VEHICLE_TYPE_LIGHT] = {
 		Name = "Light Vehicle",
 		Model = "models/hunter/plates/plate4x6.mdl",
 		Icon = Material("tdm/vehicle_pad/vehicle_light.png", "smooth mips"),
+		Cooldown = 120,
 	},
 	[VEHICLE_TYPE_MEDIUM] = {
 		Name = "Medium Vehicle",
 		Model = "models/hunter/plates/plate5x7.mdl",
 		Icon = Material("tdm/vehicle_pad/vehicle_medium.png", "smooth mips"),
+		Cooldown = 180,
 	},
 	[VEHICLE_TYPE_HEAVY] = {
 		Name = "Heavy Vehicle",
 		Model = "models/hunter/plates/plate6x8.mdl",
 		Icon = Material("tdm/vehicle_pad/vehicle_heavy.png", "smooth mips"),
+		Cooldown = 240,
 	},
 
 	[PLANE_TYPE_LIGHT] = {
 		Name = "Light Aircraft",
 		Model = "models/hunter/plates/plate8x16.mdl",
 		Icon = Material("tdm/vehicle_pad/plane_light.png", "smooth mips"),
+		Cooldown = 180,
 	},
 	[PLANE_TYPE_HEAVY] = {
 		Name = "Heavy Aircraft",
 		Model = "models/hunter/plates/plate8x16.mdl",
 		Icon = Material("tdm/vehicle_pad/plane_heavy.png", "smooth mips"),
+		Cooldown = 240,
 	},
 
 	[HELO_TYPE_UNARMED] = {
 		Name = "Transport Helicopter",
 		Model = "models/hunter/plates/plate8x8.mdl",
 		Icon = Material("tdm/vehicle_pad/helo_unarmed.png", "smooth mips"),
+		Cooldown = 90,
 	},
 	[HELO_TYPE_LIGHT] = {
 		Name = "Recon Helicopter",
 		Model = "models/hunter/plates/plate8x8.mdl",
 		Icon = Material("tdm/vehicle_pad/helo_light.png", "smooth mips"),
+		Cooldown = 120,
 	},
 	[HELO_TYPE_HEAVY] = {
 		Name = "Attack Helicopter",
 		Model = "models/hunter/plates/plate8x8.mdl",
 		Icon = Material("tdm/vehicle_pad/helo_heavy.png", "smooth mips"),
+		Cooldown = 180,
 	},
 }
+
+function GM:WithinVehiclePadRange(ply, ent)
+	return ply:GetPos():DistToSqr(ent:GetPos()) <= 256 * 256
+end

@@ -15,7 +15,7 @@ function ENT:SetupDataTables()
 end
 
 function ENT:CanSpawn()
-	return not IsValid(self:GetSpawnedVehicle()) or self:NextReady() > CurTime()
+	return not IsValid(self:GetSpawnedVehicle()) and self:GetNextReady() <= CurTime()
 end
 
 if SERVER then
@@ -41,14 +41,15 @@ elseif CLIENT then
 
 	local function drawicon(self, x, y, s)
 		local r, g, b = team.GetColor(self:GetTeam() or 0):Unpack()
-		surface.SetDrawColor(r * 0.8, g * 0.8, b * 0.8)
+		--surface.SetDrawColor(r * 0.8, g * 0.8, b * 0.8)
+		if not self:CanSpawn() then
+			surface.SetDrawColor(200, 200, 200, 255)
+		else
+			surface.SetDrawColor(r * 0.8, g * 0.8, b * 0.8)
+		end
 		surface.SetMaterial(bg)
 		surface.DrawTexturedRect(x, y, s, s)
-		if not self:CanSpawn() then
-			surface.SetDrawColor(r * 0.7, g * 0.7, b * 0.7, 200)
-		else
-			surface.SetDrawColor(r, g, b)
-		end
+		surface.SetDrawColor(r, g, b)
 		surface.SetMaterial(GAMEMODE.VehiclePadTypes[self:GetPadType()].Icon or mat)
 		surface.DrawTexturedRect(x, y, s, s)
 	end
@@ -56,9 +57,7 @@ elseif CLIENT then
 	function ENT:Draw()
 		self:DrawModel()
 
-		local mins, maxs = self:WorldSpaceAABB()
-
-		if LocalPlayer():GetPos():WithinAABox(mins - Vector(0, 0, 2), maxs + Vector(0, 0, 64)) then
+		if LocalPlayer().VehiclePad == self then
 			return
 		end
 
@@ -69,20 +68,10 @@ elseif CLIENT then
 		cam.Start3D2D(pos, angle, 0.05)
 			drawicon(self, -512, -512, 1024)
 		cam.End3D2D()
-
-		--local mins, maxs = self:GetModelBounds()
-		--render.DrawWireframeBox(self:WorldSpaceCenter(), self:GetAngles(), mins, maxs, team.GetColor(self:GetTeam()))
 	end
 
 	hook.Add("HUDPaint", "tdm_vehiclepad", function()
-		local ent
-		for _, v in pairs(ents.FindByClass("tdm_vehiclepad")) do
-			local mins, maxs = v:WorldSpaceAABB()
-			if LocalPlayer():GetPos():WithinAABox(mins - Vector(0, 0, 2), maxs + Vector(0, 0, 64)) then
-				ent = v
-				break
-			end
-		end
+		local ent = LocalPlayer().VehiclePad
 		if not IsValid(ent) then return end
 
 		local s = CGSS(64)
@@ -100,5 +89,23 @@ elseif CLIENT then
 		else
 			GAMEMODE:ShadowText("USE - Spawn", "CGHUD_5", ScrW() * 0.5, ScrH() * 0.75 + s * 0.5 + CGSS(30), clr, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, true)
 		end
+	end)
+
+	local nexttick = 0
+	hook.Add("Think", "tdm_vehiclepad", function()
+		if nexttick > CurTime() then return end
+		nexttick = CurTime() + 0.2
+		local ent
+		local dist
+		for _, v in pairs(ents.FindByClass("tdm_vehiclepad")) do
+			if GAMEMODE:WithinVehiclePadRange(LocalPlayer(), v) then
+				local vd = LocalPlayer():GetPos():DistToSqr(v:GetPos())
+				if not ent or dist > vd then
+					ent = v
+					dist = vd
+				end
+			end
+		end
+		LocalPlayer().VehiclePad = ent
 	end)
 end
