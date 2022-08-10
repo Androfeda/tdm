@@ -14,10 +14,12 @@ TOOL.PadTypes = {
 	VEHICLE_TYPE_MEDIUM,
 	VEHICLE_TYPE_HEAVY,
 
-	AIRCRAFT_TYPE_UNARMED,
-	AIRCRAFT_TYPE_LIGHT,
-	AIRCRAFT_TYPE_MEDIUM,
-	AIRCRAFT_TYPE_HEAVY,
+	PLANE_TYPE_LIGHT,
+	PLANE_TYPE_HEAVY,
+
+	HELO_TYPE_UNARMED,
+	HELO_TYPE_LIGHT,
+	HELO_TYPE_HEAVY,
 }
 
 
@@ -33,11 +35,12 @@ end
 function TOOL:LeftClick(tr)
 	if SERVER then
 		local spawn = ents.Create("tdm_vehiclepad")
-		spawn:SetPos(tr.HitPos)
+		spawn:SetPos(tr.HitPos + Vector(0, 0, 4))
 		spawn:SetAngles(Angle(0, self:GetOwner():GetAngles().y + 90, 0))
 		spawn:SetTeam(self.TeamMode)
 		spawn:SetPadType(self.PadTypes[self.PadMode])
 		spawn:Spawn()
+		spawn:DropToFloor()
 	end
 
 	return true

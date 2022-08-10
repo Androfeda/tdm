@@ -4,10 +4,12 @@ VEHICLE_TYPE_LIGHT = 1
 VEHICLE_TYPE_MEDIUM = 2
 VEHICLE_TYPE_HEAVY = 3
 
-AIRCRAFT_TYPE_UNARMED = 10
-AIRCRAFT_TYPE_LIGHT = 11
-AIRCRAFT_TYPE_MEDIUM = 12
-AIRCRAFT_TYPE_HEAVY = 13
+PLANE_TYPE_LIGHT = 10
+PLANE_TYPE_HEAVY = 11
+
+HELO_TYPE_UNARMED = 20
+HELO_TYPE_LIGHT = 21
+HELO_TYPE_HEAVY = 22
 
 GM.Vehicles = {
 	["avx_tdm_combineapc"] = {
@@ -56,20 +58,30 @@ GM.VehiclePadTypes = {
 		Icon = Material("tdm/vehicle_pad/vehicle_heavy.png", "smooth mips"),
 	},
 
-	[AIRCRAFT_TYPE_UNARMED] = {
-		Name = "Transport Aircraft",
-		Model = "models/hunter/plates/plate7x7.mdl",
-	},
-	[AIRCRAFT_TYPE_LIGHT] = {
+	[PLANE_TYPE_LIGHT] = {
 		Name = "Light Aircraft",
-		Model = "models/hunter/plates/plate6x6.mdl",
+		Model = "models/hunter/plates/plate8x16.mdl",
+		Icon = Material("tdm/vehicle_pad/plane_light.png", "smooth mips"),
 	},
-	[AIRCRAFT_TYPE_MEDIUM] = {
-		Name = "Medium Aircraft",
-		Model = "models/hunter/plates/plate8x8.mdl",
-	},
-	[AIRCRAFT_TYPE_HEAVY] = {
+	[PLANE_TYPE_HEAVY] = {
 		Name = "Heavy Aircraft",
+		Model = "models/hunter/plates/plate8x16.mdl",
+		Icon = Material("tdm/vehicle_pad/plane_heavy.png", "smooth mips"),
+	},
+
+	[HELO_TYPE_UNARMED] = {
+		Name = "Transport Helicopter",
 		Model = "models/hunter/plates/plate8x8.mdl",
+		Icon = Material("tdm/vehicle_pad/helo_unarmed.png", "smooth mips"),
+	},
+	[HELO_TYPE_LIGHT] = {
+		Name = "Recon Helicopter",
+		Model = "models/hunter/plates/plate8x8.mdl",
+		Icon = Material("tdm/vehicle_pad/helo_light.png", "smooth mips"),
+	},
+	[HELO_TYPE_HEAVY] = {
+		Name = "Attack Helicopter",
+		Model = "models/hunter/plates/plate8x8.mdl",
+		Icon = Material("tdm/vehicle_pad/helo_heavy.png", "smooth mips"),
 	},
 }
