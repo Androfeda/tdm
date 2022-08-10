@@ -61,19 +61,32 @@ function GM:LoadSpawnSet(name)
 		spawn:Spawn()
 	end
 
+	for _, v in pairs(spawns.VehiclePads) do
+		local spawn = ents.Create("tdm_vehiclepad")
+		spawn:SetPos(v[1])
+		spawn:SetAngles(v[2])
+		spawn:SetTeam(v[3])
+		spawn:SetPadType(v[4])
+		spawn:Spawn()
+	end
+
 	MsgN("Loaded spawn set '", name, "'.")
 end
 
 function GM:SaveSpawnSet(name)
 	local spawns = {
 		Areas = GAMEMODE.SpawnAreas,
-		Points = {}
+		Points = {},
+		VehiclePads = {},
 	}
 	for _, spawn in pairs(ents.FindByClass("tdm_spawn_hecu")) do
 		table.insert(spawns.Points, {spawn:GetPos(), spawn:GetClass()})
 	end
 	for _, spawn in pairs(ents.FindByClass("tdm_spawn_cmb")) do
 		table.insert(spawns.Points, {spawn:GetPos(), spawn:GetClass()})
+	end
+	for _, spawn in pairs(ents.FindByClass("tdm_vehiclepad")) do
+		table.insert(spawns.VehiclePads, {spawn:GetPos(), spawn:GetAngles(), spawn:GetTeam(), spawn:GetPadType()})
 	end
 
 	file.CreateDir("tdm/" .. game.GetMap() .. "/spawnsets")

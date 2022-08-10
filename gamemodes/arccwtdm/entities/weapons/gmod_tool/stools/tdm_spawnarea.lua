@@ -101,6 +101,12 @@ if CLIENT then
 		weight = 900
 	})
 
+	surface.CreateFont("GModToolScreen3", {
+		font = "Helvetica",
+		size = 30,
+		weight = 900
+	})
+
 	local function DrawScrollingText(text, y, texwide)
 		local w, h = surface.GetTextSize(text)
 		w = w + 64

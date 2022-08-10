@@ -1,4 +1,5 @@
 util.AddNetworkString("tdm_buy")
+util.AddNetworkString("tdm_vehicle")
 
 net.Receive("tdm_buy", function(len, ply)
 	local itemtbl = GAMEMODE.Buyables[net.ReadString()]
