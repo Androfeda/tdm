@@ -14,7 +14,7 @@ net.Receive("tdm_vehicle", function(len, ply)
 	local ent
 	if simfphys and list.Get("simfphys_vehicles")[veh] then
 		local vehtbl = list.Get("simfphys_vehicles")[veh]
-		ent = simfphys.SpawnVehicleSimple(veh, pad:GetPos() + (vehtbl.SpawnOffset or Vector()) + Vector(0, 0, 25), pad:GetAngles())
+		ent = simfphys.SpawnVehicleSimple(veh, pad:GetPos() + (vehtbl.SpawnOffset or Vector()) + Vector(0, 0, 25), pad:GetAngles() + Angle(0, 90, 0))
 	end
 
 	if IsValid(ent) then
