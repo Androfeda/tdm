@@ -10,13 +10,13 @@ local function mg_fire(ply,vehicle,shootOrigin,shootDirection)
 	projectile.DeflectAng = 40
 	projectile.AttackingEnt = vehicle
 	projectile.Force = 50
-	projectile.Damage = 100
+	projectile.Damage = 90
 	projectile.BlastRadius = 96
 	projectile.BlastDamage = 50
 	projectile:SetBlastEffect("simfphys_tankweapon_explosion_micro")
 	projectile:SetSize( 2 )
 	projectile.Filter = table.Copy( vehicle.VehicleData["filter"] )
-	projectile.MuzzleVelocity = 350
+	projectile.MuzzleVelocity = 400
 	projectile:Spawn()
 	projectile:Activate()
 
@@ -52,7 +52,7 @@ local function mg_fire2(ply,vehicle,shootOrigin,shootDirection)
 	projectile.Damage = 0
 	projectile.BlastRadius = 300
 	projectile.BlastDamage = 80
-	projectile.MuzzleVelocity = 200
+	projectile.MuzzleVelocity = 250
 	projectile:SetBlastEffect("simfphys_tankweapon_explosion_small")
 	projectile:SetSize( 5 )
 	projectile.Filter = table.Copy( vehicle.VehicleData["filter"] )
@@ -98,7 +98,7 @@ function simfphys.weapon:Initialize( vehicle )
 	data.Attach_Start_Right = "muzzle_left"
 	data.Type = 3
 
-	vehicle.MaxMag = 20
+	vehicle.MaxMag = 30
 	vehicle.CurMag = vehicle.MaxMag
 	vehicle:SetNWString( "WeaponMode", (vehicle.UsingHE and "HE" or "AP") .. " Cannon")
 	vehicle:SetNWInt("CurWPNAmmo", vehicle.CurMag)
@@ -245,10 +245,9 @@ function simfphys.weapon:PrimaryAttack( vehicle, ply, he )
 		mg_fire( ply, vehicle, shootOrigin, shootDirection )
 	end
 
-	vehicle:SetNWInt("CurWPNAmmo", vehicle.CurMag)
-
-
 	self:TakePrimaryAmmo( vehicle )
+
+	vehicle:SetNWInt("CurWPNAmmo", vehicle.CurMag)
 
 	vehicle:GetPhysicsObject():ApplyForceOffset( -shootDirection * 40000, shootOrigin )
 
