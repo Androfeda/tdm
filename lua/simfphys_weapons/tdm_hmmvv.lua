@@ -60,7 +60,9 @@ function simfphys.weapon:AimWeapon(ply, vehicle, pod)
 	vehicle.sm_pitch = vehicle.sm_pitch and (vehicle.sm_pitch + (TargetPitch - vehicle.sm_pitch) * 0.50) or 0
 	vehicle:SetPoseParameter("mg_aim_yaw", vehicle.sm_dir:Angle().y)
 	vehicle:SetPoseParameter("mg_aim_pitch", -vehicle.sm_pitch)
-	pod:SetAngles(Angle(0, vehicle:GetAngles().y + vehicle.sm_dir:Angle().y - 90, 0))
+	local podangles = vehicle:GetAngles()
+	podangles:RotateAroundAxis(vehicle:GetAngles():Up(), vehicle.sm_dir:Angle().y - 90)
+	pod:SetAngles(podangles)
 end
 
 function simfphys.weapon:Think(vehicle)
