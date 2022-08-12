@@ -21,6 +21,26 @@ local tshow = {
 	[1002] = true
 }
 
+local function utime_timeToStr( time )
+	local tmp = time
+	local s = tmp % 60
+	tmp = math.floor( tmp / 60 )
+	local m = tmp % 60
+	tmp = math.floor( tmp / 60 )
+	local h = tmp % 24
+	tmp = math.floor( tmp / 24 )
+	local d = tmp-- / 7
+
+	if d > 0 then
+		return string.format( "%id %02ih %01im", d, h, m )
+	elseif h > 0 then
+		return string.format( "%01ih %01im", h, m )
+	else
+		return string.format( "%01im", m )
+	end
+end
+
+
 hook.Add("HUDDrawScoreBoard", "ArcCWTDM_HUDDrawScoreBoard", function()
 	if SHOWSCORE then
 		local plycnt = player.GetCount()
@@ -30,7 +50,7 @@ hook.Add("HUDDrawScoreBoard", "ArcCWTDM_HUDDrawScoreBoard", function()
 		local add = 24
 		local y_offset = 196
 		if plycnt >= 64 then
-			font, font2 = "CGHUD_8", "CGHUD_9"
+			font, font2 = "CGHUD_7", "CGHUD_8"
 			add = 10
 			y_offset = 256
 		elseif plycnt >= 32 then
@@ -50,11 +70,17 @@ hook.Add("HUDDrawScoreBoard", "ArcCWTDM_HUDDrawScoreBoard", function()
 		GAMEMODE:ShadowText(GetHostName(), "CGHUD_3", ax, ay + (c * 0), CLR_W2, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, true)
 		GAMEMODE:ShadowText("Team Deathmatch", "CGHUD_5", ax, ay + (c * 16), CLR_W2, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, true)
 		-- GAMEMODE:ShadowText("Score", "CGHUD_3", ax - (c * 200), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM, true)
-		GAMEMODE:ShadowText("Earnings", "CGHUD_6", ax + (c * 110), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
-		GAMEMODE:ShadowText("KDR", "CGHUD_6", ax + (c * 150), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
-		GAMEMODE:ShadowText("Frags", "CGHUD_6", ax + (c * 200), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
-		GAMEMODE:ShadowText("Deaths", "CGHUD_6", ax + (c * 260), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
-		GAMEMODE:ShadowText("Ping", "CGHUD_6", ax + (c * 300), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, true)
+		local utime_installed = false
+		if FindMetaTable( "Player" ).GetUTimeTotalTime then
+			utime_installed = true
+		end
+			
+		if utime_installed then GAMEMODE:ShadowText("Time", "CGHUD_7", ax + (c * 80), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, true) end
+		GAMEMODE:ShadowText("Earnings", "CGHUD_7", ax + (c * 140), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, true)
+		GAMEMODE:ShadowText("KDR", "CGHUD_7", ax + (c * 180), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, true)
+		GAMEMODE:ShadowText("Frags", "CGHUD_7", ax + (c * 220), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, true)
+		GAMEMODE:ShadowText("Deaths", "CGHUD_7", ax + (c * 260), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, true)
+		GAMEMODE:ShadowText("Ping", "CGHUD_7", ax + (c * 300), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, true)
 		yd = yd + 36
 
 
@@ -77,22 +103,23 @@ hook.Add("HUDDrawScoreBoard", "ArcCWTDM_HUDDrawScoreBoard", function()
 
 			local players = team.GetPlayers(teamnum)
 
-			table.sort(players, function(a, b) return a:Frags() > b:Frags() end)
+			table.sort(players, function(a, b) return (math.max(a:Frags(), 0) / math.max(a:Deaths(), 1)) > (math.max(b:Frags(), 0) / math.max(b:Deaths(), 1)) end)
 
 			for i, ply in ipairs(players) do
 				GAMEMODE:ShadowText(ply:GetName(), font, ax - (c * 300), ay + (c * yd), teamdata.Color, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, true)
 
 				if teamnum ~= 1002 then
-					GAMEMODE:ShadowText(GAMEMODE:FormatMoney(ply:GetEarnings()), font2, ax + (c * 110), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
+					if utime_installed then GAMEMODE:ShadowText(utime_timeToStr( ply:GetUTimeTotalTime() ), font2, ax + (c * 80), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true) end
+					GAMEMODE:ShadowText(GAMEMODE:FormatMoney(ply:GetEarnings()), font2, ax + (c * 140), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
 					-- k/d
-					local kd = ply:Frags() / ply:Deaths()
-					if ply:Deaths() == 0 then
-						kd = ply:Frags()
-					else
-						kd = math.Round(kd, 2)
-					end
-					GAMEMODE:ShadowText(kd, font2, ax + (c * 150), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
-					GAMEMODE:ShadowText(ply:Frags(), font2, ax + (c * 200), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
+					local kd = math.max(ply:Frags(), 0) / math.max(ply:Deaths(), 1)
+					--if ply:Deaths() < ply:Frags() then
+					--	kd = ply:Frags()
+					--else
+					--	kd = math.Round(kd, 2)
+					--end
+					GAMEMODE:ShadowText(string.format("%f", kd):Left(4), font2, ax + (c * 180), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
+					GAMEMODE:ShadowText(ply:Frags(), font2, ax + (c * 220), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
 					GAMEMODE:ShadowText(ply:Deaths(), font2, ax + (c * 260), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
 					GAMEMODE:ShadowText(ply:Ping(), font2, ax + (c * 300), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
 				end
