@@ -14,7 +14,7 @@ AccessorFunc(PANEL, "m_Price", "Price", FORCE_NUMBER)
 function PANEL:Init()
 	self:SetPaintBackground( false )
 	local sw, sh = self:GetParent():GetParent():GetParent():GetSize()
-	self:SetSize( 384, 128 ) -- TODO: get real long n har. nvm
+	self:SetSize( 400, 128 ) -- TODO: get real long n har. nvm
 	self:SetText( "" )
 	self:SetDoubleClickingEnabled( false )
 

@@ -90,22 +90,4 @@ elseif CLIENT then
 			GAMEMODE:ShadowText("USE - Spawn", "CGHUD_5", ScrW() * 0.5, ScrH() * 0.75 + s * 0.5 + CGSS(30), clr, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, true)
 		end
 	end)
-
-	local nexttick = 0
-	hook.Add("Think", "tdm_vehiclepad", function()
-		if nexttick > CurTime() then return end
-		nexttick = CurTime() + 0.2
-		local ent
-		local dist
-		for _, v in pairs(ents.FindByClass("tdm_vehiclepad")) do
-			if GAMEMODE:WithinVehiclePadRange(LocalPlayer(), v) then
-				local vd = LocalPlayer():GetPos():DistToSqr(v:GetPos())
-				if not ent or dist > vd then
-					ent = v
-					dist = vd
-				end
-			end
-		end
-		LocalPlayer().VehiclePad = ent
-	end)
 end

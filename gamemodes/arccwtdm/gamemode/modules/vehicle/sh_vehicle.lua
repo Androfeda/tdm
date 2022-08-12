@@ -12,27 +12,55 @@ HELO_TYPE_LIGHT = 21
 HELO_TYPE_HEAVY = 22
 
 GM.Vehicles = {
+
+	["avx_tdm_bulldog"] = {
+		Team = TEAM_CMB,
+		Type = VEHICLE_TYPE_UNARMED,
+		Points = 150,
+
+		Description = "Light armored recon vehicle",
+	},
+	["avx_tdm_hmmvv"] = {
+		Team = TEAM_HECU,
+		Type = VEHICLE_TYPE_UNARMED,
+		Points = 150,
+
+		Description = "Light armored recon vehicle",
+	},
+
+	["avx_tdm_bulldog_mg"] = {
+		Team = TEAM_CMB,
+		Type = VEHICLE_TYPE_LIGHT,
+		Points = 300,
+
+		Description = "Light armored recon vehicle",
+		Description2 = "Armed with top-mounted machine gun",
+
+	},
+	["avx_tdm_hmmvv_mg"] = {
+		Team = TEAM_HECU,
+		Type = VEHICLE_TYPE_LIGHT,
+		Points = 300,
+
+		Description = "Light armored recon vehicle",
+		Description2 = "Armed with top-mounted machine gun",
+	},
+
 	["avx_tdm_combineapc"] = {
 		Team = TEAM_CMB,
 		Type = VEHICLE_TYPE_MEDIUM,
-		Points = 500,
+		Points = 700,
 
-		Description = "Flexible and mobile",
-		Armaments = {
-			"Pulse Suppression Gun (AP)",
-			"HEAT Guided Missiles",
-		}
+		Description = "Mobile and versatile armored car",
+		Description2 = "Pulse gun penetrates armor",
 	},
 	["avx_tdm_hecuapc"] = {
 		Team = TEAM_HECU,
 		Type = VEHICLE_TYPE_MEDIUM,
-		Points = 500,
+		Points = 700,
 
-		Description = "Durable, can switch ammo types",
-		Armaments = {
-			"Twin-barrel Cannon (AP)",
-			"Twin-barrel Cannon (HE)",
-		}
+		Description = "Durable armored personnel carrier",
+		Description2 = "Can switch between AP and HE rounds",
 	},
 }
 
@@ -97,4 +125,24 @@ GM.VehiclePadTypes = {
 
 function GM:WithinVehiclePadRange(ply, ent)
 	return ply:GetPos():DistToSqr(ent:GetPos()) <= 256 * 256
+end
+
+function GM:GetVehiclesForPlayer(ply, padtype)
+	local vehs = {}
+	for k, v in pairs(GAMEMODE.Vehicles) do
+		if v.Type == padtype and (not v.Team or v.Team == ply:Team()) then
+			vehs[k] = v
+		end
+	end
+	return vehs
+end
+
+function GM:GetVehicleName(class)
+	if list.Get("simfphys_vehicles") and list.Get("simfphys_vehicles")[class] then
+		return list.Get("simfphys_vehicles")[class].Name
+	elseif scripted_ents.Get(class) then
+		return scripted_ents.Get(class).PrintName
+	end
+
+	return class
 end
