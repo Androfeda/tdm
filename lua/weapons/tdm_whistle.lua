@@ -1,3 +1,4 @@
+-- https://freesound.org/people/moviemusicman/sounds/142896/
 
 SWEP.Base = "weapon_base"
 SWEP.PrintName = "Whistle"
@@ -6,9 +7,10 @@ SWEP.Category = "Other"
 
 SWEP.Instructions = "Attack to whistle"
 
-SWEP.ViewModel = "models/weapons/v_crowbar.mdl"
+SWEP.ViewModel = "models/tdm/whistle.mdl"
 SWEP.WorldModel = "models/weapons/w_crowbar.mdl"
-SWEP.ViewModelFOV = 10
+SWEP.ViewModelFOV = 62
+SWEP.UseHands = true
 
 SWEP.Primary.ClipSize = -1
 SWEP.Primary.DefaultClip = 0
@@ -49,16 +51,29 @@ function SWEP:PrimaryAttack()
 		self:GetOwner():EmitSound( ")tdm/whistle" .. math.random(1, 6) .. ".ogg", 100, 100, 1, CHAN_VOICE )
 	end
 
+	self:GetOwner():AnimRestartGesture(GESTURE_SLOT_CUSTOM, ACT_GMOD_GESTURE_WAVE, true)
+
+	self:SendAnim( "whistle", 1.5 )
+
 	self:SetFired(true)
 end
 
 function SWEP:SecondaryAttack()
 end
 
+function SWEP:SendAnim( seq, mult )
+	local vm = self:GetOwner():GetViewModel()
+	if IsValid(vm) then
+		vm:SendViewModelMatchingSequence( vm:LookupSequence( seq ) )
+		vm:SetPlaybackRate( mult or 1 )
+	end
+end
+
 function SWEP:Reload()
 end
 
 function SWEP:Deploy()
+	self:SendAnim( "idle", 1 )
 	return true
 end
 
@@ -66,8 +81,8 @@ function SWEP:Holster()
 	return true
 end
 
-function SWEP:ShouldDrawViewModel()
-	return false
+function SWEP:DoDrawCrosshair()
+	return true 
 end
 
 function SWEP:DrawWorldModel()

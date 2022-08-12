@@ -455,11 +455,11 @@ local V = {
 		BrakePower = 65,
 
 		IdleRPM = 750,
-		LimitRPM = 6500,
+		LimitRPM = 4500,
 
 		PeakTorque = 150,
 		PowerbandStart = 2200,
-		PowerbandEnd = 6300,
+		PowerbandEnd = 5300,
 		Turbocharged = false,
 		Supercharged = false,
 
@@ -467,7 +467,7 @@ local V = {
 		FuelType = FUELTYPE_PETROL,
 		FuelTankSize = 30,
 
-		PowerBias = 0,
+		PowerBias = 0.8,
 
 		EngineSoundPreset = -1,
 
@@ -604,11 +604,11 @@ local V = {
 		BrakePower = 65,
 
 		IdleRPM = 750,
-		LimitRPM = 6500,
+		LimitRPM = 4500,
 
 		PeakTorque = 150,
 		PowerbandStart = 2200,
-		PowerbandEnd = 6300,
+		PowerbandEnd = 5300,
 		Turbocharged = false,
 		Supercharged = false,
 
@@ -616,7 +616,7 @@ local V = {
 		FuelType = FUELTYPE_PETROL,
 		FuelTankSize = 30,
 
-		PowerBias = 0,
+		PowerBias = 0.8,
 
 		EngineSoundPreset = -1,
 
@@ -747,11 +747,11 @@ local V = {
 		BrakePower = 65,
 
 		IdleRPM = 750,
-		LimitRPM = 6500,
+		LimitRPM = 4500,
 
 		PeakTorque = 150,
 		PowerbandStart = 2200,
-		PowerbandEnd = 6300,
+		PowerbandEnd = 5300,
 		Turbocharged = false,
 		Supercharged = false,
 
@@ -759,7 +759,7 @@ local V = {
 		FuelType = FUELTYPE_PETROL,
 		FuelTankSize = 30,
 
-		PowerBias = 0,
+		PowerBias = 0.8,
 
 		EngineSoundPreset = -1,
 
@@ -895,11 +895,11 @@ local V = {
 		BrakePower = 65,
 
 		IdleRPM = 750,
-		LimitRPM = 6500,
+		LimitRPM = 4500,
 
 		PeakTorque = 150,
 		PowerbandStart = 2200,
-		PowerbandEnd = 6300,
+		PowerbandEnd = 5300,
 		Turbocharged = false,
 		Supercharged = false,
 
@@ -907,7 +907,7 @@ local V = {
 		FuelType = FUELTYPE_PETROL,
 		FuelTankSize = 30,
 
-		PowerBias = 0,
+		PowerBias = 0.8,
 
 		EngineSoundPreset = -1,
 
