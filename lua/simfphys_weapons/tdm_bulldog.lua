@@ -14,6 +14,15 @@ local function mg_fire(ply, vehicle, shootOrigin, shootDirection)
 	bullet.Attacker = ply
 
 	vehicle:FireBullets(bullet)
+
+	local eff = EffectData()
+	local shootAng = shootDirection:Angle()
+	eff:SetOrigin(shootOrigin + shootAng:Forward() * -45)
+	shootAng:RotateAroundAxis(shootAng:Up(), -90)
+	shootAng:RotateAroundAxis(shootAng:Right(), 15)
+	eff:SetAngles(shootAng)
+	eff:SetEntity(vehicle)
+	util.Effect("RifleShellEject", eff)
 end
 
 function simfphys.weapon:ValidClasses()
@@ -38,7 +47,7 @@ function simfphys.weapon:Initialize(vehicle)
 		Type = 3
 	})
 
-	simfphys.RegisterCamera(vehicle.pSeat[1], Vector(-75, 0, -9), Vector(0, 0, 30), true, "muzzle")
+	simfphys.RegisterCamera(vehicle.pSeat[1], Vector(-75, 0, -7), Vector(0, 0, 15), true, "muzzle")
 	if not istable(vehicle.PassengerSeats) or not istable(vehicle.pSeat) then return end
 end
 
@@ -54,7 +63,7 @@ function simfphys.weapon:AimWeapon(ply, vehicle, pod)
 	local La_Right = Angle(0, Attachment.Ang.y, 0):Forward()
 	local AimRate = 40
 	local Yaw_Diff = math.Clamp(math.acos(math.Clamp(L_Right:Dot(La_Right), -1, 1)) * (180 / math.pi) - 90, -AimRate, AimRate)
-	local TargetPitch = Angles.p
+	local TargetPitch = Angles.p + 10
 	local TargetYaw = vehicle.sm_dir:Angle().y - Yaw_Diff
 	vehicle.sm_dir = vehicle.sm_dir + (Angle(0, TargetYaw, 0):Forward() - vehicle.sm_dir) * 0.05
 	vehicle.sm_pitch = vehicle.sm_pitch and (vehicle.sm_pitch + (TargetPitch - vehicle.sm_pitch) * 0.50) or 0

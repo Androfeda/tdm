@@ -14,6 +14,15 @@ local function mg_fire(ply, vehicle, shootOrigin, shootDirection)
 	bullet.Attacker = ply
 
 	vehicle:FireBullets(bullet)
+
+	local eff = EffectData()
+	local shootAng = shootDirection:Angle()
+	eff:SetOrigin(shootOrigin + shootAng:Forward() * -42)
+	shootAng:RotateAroundAxis(shootAng:Up(), -90)
+	shootAng:RotateAroundAxis(shootAng:Right(), 15)
+	eff:SetAngles(shootAng)
+	eff:SetEntity(vehicle)
+	util.Effect("RifleShellEject", eff)
 end
 
 function simfphys.weapon:ValidClasses()
