@@ -1,17 +1,5 @@
 if not simfphys then return end
 
-local function TankTakeDamage(ent, dmginfo)
-
-	if not dmginfo:IsExplosionDamage() and not dmginfo:IsDamageType(DMG_AIRBOAT) then
-		dmginfo:SetDamage(dmginfo:GetDamage() - ent.DamageBlock)
-	end
-
-	dmginfo:SetDamage(math.max(dmginfo:GetDamage(), 0))
-
-	AVX.TankTakeDamage(ent, dmginfo)
-end
-
-
 local V = {
 	Name = "Civil Enforcement Vehicle",
 	Model = "models/combine_apc.mdl",
@@ -32,7 +20,7 @@ local V = {
 				ent.IsArmored = true
 				ent.DamageThreshold = 80
 				ent.DamageBlock = 100
-				ent.OnTakeDamage = TankTakeDamage
+				SIMF_TDM.OnSpawned(ent)
 			end,
 
 		GibModels = {
@@ -167,7 +155,7 @@ local V = {
 				ent.IsArmored = true
 				ent.DamageThreshold = 100
 				ent.DamageBlock = 120
-				ent.OnTakeDamage = TankTakeDamage
+				SIMF_TDM.OnSpawned(ent)
 			end,
 
 		CustomWheels = true,

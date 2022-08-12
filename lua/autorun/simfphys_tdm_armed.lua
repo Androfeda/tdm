@@ -119,7 +119,7 @@ local function tiredamage(self, dmginfo)
 	local Type = dmginfo:GetDamageType()
 	local BaseEnt = self:GetBaseEnt()
 
-	if TYPE == DMG_BLAST then return end  -- no tirepopping on explosions
+	if dmginfo:IsDamageType(DMG_BLAST) or dmginfo:IsDamageType(DMG_BURN) then return end  -- no tirepopping on explosions
 
 	if IsValid(BaseEnt) then
 		if BaseEnt:GetBulletProofTires() then return end
@@ -243,8 +243,16 @@ function SIMF_TDM.OnTakeDamage(ent, dmginfo)
 	if not simfphys.DamageEnabled then return end
 
 	-- Armor
-	if ent.DamageBlock and not dmginfo:IsExplosionDamage() and not dmginfo:IsDamageType(DMG_AIRBOAT) then
-		dmginfo:SetDamage(dmginfo:GetDamage() - ent.DamageBlock)
+	local skipthreshold = false
+	if ent.DamageBlock then
+		if dmginfo:IsDamageType(DMG_DIRECT) then
+			skipthreshold = true
+		elseif dmginfo:IsDamageType(DMG_BURN) or dmginfo:IsDamageType(DMG_SLOWBURN) then
+			dmginfo:ScaleDamage(2 + math.Clamp((ent:GetCurHealth() / ent:GetMaxHealth()) * 3, 0, 3))
+			skipthreshold = true
+		elseif not dmginfo:IsExplosionDamage() and not dmginfo:IsDamageType(DMG_AIRBOAT) then
+			dmginfo:SetDamage(dmginfo:GetDamage() - ent.DamageBlock)
+		end
 	end
 
 	ent:TakePhysicsDamage( dmginfo )
@@ -263,7 +271,7 @@ function SIMF_TDM.OnTakeDamage(ent, dmginfo)
 		net.WriteBool(ent)
 	net.Broadcast()
 
-	if ent.DamageThreshold and Damage < ent.DamageThreshold then
+	if ent.DamageThreshold and not skipthreshold and Damage < ent.DamageThreshold then
 		dmginfo:ScaleDamage(Damage / ent.DamageThreshold)
 	end
 
