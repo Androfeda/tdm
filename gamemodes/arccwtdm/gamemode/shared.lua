@@ -80,6 +80,11 @@ function GM:Initialize()
 			RunConsoleCommand(conname, conval)
 		end
 		GAMEMODE:LoadSpawnSet(GetConVar("tdm_gamemode"):GetString())
+	end
+end
+
+function GM:PostGamemodeLoaded()
+	if SERVER then
 		RunConsoleCommand("arccw_uc_cache_server")
 	else
 		RunConsoleCommand("arccw_uc_cache_client")
