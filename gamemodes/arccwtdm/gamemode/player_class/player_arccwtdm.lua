@@ -74,6 +74,8 @@ function PLAYER:Loadout()
 		end
 	end
 
+	self.Player:Give("tdm_whistle")
+
 	--[[]
 	self.Player:GiveAmmo( 9999, "AR2", true )
 	self.Player:GiveAmmo( 9999, "AR2AltFire", true )
