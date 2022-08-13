@@ -22,6 +22,7 @@ local CLR_R2 = Color(255, 150, 150, 150)
 local CLR_FUEL = Color(255, 255, 150, 255)
 
 local veh = Material("tdm/vehiclehealth.png", "smooth")
+local spawnpro = Material("tdm/spawnpro.png", "smooth")
 local am_pi = Material("tdm/pistol.png", "smooth")
 local am_ri = Material("tdm/rifle.png", "smooth")
 local am_sg = Material("tdm/shotgun.png", "smooth")
@@ -118,6 +119,18 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 			CLR_W.g = (CLR_W.g * 0.5) + (255 * 0.5)
 			CLR_W.b = (CLR_W.b * 0.5) + (255 * 0.5)
 			GAMEMODE:ShadowText("+ " .. P:Health(), "CGHUD_2", 0 + (c * 16), h - (c * 16), CLR_W, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+
+			-- Maybe you could use this type of display for capture points, flags and the like?
+			if LocalPlayer():GetSpawnArea() == LocalPlayer():Team() then
+				surface.SetMaterial(spawnpro)
+				local size = (c * 96)
+				surface.SetDrawColor(CLR_B2)
+				surface.DrawTexturedRect( (ScrW() / 2) - (size / 2) + (c * 4), (h * 0.15) - (size / 2) + (c * 4), size, size )
+				surface.SetDrawColor(CLR_W)
+				surface.DrawTexturedRect( (ScrW() / 2) - (size / 2), (h * 0.15) - (size / 2), size, size )
+				GAMEMODE:ShadowText("Spawn Protection", "CGHUD_6", w / 2, (h * 0.15) + (size / 2) + (c * 12), CLR_W, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			end
+
 			surface.SetDrawColor(CLR_B2)
 			surface.DrawOutlinedRect((c * 128) + (c * 4), h - (c * 46) + (c * 4), c * 200, c * 18, c * 4)
 
@@ -344,10 +357,6 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 
 					li = li + 1
 				end
-			end
-
-			if LocalPlayer():GetSpawnArea() == LocalPlayer():Team() then
-				GAMEMODE:ShadowText("[ Spawn Protection ]", "CGHUD_3", w / 2, h - c * 64, CLR_W, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, true)
 			end
 
 			local ally_positions = {}
