@@ -181,7 +181,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 				surface.DrawRect(c * 128, (c * 36), (c * 200) * (VW:GetCurHealth() / VW:GetMaxHealth()), c * 18)
 
 				GAMEMODE:ShadowText( math.Round( VW:GetVelocity():Length() * HUToM / 0.277778 ) .. "km/h", "CGHUD_2", (c * 16), (c * 48) + (c * 16) + (c * 48), CLR_W, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
-				GAMEMODE:ShadowText( math.Round( VW:GetVelocity():Length() ) .. "hU", "CGHUD_4", (c * 16), (c * 48) + (c * 16) + (c * 48) + (c * 24), CLR_W, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+				GAMEMODE:ShadowText( math.Round( VW:GetVelocity():Length() ) .. "hU/s", "CGHUD_4", (c * 16), (c * 48) + (c * 16) + (c * 48) + (c * 24), CLR_W, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
 
 				-- Fuel
 				-- GAMEMODE:ShadowText( math.Round( (VW:GetFuel() / VW:GetMaxFuel())*100 ) .. "%", "CGHUD_7", (c * 128), (c * 36) - (c * 10), CLR_FUEL, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
@@ -376,10 +376,31 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 			end
 
 			local ally_positions = {}
+			local vehicle_positions = {}
 			cam.Start3D()
 			for _, p in pairs(player.GetAll()) do
 				if p ~= LocalPlayer() and p:Team() == LocalPlayer():Team() then
 					table.insert(ally_positions, {p, (p:GetPos() + Vector(0, 0, 80)):ToScreen()})
+				end
+			end
+			for _, t in pairs(GAMEMODE.SpawnedVehicles or {}) do
+				local v = t.Entity
+				if not IsValid(v) then continue end
+				if LocalPlayer():GetSimfphys() == v then continue end
+				class = t.VehicleName
+				local occupied = false
+				local hasally = false
+				if simfphys and simfphys.IsCar(v) then
+					for _, ply in pairs( player.GetAll() ) do
+						if ply:GetSimfphys() == v then
+							occupied = true
+							hasally = hasally or ply:Team() == LocalPlayer():Team()
+						end
+					end
+				end
+
+				if GAMEMODE.Vehicles[class] and (hasally or (not occupied and t.Team == LocalPlayer():Team())) then
+					table.insert(vehicle_positions, {v, (v:GetPos() + Vector(0, 0, 100)):ToScreen(), GAMEMODE.VehiclePadTypes[GAMEMODE.Vehicles[class].Type].Icon, class, occupied})
 				end
 			end
 			cam.End3D()
@@ -397,6 +418,27 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 
 				surface.SetDrawColor(CLR_W.r, CLR_W.g, CLR_W.b, 150)
 				surface.SetMaterial(v[1]:Alive() and diamond or skull)
+				surface.DrawTexturedRect(x - s * 0.5, y - s * 0.5, s, s)
+			end
+
+			for k, v in pairs(vehicle_positions) do
+				local ply_dist = EyePos():DistToSqr(v[1]:GetPos() + Vector(0, 0, 80))
+				local s = math.Clamp(1 - ply_dist / 4096 ^ 2, 0.5, 1) * 64
+				local x, y = v[2].x, v[2].y
+
+				-- local mouse_dist = math.sqrt(math.abs(ScrW() * 0.5 - x) ^ 2 + math.abs(ScrH() * 0.5 - y) ^ 2)
+				-- local mouse_range = CGSS(math.Clamp(1 - ply_dist / 2048 ^ 2, 0.1, 1) * 256)
+				-- if mouse_dist < mouse_range then
+				-- 	GAMEMODE:ShadowText(GAMEMODE:GetVehicleName(v[4]), "CGHUD_24_Unscaled", x, y - s / 2, CLR_W, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, true)
+				-- end
+
+				if v[5] then
+					surface.SetDrawColor(CLR_W.r, CLR_W.g, CLR_W.b, 200)
+				else
+					surface.SetDrawColor(255, 255, 255, 200)
+				end
+
+				surface.SetMaterial(v[3])
 				surface.DrawTexturedRect(x - s * 0.5, y - s * 0.5, s, s)
 			end
 		end

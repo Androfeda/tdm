@@ -132,6 +132,8 @@ GM.VehiclePadTypes = {
 	},
 }
 
+GM.SpawnedVehicles = {}
+
 function GM:WithinVehiclePadRange(ply, ent)
 	return ply:GetPos():DistToSqr(ent:GetPos()) <= 256 * 256
 end

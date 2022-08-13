@@ -46,3 +46,26 @@ hook.Add("KeyPress", "tdm_vehicle", function( ply, key )
 		vehList:SetPadType(LocalPlayer().VehiclePad:GetPadType())
 	end
 end)
+
+net.Receive("tdm_vehicle", function()
+	local padi = net.ReadUInt(16)
+	local enti = net.ReadUInt(16)
+	local vname = net.ReadString()
+	local t = net.ReadUInt(4)
+	local cur = CurTime()
+	timer.Create("addveh_" .. enti, 0, 0, function()
+		if CurTime() > cur + 1 then
+			timer.Remove("addveh_" .. enti)
+			return
+		end
+		if IsValid(Entity(enti)) then
+			GAMEMODE.SpawnedVehicles[padi] = {
+				Entity = Entity(enti),
+				VehicleName = vname,
+				Team = t,
+			}
+			timer.Remove("addveh_" .. enti)
+		end
+	end)
+
+end)

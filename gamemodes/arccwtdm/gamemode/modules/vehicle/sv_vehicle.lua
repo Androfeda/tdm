@@ -20,11 +20,17 @@ net.Receive("tdm_vehicle", function(len, ply)
 	if IsValid(ent) then
 		pad:SetSpawnedVehicle(ent)
 		pad:SetNextReady(CurTime() + GAMEMODE.VehiclePadTypes[pad:GetPadType()].Cooldown or 5)
-		GAMEMODE.SpawnedVehicles[pad] = {
+		GAMEMODE.SpawnedVehicles[pad:EntIndex()] = {
 			Entity = ent,
 			LastOccupied = CurTime(),
 			Team = ply:Team(),
 		}
+		net.Start("tdm_vehicle")
+			net.WriteUInt(pad:EntIndex(), 16)
+			net.WriteUInt(ent:EntIndex(), 16)
+			net.WriteString(veh)
+			net.WriteUInt(ply:Team(), 4)
+		net.Broadcast()
 	else
 		print("Failed to spawn " .. veh .. "!")
 	end
