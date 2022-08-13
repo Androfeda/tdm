@@ -14,7 +14,7 @@ for i = 1,4 do
 end
 
 simfphys.weapon.ATGMClipsize = 2
-simfphys.weapon.GunClipsize = 15
+simfphys.weapon.GunClipsize = 20
 
 local function cannon_fire(ply,vehicle,shootOrigin,shootDirection)
 	vehicle:EmitSound("tdm/lav_fire.wav", 130)
@@ -214,15 +214,6 @@ function simfphys.weapon:PrimaryAttack( vehicle, ply, shootOrigin, Attachment )
 
 	if not self:CanPrimaryAttack( vehicle ) then return end
 
-	if self.GunClip <= 0 then
-		self.GunClip = self.GunClipsize
-		vehicle:EmitSound("tdm/lav_reload.wav")
-		self:SetNextPrimaryFire(vehicle, CurTime() + 2)
-		vehicle:SetNWString("WeaponMode", tostring(self.GunClip) .. " | " .. tostring(self.ATGMClip))
-
-		return
-	end
-
 	self.GunClip = self.GunClip - 1
 	vehicle:SetNWString("WeaponMode", tostring(self.GunClip) .. " | " .. tostring(self.ATGMClip))
 
@@ -235,7 +226,15 @@ function simfphys.weapon:PrimaryAttack( vehicle, ply, shootOrigin, Attachment )
 		effectdata:SetEntity( vehicle )
 	util.Effect( "arctic_apc_muzzle", effectdata, true, true )
 
-	self:SetNextPrimaryFire( vehicle, CurTime() + 0.3 )
+	if self.GunClip <= 0 then
+		self.GunClip = self.GunClipsize
+		vehicle:EmitSound("simulated_vehicles/weapons/apc_reload.wav")
+		self:SetNextPrimaryFire(vehicle, CurTime() + 2)
+		vehicle:SetNWString("WeaponMode", tostring(self.GunClip) .. " | " .. tostring(self.ATGMClip))
+	else
+		self:SetNextPrimaryFire( vehicle, CurTime() + 0.3 )
+
+	end
 end
 
 function simfphys.weapon:SecondaryAttack( vehicle, ply, shootOrigin, Attachment )
