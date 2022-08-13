@@ -162,7 +162,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 				surface.SetDrawColor(CLR_W)
 				surface.DrawRect(c * 128, (c * 36), (c * 200) * (VW:GetCurHealth() / VW:GetMaxHealth()), c * 18)
 
-				GAMEMODE:ShadowText( math.Round( VW:GetVelocity():Length() * HUToM ) .. "km/h", "CGHUD_2", (c * 16), (c * 48) + (c * 16) + (c * 48), CLR_W, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+				GAMEMODE:ShadowText( math.Round( VW:GetVelocity():Length() * HUToM / 0.277778 ) .. "km/h", "CGHUD_2", (c * 16), (c * 48) + (c * 16) + (c * 48), CLR_W, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
 				GAMEMODE:ShadowText( math.Round( VW:GetVelocity():Length() ) .. "hU", "CGHUD_4", (c * 16), (c * 48) + (c * 16) + (c * 48) + (c * 24), CLR_W, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
 				
 				-- Fuel

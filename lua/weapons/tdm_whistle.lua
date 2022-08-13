@@ -70,7 +70,7 @@ function SWEP:SecondaryAttack()
 	self:SetNextPrimaryFire( CurTime() + self.Delay2 )
 
 	if (game.SinglePlayer() and true) or (!game.SinglePlayer() and IsFirstTimePredicted()) then
-		self:GetOwner():EmitSound( ")tdm/catcall.ogg", 100, 100, 1, CHAN_VOICE )
+		self:GetOwner():EmitSound( ")tdm/catcall.ogg", 100, util.SharedRandom("catcall", 95, 105), 1, CHAN_VOICE )
 	end
 
 	self:GetOwner():AnimRestartGesture(GESTURE_SLOT_CUSTOM, ACT_GMOD_GESTURE_AGREE, true)
