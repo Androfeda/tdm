@@ -5,7 +5,7 @@ SWEP.PrintName = "Whistle"
 SWEP.Spawnable = false
 SWEP.Category = "Other"
 
-SWEP.Instructions = "Attack to whistle"
+SWEP.Instructions = "Attack to whistle\nSecondary to catcall"
 
 SWEP.ViewModel = "models/tdm/whistle.mdl"
 SWEP.WorldModel = "models/weapons/w_crowbar.mdl"
@@ -23,13 +23,14 @@ SWEP.Secondary.Ammo = "none"
 SWEP.Secondary.Ammo = "none"
 
 SWEP.Delay = 1.5
+SWEP.Delay2 = 2
 
 function SWEP:SetupDataTables()
 	self:NetworkVar("Bool", 0, "Fired")
 end
 
 function SWEP:Think()
-	if !self:GetOwner():KeyDown(IN_ATTACK) then
+	if !self:GetOwner():KeyDown(IN_ATTACK) and !self:GetOwner():KeyDown(IN_ATTACK2) then
 		self:SetFired(false)
 	end
 	
@@ -48,7 +49,7 @@ function SWEP:PrimaryAttack()
 	self:SetNextPrimaryFire( CurTime() + self.Delay )
 
 	if (game.SinglePlayer() and true) or (!game.SinglePlayer() and IsFirstTimePredicted()) then
-		self:GetOwner():EmitSound( ")tdm/whistle" .. math.random(1, 6) .. ".ogg", 100, 100, 1, CHAN_VOICE )
+		self:GetOwner():EmitSound( ")tdm/whistle" .. math.Round(util.SharedRandom("whistle", 1, 6)) .. ".ogg", 100, 100, 1, CHAN_VOICE )
 	end
 
 	self:GetOwner():AnimRestartGesture(GESTURE_SLOT_CUSTOM, ACT_GMOD_GESTURE_WAVE, true)
@@ -59,6 +60,24 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
+	if self:GetNextPrimaryFire() > CurTime() then
+		return false
+	end
+	if self:GetFired() then
+		return false
+	end
+	
+	self:SetNextPrimaryFire( CurTime() + self.Delay2 )
+
+	if (game.SinglePlayer() and true) or (!game.SinglePlayer() and IsFirstTimePredicted()) then
+		self:GetOwner():EmitSound( ")tdm/catcall.ogg", 100, 100, 1, CHAN_VOICE )
+	end
+
+	self:GetOwner():AnimRestartGesture(GESTURE_SLOT_CUSTOM, ACT_GMOD_GESTURE_AGREE, true)
+
+	self:SendAnim( "whistle", 1 )
+
+	self:SetFired(true)
 end
 
 function SWEP:SendAnim( seq, mult )
