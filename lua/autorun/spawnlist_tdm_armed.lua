@@ -387,7 +387,7 @@ local V = {
 	SpawnAngleOffset = 90,
 
 	Members = {
-		Mass = 2500,
+		Mass = 3500,
 		EnginePos = Vector(90,0,48),
 		BulletProofTires = false,
 
@@ -532,7 +532,7 @@ local V = {
 	SpawnAngleOffset = 90,
 
 	Members = {
-		Mass = 2500,
+		Mass = 3500,
 		EnginePos = Vector(90,0,48),
 		BulletProofTires = false,
 
@@ -679,7 +679,7 @@ local V = {
 	SpawnAngleOffset = 90,
 
 	Members = {
-		Mass = 2500,
+		Mass = 3500,
 		EnginePos = Vector(90,0,48),
 		BulletProofTires = false,
 
@@ -823,7 +823,7 @@ local V = {
 	SpawnAngleOffset = 90,
 
 	Members = {
-		Mass = 2500,
+		Mass = 3500,
 		EnginePos = Vector(90,0,48),
 		BulletProofTires = false,
 
