@@ -29,6 +29,8 @@ local am_sg = Material("tdm/shotgun.png", "smooth")
 local am_gr = Material("tdm/grenade.png", "smooth")
 local am_fr = Material("tdm/frag.png", "smooth")
 local am_he = Material("tdm/flame.png", "smooth")
+local am_ms = Material("tdm/missile.png", "smooth")
+local am_cn = Material("tdm/cannon.png", "smooth")
 
 local diamond = Material("tdm/diamond.png", "smooth")
 local skull = Material("tdm/skull.png", "smooth")
@@ -77,6 +79,22 @@ local toop = {
 		gap_hor = 12,
 		gap_ver = 32,
 		rep = 30,
+		size = 32,
+	},
+
+	-- vehicles
+	["missile"] = {
+		Texture = am_ms,
+		gap_hor = 14,
+		gap_ver = 32,
+		rep = 5,
+		size = 32,
+	},
+	["cannon"] = {
+		Texture = am_cn,
+		gap_hor = 8,
+		gap_ver = 32,
+		rep = 40,
 		size = 32,
 	},
 }
@@ -164,7 +182,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 
 				GAMEMODE:ShadowText( math.Round( VW:GetVelocity():Length() * HUToM / 0.277778 ) .. "km/h", "CGHUD_2", (c * 16), (c * 48) + (c * 16) + (c * 48), CLR_W, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
 				GAMEMODE:ShadowText( math.Round( VW:GetVelocity():Length() ) .. "hU", "CGHUD_4", (c * 16), (c * 48) + (c * 16) + (c * 48) + (c * 24), CLR_W, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
-				
+
 				-- Fuel
 				-- GAMEMODE:ShadowText( math.Round( (VW:GetFuel() / VW:GetMaxFuel())*100 ) .. "%", "CGHUD_7", (c * 128), (c * 36) - (c * 10), CLR_FUEL, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
 				surface.SetDrawColor(CLR_B2)
@@ -193,15 +211,17 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 
 			if VW then
 				iClip1		= VW:GetNWInt( "CurWPNAmmo", -1 )
-				iClip2		= -1
-				wtfsimfphys = math.max( wtfsimfphys, VW:GetNWInt( "CurWPNAmmo", -1 ) )
-				iMaxClip1	= wtfsimfphys
-				iMaxClip2	= -1
+				iClip2		= VW:GetNWInt( "CurWPNAmmo2", -1 )
+				-- wtfsimfphys = math.max( wtfsimfphys, VW:GetNWInt( "CurWPNAmmo", -1 ) )
+				iMaxClip1	= VW:GetNWInt( "MaxWPNAmmo", 0 ) -- wtfsimfphys
+				iMaxClip2	= VW:GetNWInt( "MaxWPNAmmo2", -1 )
 				iAmmoType1	= 13
 				iAmmoType2	= 13
 				iAmmoCount1	= 13
 				iAmmoCount2	= 13
 				iFiremode = VW:GetNWString( "WeaponMode" )
+				iAmmoIcon1 = VW:GetNWString( "WPNType", "rifle" )
+				iAmmoIcon2 = VW:GetNWString( "WPNType2", "rifle" )
 			elseif PW then
 				iClip1		= PW:Clip1()
 				iClip2		= PW:Clip2()
@@ -227,7 +247,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 				local lg = 8 -- lr distance
 				local hg = 34 -- ud distance
 				local rep = 30 -- repeating
-				local dat = refer[game.GetAmmoName(iAmmoType1)] or toop.frag
+				local dat = (VW and toop[iAmmoIcon1 or ""]) or refer[game.GetAmmoName(iAmmoType1)] or toop.frag
 
 				if dat then
 					si = dat.size
@@ -284,7 +304,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 					local lg = 8
 					local hg = 34
 					local rep = 30
-					local dat = refer[game.GetAmmoName(iAmmoType2)] or toop.pistol
+					local dat = (VW and toop[iAmmoIcon2]) or refer[game.GetAmmoName(iAmmoType2)] or toop.pistol
 
 					if dat then
 						si = dat.size

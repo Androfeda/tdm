@@ -80,7 +80,14 @@ function simfphys.weapon:Initialize(vehicle)
 		simfphys.RegisterCamera(vehicle.pSeat[i], Vector(0, 30, 60), Vector(0, -20, 60))
 	end
 
-	vehicle:SetNWString("WeaponMode", tostring(math.Round(100)) .. "%")
+	vehicle:SetNWInt("MaxWPNAmmo", 100 / 5)
+	vehicle:SetNWInt("CurWPNAmmo", 100 / 5)
+	vehicle:SetNWInt("MaxWPNAmmo2", 1)
+	vehicle:SetNWInt("CurWPNAmmo2", 1)
+	vehicle:SetNWString("WPNType", "frag")
+	vehicle:SetNWString("WPNType2", "missile")
+	vehicle:SetNWString("WeaponMode", "Pulse Gun | ATGM")
+	--vehicle:SetNWString("WeaponMode", tostring(math.Round(100)) .. "%")
 end
 
 function simfphys.weapon:AimWeapon(ply, vehicle, pod)
@@ -142,7 +149,8 @@ function simfphys.weapon:Think(vehicle)
 
 	if not fire then
 		vehicle.charge = math.min(vehicle.charge + 0.3, 100)
-		vehicle:SetNWString("WeaponMode", tostring(math.Round(vehicle.charge)) .. "%")
+		vehicle:SetNWInt("CurWPNAmmo", math.ceil(vehicle.charge / 5))
+		--vehicle:SetNWString("WeaponMode", tostring(math.Round(vehicle.charge)) .. "%")
 	end
 
 	if vehicle.NextShoot < curtime and fire then
@@ -157,13 +165,16 @@ function simfphys.weapon:Think(vehicle)
 			vehicle.charge = -25
 		end
 
-		vehicle:SetNWString("WeaponMode", tostring(math.Round(vehicle.charge)) .. "%")
+		vehicle:SetNWInt("CurWPNAmmo", math.ceil(vehicle.charge / 5))
+		--vehicle:SetNWString("WeaponMode", tostring(math.Round(vehicle.charge)) .. "%")
 		vehicle.NextShoot = curtime + 0.08 -- + (1 - vehicle.charge / 100) * 0.1
 	end
 
 	ID = vehicle:LookupAttachment("cannon_muzzle")
 	Attachment = vehicle:GetAttachment(ID)
 	vehicle.NextSecondaryShoot = vehicle.NextSecondaryShoot or 0
+
+	vehicle:SetNWInt("CurWPNAmmo2", (vehicle.NextSecondaryShoot < curtime) and 1 or 0)
 
 	if alt_fire ~= vehicle.afire_pressed then
 		vehicle.afire_pressed = alt_fire

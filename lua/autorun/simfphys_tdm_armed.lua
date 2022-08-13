@@ -348,3 +348,15 @@ function SIMF_TDM.OnTakeDamage(ent, dmginfo)
 		end
 	end
 end
+
+local function override_hook()
+	if engine.ActiveGamemode() ~= "arccwtdm" then return end
+	timer.Simple(1, function()
+		local old_hook = hook.GetTable()["HUDPaint"]["simfphys_HUD"]
+		if old_hook then
+			-- we have our own hud
+			hook.Remove("HUDPaint", "simfphys_HUD")
+		end
+	end)
+end
+hook.Add("InitPostEntity", "tdm_simfphysoverride", override_hook)

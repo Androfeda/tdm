@@ -73,8 +73,14 @@ function simfphys.weapon:Initialize( vehicle )
 
 	simfphys.RegisterCamera( vehicle.pSeat[1], Vector(-4,26,24), Vector(0,45,100), true, "muzzle_up" )
 
-	-- vehicle:SetNWString( "WeaponMode", "Cannon | ATGM")
-	vehicle:SetNWString("WeaponMode", tostring(self.GunClipsize) .. " | " .. tostring(self.ATGMClipsize))
+	vehicle:SetNWString( "WeaponMode", "Cannon | ATGM")
+	vehicle:SetNWInt("MaxWPNAmmo", self.GunClipsize)
+	vehicle:SetNWInt("CurWPNAmmo", self.GunClipsize)
+	vehicle:SetNWInt("MaxWPNAmmo2", self.ATGMClipsize)
+	vehicle:SetNWInt("CurWPNAmmo2", self.ATGMClipsize)
+	vehicle:SetNWString("WPNType", "cannon")
+	vehicle:SetNWString("WPNType2", "missile")
+	--vehicle:SetNWString("WeaponMode", tostring(self.GunClipsize) .. " | " .. tostring(self.ATGMClipsize))
 
 	self.ATGMClip = self.ATGMClipsize
 
@@ -215,7 +221,8 @@ function simfphys.weapon:PrimaryAttack( vehicle, ply, shootOrigin, Attachment )
 	if not self:CanPrimaryAttack( vehicle ) then return end
 
 	self.GunClip = self.GunClip - 1
-	vehicle:SetNWString("WeaponMode", tostring(self.GunClip) .. " | " .. tostring(self.ATGMClip))
+	vehicle:SetNWInt("CurWPNAmmo", self.GunClip)
+	--vehicle:SetNWString("WeaponMode", tostring(self.GunClip) .. " | " .. tostring(self.ATGMClip))
 
 	local shootDirection = -Attachment.Ang:Up()
 
@@ -230,10 +237,10 @@ function simfphys.weapon:PrimaryAttack( vehicle, ply, shootOrigin, Attachment )
 		self.GunClip = self.GunClipsize
 		vehicle:EmitSound("simulated_vehicles/weapons/apc_reload.wav")
 		self:SetNextPrimaryFire(vehicle, CurTime() + 2)
-		vehicle:SetNWString("WeaponMode", tostring(self.GunClip) .. " | " .. tostring(self.ATGMClip))
+		vehicle:SetNWInt("CurWPNAmmo", self.GunClip)
+		--vehicle:SetNWString("WeaponMode", tostring(self.GunClip) .. " | " .. tostring(self.ATGMClip))
 	else
 		self:SetNextPrimaryFire( vehicle, CurTime() + 0.3 )
-
 	end
 end
 
@@ -256,7 +263,8 @@ function simfphys.weapon:SecondaryAttack( vehicle, ply, shootOrigin, Attachment 
 	local Attachment = vehicle:GetAttachment( AttachmentID )
 
 	self.ATGMClip = self.ATGMClip - 1
-	vehicle:SetNWString("WeaponMode", tostring(self.GunClip) .. " | " .. tostring(self.ATGMClip))
+	vehicle:SetNWInt("CurWPNAmmo2", self.ATGMClip)
+	--vehicle:SetNWString("WeaponMode", tostring(self.GunClip) .. " | " .. tostring(self.ATGMClip))
 
 	local shootDirection = -Attachment.Ang:Up()
 
@@ -378,7 +386,8 @@ function simfphys.weapon:Think( vehicle )
 
 	if (self.ATGMNext or 0) > 0 and self.ATGMNext < CurTime() then
 		self.ATGMClip = self.ATGMClip + 1
-		vehicle:SetNWString("WeaponMode", tostring(self.GunClip) .. " | " .. tostring(self.ATGMClip))
+		vehicle:SetNWInt("CurWPNAmmo2", self.ATGMClip)
+		--vehicle:SetNWString("WeaponMode", tostring(self.GunClip) .. " | " .. tostring(self.ATGMClip))
 		vehicle:EmitSound("buttons/lever6.wav", 75, 105)
 		if self.ATGMClip < self.ATGMClipsize then
 			self.ATGMNext = CurTime() + 5
