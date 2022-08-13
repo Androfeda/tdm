@@ -30,7 +30,8 @@ hook.Add("Think", "tdm_vehiclepad", function()
 	for _, v in pairs(ents.FindByClass("tdm_vehiclepad")) do
 		if v:GetTeam() == LocalPlayer():Team() and GAMEMODE:WithinVehiclePadRange(LocalPlayer(), v) then
 			local vd = LocalPlayer():GetPos():DistToSqr(v:GetPos())
-			if not ent or dist > vd then
+			local zd = LocalPlayer():GetPos().z - v:GetPos().z
+			if (not ent or dist > vd) and zd > -32 and zd < 72 then
 				ent = v
 				dist = vd
 			end
