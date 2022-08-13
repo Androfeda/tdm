@@ -19,6 +19,9 @@ local CLR_W = Color(255, 255, 255, 255)
 local CLR_W2 = Color(255, 255, 255, 255)
 local CLR_R2 = Color(255, 150, 150, 150)
 
+local CLR_FUEL = Color(255, 255, 150, 255)
+
+local veh = Material("tdm/vehiclehealth.png", "smooth")
 local am_pi = Material("tdm/pistol.png", "smooth")
 local am_ri = Material("tdm/rifle.png", "smooth")
 local am_sg = Material("tdm/shotgun.png", "smooth")
@@ -89,6 +92,10 @@ local refer = {
 	["SMG1_Grenade"] = toop.grenade,
 }
 
+local HUToM = 0.0254
+
+local wtfsimfphys = 0
+
 hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 	local w, h = ScrW(), ScrH()
 	local c = CGSS(1)
@@ -99,8 +106,13 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 		PW = false
 	end
 
+	local VW = false
+	if IsValid(LocalPlayer():GetVehicle()) and LocalPlayer().GetSimfphys then
+		VW = LocalPlayer():GetSimfphys()
+	end
+
 	if IsValid(P) then
-		if P:Alive() then
+		if P:Alive() and (P:Health() / P:GetMaxHealth()) > 0 then
 			CLR_W = team.GetColor(P:Team())
 			CLR_W.r = (CLR_W.r * 0.5) + (255 * 0.5)
 			CLR_W.g = (CLR_W.g * 0.5) + (255 * 0.5)
@@ -109,7 +121,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 			surface.SetDrawColor(CLR_B2)
 			surface.DrawOutlinedRect((c * 128) + (c * 4), h - (c * 46) + (c * 4), c * 200, c * 18, c * 4)
 
-			if P:Health() ~= 100 then
+			if (P:Health() / P:GetMaxHealth()) != 1 then
 				surface.SetDrawColor(CLR_B2)
 				surface.DrawRect((c * 128) + (c * 4), h - (c * 46) + (c * 8), (c * 200) * (P:Health() / P:GetMaxHealth()), c * 10)
 			end
@@ -119,6 +131,35 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 			surface.SetDrawColor(CLR_W)
 			surface.DrawRect(c * 128, h - (c * 46), (c * 200) * (P:Health() / P:GetMaxHealth()), c * 18)
 
+			if VW then
+				GAMEMODE:ShadowText("   " .. math.Round((VW:GetCurHealth() / VW:GetMaxHealth())*100), "CGHUD_2", (c * 16), (c * 48) + (c * 16), CLR_W, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+				surface.SetMaterial(veh)
+				surface.SetDrawColor(CLR_B2)
+				surface.DrawTexturedRect( (c * 14) + (c * 4), (c * 29) + (c * 4), (c * 26), (c * 26) ) -- wrench
+				surface.DrawOutlinedRect((c * 128) + (c * 4), (c * 36) + (c * 4), c * 200, c * 18, c * 4)
+
+				if (VW:GetCurHealth() / VW:GetMaxHealth()) != 1 then
+					surface.SetDrawColor(CLR_B2)
+					surface.DrawRect((c * 128) + (c * 4), (c * 36) + (c * 8), (c * 200) * (VW:GetCurHealth() / VW:GetMaxHealth()), c * 10)
+				end
+
+				surface.SetDrawColor(CLR_W)
+				surface.DrawTexturedRect( (c * 14), (c * 29), (c * 26), (c * 26) ) -- wrench
+				surface.DrawOutlinedRect(c * 128, (c * 36), c * 200, c * 18, c * 4)
+				surface.SetDrawColor(CLR_W)
+				surface.DrawRect(c * 128, (c * 36), (c * 200) * (VW:GetCurHealth() / VW:GetMaxHealth()), c * 18)
+
+				GAMEMODE:ShadowText( math.Round( VW:GetVelocity():Length() * HUToM ) .. "km/h", "CGHUD_2", (c * 16), (c * 48) + (c * 16) + (c * 48), CLR_W, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+				GAMEMODE:ShadowText( math.Round( VW:GetVelocity():Length() ) .. "hU", "CGHUD_4", (c * 16), (c * 48) + (c * 16) + (c * 48) + (c * 24), CLR_W, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+				
+				-- Fuel
+				-- GAMEMODE:ShadowText( math.Round( (VW:GetFuel() / VW:GetMaxFuel())*100 ) .. "%", "CGHUD_7", (c * 128), (c * 36) - (c * 10), CLR_FUEL, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+				surface.SetDrawColor(CLR_B2)
+				surface.DrawRect((c * 128) + (c * 4), (c * 36) - (c * 8) + (c * 4), (c * 200) * (VW:GetFuel() / VW:GetMaxFuel()), c * 4)
+				surface.SetDrawColor(CLR_FUEL)
+				surface.DrawRect(c * 128, (c * 36) - (c * 8), (c * 200) * (VW:GetFuel() / VW:GetMaxFuel()), c * 4)
+			end
+
 			-- stamina
 			if P.GetStamina_Run and P:GetStamina_Run() < 1 then
 				surface.SetDrawColor(CLR_B2)
@@ -127,38 +168,53 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 				surface.DrawRect(c * 128, h - (c * 46) + (c * 22), (c * 200) * (P:GetStamina_Run() / 1), c * 4)
 			end
 
-			if P.GetNextJump and P:GetNextJump() < 1 then
-				surface.SetDrawColor(CLR_B2)
-				surface.DrawRect((c * 128) + (c * 4), h - (c * 46) - (c * 8) + (c * 4), c * 200, c * 4)
-				surface.SetDrawColor(CLR_W)
-				surface.DrawRect(c * 128, h - (c * 46) - (c * 8), (c * 200) * P:GetNextJump(), c * 4)
+			local iClip1
+			local iClip2
+			local iMaxClip1
+			local iMaxClip2
+			local iAmmoType1
+			local iAmmoType2
+			local iAmmoCount1
+			local iAmmoCount2
+			local iFiremode
+
+			if VW then
+				iClip1		= VW:GetNWInt( "CurWPNAmmo", -1 )
+				iClip2		= -1
+				wtfsimfphys = math.max( wtfsimfphys, VW:GetNWInt( "CurWPNAmmo", -1 ) )
+				iMaxClip1	= wtfsimfphys
+				iMaxClip2	= -1
+				iAmmoType1	= 13
+				iAmmoType2	= 13
+				iAmmoCount1	= 13
+				iAmmoCount2	= 13
+				iFiremode = VW:GetNWString( "WeaponMode" )
+			elseif PW then
+				iClip1		= PW:Clip1()
+				iClip2		= PW:Clip2()
+				iMaxClip1	= PW:GetMaxClip1()
+				iMaxClip2	= PW:GetMaxClip2()
+				iAmmoType1	= PW:GetPrimaryAmmoType()
+				iAmmoType2	= PW:GetSecondaryAmmoType()
+				iAmmoCount1	= P:GetAmmoCount(iAmmoType1)
+				iAmmoCount2	= P:GetAmmoCount(iAmmoType2)
+				if PW.GetFiremodeName then
+					iFiremode = PW:GetFiremodeName()
+				--else
+				--	iFiremode = "Not Vehicle"
+				end
 			end
 
-			if PW then
-				local str1 = ""
-				local str2 = ""
+			if !VW then
+				wtfsimfphys = 0
+			end
 
-				if PW:GetPrimaryAmmoType() == -1 and PW:Clip1() <= 0 then
-					str1 = ""
-				elseif PW:Clip1() == -1 then
-					str1 = P:GetAmmoCount(PW:GetPrimaryAmmoType())
-				elseif true or PW:GetPrimaryAmmoType() == -1 then
-					str1 = PW:Clip1()
-				end
-
-				if PW:GetSecondaryAmmoType() == -1 and PW:Clip2() <= 0 then
-					str2 = ""
-				elseif PW:Clip2() == -1 then
-					str2 = P:GetAmmoCount(PW:GetSecondaryAmmoType())
-				elseif true or PW:GetSecondaryAmmoType() == -1 then
-					str2 = PW:Clip2()
-				end
-
+			if PW or VW then
 				local si = 32
 				local lg = 8 -- lr distance
 				local hg = 34 -- ud distance
 				local rep = 30 -- repeating
-				local dat = refer[game.GetAmmoName(PW:GetPrimaryAmmoType())] or toop.frag
+				local dat = refer[game.GetAmmoName(iAmmoType1)] or toop.frag
 
 				if dat then
 					si = dat.size
@@ -170,11 +226,9 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 
 				local ind = 0
 
-				local fml = 0
-				if PW.GetFiremodeName then
+				if iFiremode then
 					surface.SetFont("CGHUD_5")
-					fml = surface.GetTextSize(PW:GetFiremodeName())
-					GAMEMODE:ShadowText(PW:GetFiremodeName(), "CGHUD_5", w - (c * 28), h - (c * 16) - (c * ind), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+					GAMEMODE:ShadowText(iFiremode, "CGHUD_5", w - (c * 28), h - (c * 16) - (c * ind), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
 					ind = ind + 26
 				end
 
@@ -182,11 +236,11 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 				local li = 0 -- leftright
 				local hi = 0 -- updown
 
-				for i = 1, math.max(PW:GetMaxClip1(), PW:Clip1()) do
+				for i = 1, math.max(iMaxClip1, iClip1) do
 					surface.SetDrawColor(CLR_B2)
 					surface.DrawTexturedRect(ax - (c * li * lg) + (c * 4), ay - (c * hi * hg) + (c * 4), c * si, c * si)
 
-					if i ~= math.max(PW:GetMaxClip1(), PW:Clip1()) and (i % rep == 0) then
+					if i ~= math.max(iMaxClip1, iClip1) and (i % rep == 0) then
 						hi = hi + 1
 						li = -1
 					end
@@ -194,7 +248,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 					li = li + 1
 				end
 				if not GAMEMODE:WeaponHasInfiniteAmmo(PW) then
-					GAMEMODE:ShadowText(P:GetAmmoCount(PW:GetPrimaryAmmoType()), "CGHUD_5", ax + (c * 1) - (c * li * lg), h - (c * 44) - (c * hi * hg), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+					GAMEMODE:ShadowText(iAmmoCount1, "CGHUD_5", ax + (c * 1) - (c * li * lg), h - (c * 44) - (c * hi * hg), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
 					GAMEMODE:ShadowText("+", "CGHUD_5", ax + (c * 15) - (c * li * lg), h - (c * 44) - (c * hi * hg), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
 				end
 
@@ -217,7 +271,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 					local lg = 8
 					local hg = 34
 					local rep = 30
-					local dat = refer[game.GetAmmoName(PW:GetSecondaryAmmoType())] or toop.pistol
+					local dat = refer[game.GetAmmoName(iAmmoType2)] or toop.pistol
 
 					if dat then
 						si = dat.size
@@ -230,28 +284,28 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 					local li = 0
 					local hi = hi + 1
 
-					for i = 1, math.max(PW:GetMaxClip2(), PW:Clip2()) do
+					for i = 1, math.max(iMaxClip2, iClip2) do
 						surface.SetDrawColor(CLR_B2)
 						surface.DrawTexturedRect(ax - (c * li * lg) + (c * 4), ay - (c * hi * hg) + (c * 4), c * si, c * si)
 
-						if i ~= math.max(PW:GetMaxClip2(), PW:Clip2()) and i % rep == 0 then
+						if i ~= math.max(iMaxClip2, iClip2) and i % rep == 0 then
 							hi = hi + 1
 							li = -1
 						end
 
 						li = li + 1
 					end
-					if PW:GetMaxClip2() > 0 and PW:GetSecondaryAmmoType() != -1 and GAMEMODE.AmmoBlacklist[string.lower(game.GetAmmoName(PW:GetSecondaryAmmoType()))] then
-						GAMEMODE:ShadowText(P:GetAmmoCount(PW:GetSecondaryAmmoType()), "CGHUD_5", ax + (c * 1) - (c * li * lg), h - (c * hi * hg) - (c * 44), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+					if iMaxClip2 > 0 and iAmmoType2 != -1 and GAMEMODE.AmmoBlacklist[string.lower(game.GetAmmoName(iAmmoType2))] then
+						GAMEMODE:ShadowText(iAmmoCount2, "CGHUD_5", ax + (c * 1) - (c * li * lg), h - (c * hi * hg) - (c * 44), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
 						GAMEMODE:ShadowText("+", "CGHUD_5", ax + (c * 15) - (c * li * lg), h - (c * hi * hg) - (c * 44), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
 					end
 
 					li = 0
 
-					for i = 1, PW:Clip2() do
-						if (PW:Clip2() - i) >= PW:GetMaxClip2() then
+					for i = 1, iClip2 do
+						if (iClip2 - i) >= iMaxClip2 then
 							surface.SetDrawColor(CLR_R)
-						elseif (PW:Clip2() - i) % 2 == 0 then
+						elseif (iClip2 - i) % 2 == 0 then
 							surface.SetDrawColor(CLR_W)
 						else
 							surface.SetDrawColor(CLR_W2)
@@ -272,10 +326,10 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 				li = 0
 				hi = 0
 
-				for i = 1, PW:Clip1() do
-					if (PW:Clip1() - i) >= PW:GetMaxClip1() then
+				for i = 1, iClip1 do
+					if (iClip1 - i) >= iMaxClip1 then
 						surface.SetDrawColor(CLR_R)
-					elseif (PW:Clip1() - i) % 3 == 0 then
+					elseif (iClip1 - i) % 3 == 0 then
 						surface.SetDrawColor(CLR_W)
 					else
 						surface.SetDrawColor(CLR_W2)
