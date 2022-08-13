@@ -7,7 +7,7 @@ local function cAPCFire(ply, vehicle, shootOrigin, Attachment, damage, ID)
 	effectdata:SetScale(1)
 	util.Effect("AirboatMuzzleFlash", effectdata, true, true)
 	local bullet = {}
-	bullet.Num = 3
+	bullet.Num = 1
 	bullet.Src = shootOrigin
 	bullet.Dir = Attachment.Ang:Forward()
 	local c = (1 - vehicle.charge / 100) ^ 0.5 * 0.03 + 0.01
@@ -146,7 +146,7 @@ function simfphys.weapon:Think(vehicle)
 	end
 
 	if vehicle.NextShoot < curtime and fire then
-		cAPCFire(ply, vehicle, shootOrigin, Attachment, 20, ID)
+		cAPCFire(ply, vehicle, shootOrigin, Attachment, 50, ID)
 		vehicle:EmitSound("^npc/strider/strider_minigun.wav", 120, 100 - (1 - vehicle.charge / 100) * 20)
 		vehicle.charge = vehicle.charge - 1
 		if vehicle.charge <= 0 then

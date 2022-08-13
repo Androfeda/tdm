@@ -46,10 +46,19 @@ GM.Vehicles = {
 		Description2 = "Armed with top-mounted machine gun",
 	},
 
+	["avx_tdm_lav"] = {
+		Team = TEAM_CMB,
+		Type = VEHICLE_TYPE_MEDIUM,
+		Points = 600,
+
+		Description = "Anti-vehicle armored personnel carrier",
+		Description2 = "Fires two high velocity ATGMs rapidly",
+	},
+
 	["avx_tdm_combineapc"] = {
 		Team = TEAM_CMB,
 		Type = VEHICLE_TYPE_MEDIUM,
-		Points = 700,
+		Points = 800,
 
 		Description = "Mobile and versatile armored car",
 		Description2 = "Pulse gun penetrates armor",
@@ -57,7 +66,7 @@ GM.Vehicles = {
 	["avx_tdm_hecuapc"] = {
 		Team = TEAM_HECU,
 		Type = VEHICLE_TYPE_MEDIUM,
-		Points = 700,
+		Points = 800,
 
 		Description = "Durable armored personnel carrier",
 		Description2 = "Can switch between AP and HE rounds",
