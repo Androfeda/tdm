@@ -7,7 +7,7 @@ CreateConVar("tdm_regen_delay", 5, FCVAR_ARCHIVE + FCVAR_REPLICATED, "How long i
 CreateConVar("tdm_stamina_drain", 4, FCVAR_ARCHIVE + FCVAR_REPLICATED, "How long it takes to drain stamina")
 CreateConVar("tdm_stamina_gain", 3, FCVAR_ARCHIVE + FCVAR_REPLICATED, "How long it takes to regain stamina")
 CreateConVar("tdm_stamina_wain", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "How long it takes to start recharging")
-CreateConVar("tdm_jump_gain", 0.5, FCVAR_ARCHIVE + FCVAR_REPLICATED, "How long it takes to get full jump")
+CreateConVar("tdm_jump_gain", (1/3), FCVAR_ARCHIVE + FCVAR_REPLICATED, "How long it takes to get full jump")
 CreateConVar("tdm_jump_power", 220, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Jump power")
 
 CreateConVar("tdm_ff", 0.5, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Friendly fire damage percent (0 is no damage).", 0, 1)
