@@ -14,7 +14,7 @@ hook.Add("StartCommand", "TDM_StartCommand", function( ply, cmd )
 	local time = GetConVar("tdm_jump_gain"):GetFloat() -- time to restore full jump
 	ply:SetNextJump( math.Approach( ply:GetNextJump(), 1, FrameTime()/time ) )
 	local tong = Lerp( ply:GetNextJump(), 0, GetConVar("tdm_jump_power"):GetFloat() )
-	if tong <= 50 then tong = 0 end
+	if ply:GetNextJump() != 1 then tong = 0 end
 	ply:SetJumpPower( tong )
 
 	local actio = ply:GetMoveType() != MOVETYPE_NOCLIP and ply:GetAbsVelocity():Length2D() > 0 and ply:OnGround()
