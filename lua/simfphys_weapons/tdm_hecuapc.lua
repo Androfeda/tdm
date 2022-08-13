@@ -7,7 +7,7 @@ local function mg_fire(ply,vehicle,shootOrigin,shootDirection)
 	projectile:SetAngles( shootDirection:Angle() )
 	projectile:SetOwner( vehicle )
 	projectile.Attacker = ply
-	projectile.DeflectAng = 40
+	projectile.DeflectAng = 0
 	projectile.AttackingEnt = vehicle
 	projectile.Force = 50
 	projectile.Damage = 90
@@ -46,7 +46,7 @@ local function mg_fire2(ply,vehicle,shootOrigin,shootDirection)
 	projectile:SetAngles( shootDirection:Angle() )
 	projectile:SetOwner( vehicle )
 	projectile.Attacker = ply
-	projectile.DeflectAng = 25
+	projectile.DeflectAng = 0
 	projectile.AttackingEnt = vehicle
 	projectile.Force = 10
 	projectile.Damage = 0

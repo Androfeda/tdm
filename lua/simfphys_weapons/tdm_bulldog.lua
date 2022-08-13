@@ -5,7 +5,8 @@ local function mg_fire(ply, vehicle, shootOrigin, shootDirection)
 	bullet.Num = 1
 	bullet.Src = shootOrigin
 	bullet.Dir = shootDirection
-	bullet.Spread = Vector(0.01, 0.01, 0)
+	local s = 0.005 + (vehicle.weaponheat or 0) * 0.025 * 0.01
+	bullet.Spread = Vector(s, s, 0)
 	bullet.Tracer = 1
 	bullet.TracerName = "simfphys_tracer"
 	bullet.Force = 8
@@ -25,6 +26,7 @@ local function mg_fire(ply, vehicle, shootOrigin, shootDirection)
 	util.Effect("RifleShellEject", eff)
 end
 
+
 function simfphys.weapon:ValidClasses()
 	local classes = {"avx_tdm_bulldog_mg"}
 
@@ -41,6 +43,8 @@ function simfphys.weapon:Initialize(vehicle)
 	data.Attach_Start_Left = "muzzle"
 	data.Attach_Start_Right = "muzzle"
 	data.Type = 3
+
+	vehicle.weaponheat = 0
 
 	simfphys.RegisterCrosshair(vehicle.pSeat[1], {
 		Attachment = "muzzle",
@@ -95,6 +99,8 @@ function simfphys.weapon:Think(vehicle)
 
 	if fire then
 		self:PrimaryAttack(vehicle, ply, shootOrigin)
+	else
+		vehicle.weaponheat = math.max(0, (vehicle.weaponheat or 0) - 0.5)
 	end
 end
 
@@ -127,4 +133,6 @@ function simfphys.weapon:PrimaryAttack(vehicle, ply)
 	util.Effect("AirboatMuzzleFlash", effectdata, true, true)
 	mg_fire(ply, vehicle, shootOrigin, shootDirection)
 	self:SetNextPrimaryFire(vehicle, CurTime() + (60 / 600))
+
+	vehicle.weaponheat = math.min(100, vehicle.weaponheat + 1)
 end

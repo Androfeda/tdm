@@ -238,10 +238,6 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 				end
 			end
 
-			if !VW then
-				wtfsimfphys = 0
-			end
-
 			if PW or VW then
 				local si = 32
 				local lg = 8 -- lr distance

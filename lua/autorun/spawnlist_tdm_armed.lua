@@ -18,7 +18,7 @@ local V = {
 			function(ent)
 				ent:SetNWBool( "simfphys_NoRacingHud", true )
 				ent.IsArmored = true
-				ent.DamageThreshold = 80
+				ent.DamageThreshold = 90
 				ent.DamageBlock = 100
 				SIMF_TDM.OnSpawned(ent)
 			end,
@@ -153,7 +153,7 @@ local V = {
 			function(ent)
 				ent:SetNWBool( "simfphys_NoRacingHud", true )
 				ent.IsArmored = true
-				ent.DamageThreshold = 100
+				ent.DamageThreshold = 125
 				ent.DamageBlock = 120
 				SIMF_TDM.OnSpawned(ent)
 			end,

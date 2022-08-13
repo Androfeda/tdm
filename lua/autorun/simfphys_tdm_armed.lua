@@ -245,12 +245,18 @@ function SIMF_TDM.OnTakeDamage(ent, dmginfo)
 	-- Armor
 	local skipthreshold = false
 	if ent.DamageBlock then
-		if dmginfo:IsDamageType(DMG_DIRECT) then
+		if dmginfo:IsDamageType(DMG_AIRBOAT) then
+			-- "pure" damage
 			skipthreshold = true
 		elseif dmginfo:IsDamageType(DMG_BURN) or dmginfo:IsDamageType(DMG_SLOWBURN) then
-			dmginfo:ScaleDamage(2 + math.Clamp((ent:GetCurHealth() / ent:GetMaxHealth()) * 3, 0, 3))
+			local factor = (dmginfo:GetDamageType() == DMG_BURN) and 3 or 1 -- pure fire gets bonus factor
+			dmginfo:ScaleDamage(2 + math.Clamp((ent:GetCurHealth() / ent:GetMaxHealth()) * factor, 0, factor))
 			skipthreshold = true
-		elseif not dmginfo:IsExplosionDamage() and not dmginfo:IsDamageType(DMG_AIRBOAT) then
+		elseif dmginfo:IsExplosionDamage() then
+			-- resistance against HE
+			dmginfo:SetDamage(dmginfo:GetDamage() - ent.DamageBlock / 2)
+		elseif not dmginfo:IsDamageType(DMG_DIRECT) then
+			-- DMG_DIRECT is used by simfphys_projectiles, skips block but affected by threshold
 			dmginfo:SetDamage(dmginfo:GetDamage() - ent.DamageBlock)
 		end
 	end

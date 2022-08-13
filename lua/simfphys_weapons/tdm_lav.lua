@@ -26,7 +26,7 @@ local function cannon_fire(ply,vehicle,shootOrigin,shootDirection)
 	projectile:SetAngles( shootDirection:Angle() )
 	projectile:SetOwner( vehicle )
 	projectile.Attacker = ply
-	projectile.DeflectAng = 30
+	projectile.DeflectAng = 0
 	projectile.AttackingEnt = vehicle
 	projectile.Force = 30
 	projectile.Damage = 80
