@@ -263,7 +263,9 @@ function simfphys.weapon:SecondaryAttack( vehicle, ply, shootOrigin, Attachment 
 
 	atgm_fire( ply, vehicle, shootOrigin + shootDirection * 80, shootDirection )
 
-	self.ATGMNext = CurTime() + 5
+	if (self.ATGMNext or 0) == 0 then
+		self.ATGMNext = CurTime() + 5
+	end
 
 	self:SetNextSecondaryFire( vehicle, CurTime() + 0.5 )
 end
