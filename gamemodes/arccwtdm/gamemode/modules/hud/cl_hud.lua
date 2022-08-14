@@ -233,8 +233,6 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 				iAmmoCount2	= P:GetAmmoCount(iAmmoType2)
 				if PW.GetFiremodeName then
 					iFiremode = PW:GetFiremodeName()
-				--else
-				--	iFiremode = "Not Vehicle"
 				end
 			end
 
