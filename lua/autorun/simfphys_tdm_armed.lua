@@ -250,8 +250,10 @@ function SIMF_TDM.OnTakeDamage(ent, dmginfo)
 			skipthreshold = true
 		elseif dmginfo:GetDamageType() == 0 then
 			-- physics damage
-			dmginfo:ScaleDamage(3)
-			skipthreshold = true
+			if dmginfo:GetDamage() > 5 then
+				dmginfo:ScaleDamage(4)
+				skipthreshold = true
+			end
 		elseif dmginfo:IsDamageType(DMG_BURN) or dmginfo:IsDamageType(DMG_SLOWBURN) then
 			local factor = (dmginfo:GetDamageType() == DMG_BURN) and 3 or 1 -- pure fire gets bonus factor
 			dmginfo:ScaleDamage(2 + math.Clamp((ent:GetCurHealth() / ent:GetMaxHealth()) * factor, 0, factor))
