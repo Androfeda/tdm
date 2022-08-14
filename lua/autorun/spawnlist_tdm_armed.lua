@@ -450,12 +450,12 @@ local V = {
 		TurnSpeed = 20,
 
 		MaxGrip = 120,
-		Efficiency = 0.75,
+		Efficiency = 1,
 		GripOffset = -0,
 		BrakePower = 65,
 
 		IdleRPM = 750,
-		LimitRPM = 4500,
+		LimitRPM = 5500,
 
 		PeakTorque = 150,
 		PowerbandStart = 2200,
@@ -599,12 +599,12 @@ local V = {
 		TurnSpeed = 20,
 
 		MaxGrip = 120,
-		Efficiency = 0.75,
+		Efficiency = 1,
 		GripOffset = -0,
 		BrakePower = 65,
 
 		IdleRPM = 750,
-		LimitRPM = 4500,
+		LimitRPM = 5500,
 
 		PeakTorque = 150,
 		PowerbandStart = 2200,
@@ -742,12 +742,12 @@ local V = {
 		TurnSpeed = 20,
 
 		MaxGrip = 120,
-		Efficiency = 0.75,
+		Efficiency = 1,
 		GripOffset = -0,
 		BrakePower = 65,
 
 		IdleRPM = 750,
-		LimitRPM = 4500,
+		LimitRPM = 5500,
 
 		PeakTorque = 150,
 		PowerbandStart = 2200,
@@ -890,12 +890,12 @@ local V = {
 		TurnSpeed = 20,
 
 		MaxGrip = 120,
-		Efficiency = 0.75,
+		Efficiency = 1,
 		GripOffset = -0,
 		BrakePower = 65,
 
 		IdleRPM = 750,
-		LimitRPM = 4500,
+		LimitRPM = 5500,
 
 		PeakTorque = 150,
 		PowerbandStart = 2200,
