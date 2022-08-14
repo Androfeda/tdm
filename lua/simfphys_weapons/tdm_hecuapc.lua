@@ -12,7 +12,7 @@ local function mg_fire(ply,vehicle,shootOrigin,shootDirection)
 	projectile.Force = 50
 	projectile.Damage = 90
 	projectile.BlastRadius = 96
-	projectile.BlastDamage = 50
+	projectile.BlastDamage = 60
 	projectile:SetBlastEffect("simfphys_tankweapon_explosion_micro")
 	projectile:SetSize( 4 )
 	projectile.Filter = table.Copy( vehicle.VehicleData["filter"] )
@@ -48,10 +48,10 @@ local function mg_fire2(ply,vehicle,shootOrigin,shootDirection)
 	projectile.Attacker = ply
 	projectile.DeflectAng = 0
 	projectile.AttackingEnt = vehicle
-	projectile.Force = 10
+	projectile.Force = 15
 	projectile.Damage = 0
-	projectile.BlastRadius = 300
-	projectile.BlastDamage = 80
+	projectile.BlastRadius = 350
+	projectile.BlastDamage = 200
 	projectile.MuzzleVelocity = 250
 	projectile:SetBlastEffect("simfphys_tankweapon_explosion_small")
 	projectile:SetSize( 6 )
