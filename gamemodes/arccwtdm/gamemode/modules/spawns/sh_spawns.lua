@@ -26,7 +26,7 @@ concommand.Add("tdm_loadspawnset", function(ply, cmd, args, argStr)
 	if CLIENT or (IsValid(ply) and not ply:IsAdmin()) then return end
 	local name = args[1]
 	if not name or name == "" then
-		name = GetConVar("tdm_gamemode"):GetString()
+		name = GetConVar("tdm_game"):GetString()
 	end
 	GAMEMODE:LoadSpawnSet(name)
 end)
@@ -35,7 +35,7 @@ concommand.Add("tdm_savespawnset", function(ply, cmd, args, argStr)
 	if CLIENT or (IsValid(ply) and not ply:IsAdmin()) then return end
 	local name = args[1]
 	if not name or name == "" then
-		name = GetConVar("tdm_gamemode"):GetString()
+		name = GetConVar("tdm_game"):GetString()
 	end
 	GAMEMODE:SaveSpawnSet(name)
 end)
