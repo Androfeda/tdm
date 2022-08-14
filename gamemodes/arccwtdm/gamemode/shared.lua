@@ -79,7 +79,7 @@ function GM:Initialize()
 			print("Saved old config:", conname, GetConVar(conname):GetString())
 			RunConsoleCommand(conname, conval)
 		end
-		GAMEMODE:LoadSpawnSet(GetConVar("tdm_gamemode"):GetString())
+		GAMEMODE:LoadSpawnSet(GetConVar("tdm_game"):GetString())
 	end
 end
 
