@@ -388,6 +388,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 				if not IsValid(v) then continue end
 				if LocalPlayer():GetSimfphys() == v then continue end
 				class = t.VehicleName
+				--[[]
 				local occupied = false
 				local hasally = false
 				if simfphys and simfphys.IsCar(v) then
@@ -398,8 +399,10 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 						end
 					end
 				end
+				]]
 
-				if GAMEMODE.Vehicles[class] and (hasally or (not occupied and t.Team == LocalPlayer():Team())) then
+				local cur_team, occupied = GAMEMODE:GetVehicleTeam(v, true)
+				if GAMEMODE.Vehicles[class] and cur_team == LocalPlayer():Team() then --(hasally or (not occupied and t.Team == LocalPlayer():Team())) then
 					table.insert(vehicle_positions, {v, (v:GetPos() + Vector(0, 0, 100)):ToScreen(), GAMEMODE.VehiclePadTypes[GAMEMODE.Vehicles[class].Type].Icon, class, occupied})
 				end
 			end

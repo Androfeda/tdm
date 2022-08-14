@@ -101,9 +101,8 @@ function simfphys.weapon:Initialize( vehicle )
 	vehicle.MaxMag = 30
 	vehicle.CurMag = vehicle.MaxMag
 	vehicle:SetNWString( "WeaponMode", (vehicle.UsingHE and "HE" or "AP") .. " Cannon")
-	vehicle:SetNWInt("CurWPNAmmo", vehicle.CurMag)
 	vehicle:SetNWInt("MaxWPNAmmo", vehicle.MaxMag)
-	vehicle:SetNWInt("CurWPNAmmo", self.GunClipsize)
+	vehicle:SetNWInt("CurWPNAmmo", vehicle.CurMag)
 	vehicle:SetNWString("WPNType", "cannon")
 
 	simfphys.RegisterCrosshair( vehicle:GetDriverSeat(), data )

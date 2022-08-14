@@ -156,11 +156,13 @@ function SIMF_TDM.OnSpawned(self)
 end
 
 
-local function DestroyVehicle( ent )
+local function DestroyVehicle( ent, dmginfo )
 	if not IsValid( ent ) then return end
 	if ent.destroyed then return end
 
 	ent.destroyed = true
+
+	hook.Run( "simfphysVehicleDestroyed", ent, dmginfo )
 
 	local ply = ent.EntityOwner
 	local skin = ent:GetSkin()
@@ -240,9 +242,13 @@ local function DestroyVehicle( ent )
 end
 
 function SIMF_TDM.OnTakeDamage(ent, dmginfo)
+	if not ent:IsInitialized() then return end
 	if not simfphys.DamageEnabled then return end
 
+	if hook.Run( "simfphysOnTakeDamage", ent, dmginfo ) then return end
+
 	-- Armor
+
 	local skipthreshold = false
 	if ent.DamageBlock then
 		if dmginfo:IsDamageType(DMG_AIRBOAT) then
@@ -261,11 +267,14 @@ function SIMF_TDM.OnTakeDamage(ent, dmginfo)
 		end
 	end
 
+	if ent.DamageThreshold and not skipthreshold and dmginfo:GetDamage() < ent.DamageThreshold then
+		dmginfo:ScaleDamage(dmginfo:GetDamage() / ent.DamageThreshold)
+	end
+
+	if dmginfo:GetDamage() <= 0 then return end
+
 	ent:TakePhysicsDamage( dmginfo )
 
-	if not ent:IsInitialized() then return end
-
-	local Damage = dmginfo:GetDamage()
 	local DamagePos = dmginfo:GetDamagePosition()
 
 	ent.LastAttacker = dmginfo:GetAttacker()
@@ -277,11 +286,6 @@ function SIMF_TDM.OnTakeDamage(ent, dmginfo)
 		net.WriteBool(ent)
 	net.Broadcast()
 
-	if ent.DamageThreshold and not skipthreshold and Damage < ent.DamageThreshold then
-		dmginfo:ScaleDamage(Damage / ent.DamageThreshold)
-	end
-
-	if dmginfo:GetDamage() <= 0 then return end
 
 	local MaxHealth = ent:GetMaxHealth()
 	local CurHealth = ent:GetCurHealth()
@@ -304,7 +308,7 @@ function SIMF_TDM.OnTakeDamage(ent, dmginfo)
 	if NewHealth <= 0 then
 		if type ~= DMG_GENERIC and type ~= DMG_CRUSH or damage > 400 then
 
-			DestroyVehicle( ent )
+			DestroyVehicle( ent, dmginfo )
 
 			return
 		end
@@ -317,6 +321,8 @@ function SIMF_TDM.OnTakeDamage(ent, dmginfo)
 	end
 
 	ent:SetCurHealth( NewHealth )
+
+	hook.Run( "simfphysPostTakeDamage", ent, dmginfo )
 
 	local healthmult = NewHealth / MaxHealth
 	if ent.IsArmored or (ent.ArmorThreshold and ent.ArmorThreshold <= healthmult) then return end

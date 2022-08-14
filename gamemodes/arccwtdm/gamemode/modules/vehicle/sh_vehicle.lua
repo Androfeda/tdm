@@ -157,3 +157,36 @@ function GM:GetVehicleName(class)
 
 	return class
 end
+
+function GM:GetVehicleTeam(ent, count_unoccupied)
+	local cur_team = nil
+	local vehtbl = {}
+	for k, v in pairs(GAMEMODE.SpawnedVehicles) do
+		if v.Entity == ent then
+			vehtbl = v
+			break
+		end
+	end
+
+	local occupied = false
+	if simfphys and simfphys.IsCar(ent) then
+		for _, ply in pairs(player.GetAll()) do
+			if ply:GetSimfphys() == ent then
+				occupied = true
+				if ply:Team() == vehtbl.Team then
+					-- if anyone in the original team is in the vehicle, it is their team's even if enemies are on board
+					cur_team = ply:Team()
+					break
+				elseif cur_team == nil then
+					cur_team = ply:Team()
+				end
+			end
+		end
+	end
+
+	if not occupied and count_unoccupied then
+		return vehtbl.Team, false
+	else
+		return cur_team, occupied
+	end
+end
