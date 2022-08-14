@@ -342,7 +342,7 @@ local V = {
 
 		FuelFillPos = Vector(-61.34,49.71,15.98),
 		FuelType = FUELTYPE_DIESEL,
-		FuelTankSize = 120,
+		FuelTankSize = 20,
 
 		PowerBias = 0,
 
@@ -465,7 +465,7 @@ local V = {
 
 		FuelFillPos = Vector(-40,48,48),
 		FuelType = FUELTYPE_PETROL,
-		FuelTankSize = 30,
+		FuelTankSize = 20,
 
 		PowerBias = 0.8,
 
@@ -614,7 +614,7 @@ local V = {
 
 		FuelFillPos = Vector(-40,48,48),
 		FuelType = FUELTYPE_PETROL,
-		FuelTankSize = 30,
+		FuelTankSize = 20,
 
 		PowerBias = 0.8,
 
@@ -757,7 +757,7 @@ local V = {
 
 		FuelFillPos = Vector(-40,48,48),
 		FuelType = FUELTYPE_PETROL,
-		FuelTankSize = 30,
+		FuelTankSize = 20,
 
 		PowerBias = 0.8,
 
@@ -905,7 +905,7 @@ local V = {
 
 		FuelFillPos = Vector(-40,48,48),
 		FuelType = FUELTYPE_PETROL,
-		FuelTankSize = 30,
+		FuelTankSize = 20,
 
 		PowerBias = 0.8,
 
@@ -1119,7 +1119,7 @@ local V = {
 
 		FuelFillPos = Vector(-40,50,50),
 		FuelType = FUELTYPE_DIESEL,
-		FuelTankSize = 250,
+		FuelTankSize = 20,
 
 		PowerBias = 0,
 
