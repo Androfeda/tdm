@@ -450,7 +450,7 @@ local V = {
 		TurnSpeed = 20,
 
 		MaxGrip = 120,
-		Efficiency = 1,
+		Efficiency = 1.25,
 		GripOffset = -0,
 		BrakePower = 65,
 
@@ -599,7 +599,7 @@ local V = {
 		TurnSpeed = 20,
 
 		MaxGrip = 120,
-		Efficiency = 1,
+		Efficiency = 1.25,
 		GripOffset = -0,
 		BrakePower = 65,
 
@@ -742,7 +742,7 @@ local V = {
 		TurnSpeed = 20,
 
 		MaxGrip = 120,
-		Efficiency = 1,
+		Efficiency = 1.25,
 		GripOffset = -0,
 		BrakePower = 65,
 
@@ -890,7 +890,7 @@ local V = {
 		TurnSpeed = 20,
 
 		MaxGrip = 120,
-		Efficiency = 1,
+		Efficiency = 1.25,
 		GripOffset = -0,
 		BrakePower = 65,
 
