@@ -92,7 +92,7 @@ local toop = {
 	},
 	["cannon"] = {
 		Texture = am_cn,
-		gap_hor = 8,
+		gap_hor = 9,
 		gap_ver = 32,
 		rep = 40,
 		size = 32,
@@ -233,8 +233,6 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 				iAmmoCount2	= P:GetAmmoCount(iAmmoType2)
 				if PW.GetFiremodeName then
 					iFiremode = PW:GetFiremodeName()
-				--else
-				--	iFiremode = "Not Vehicle"
 				end
 			end
 

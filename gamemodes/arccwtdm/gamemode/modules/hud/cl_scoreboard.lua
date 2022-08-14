@@ -2,6 +2,8 @@ local CLR_B2 = Color(0, 0, 0, 127)
 local CLR_W2 = Color(255, 255, 255, 255)
 
 local SHOWSCORE = false
+local dead = Material("tdm/dead.png", "smooth")
+local dead_glow = Material("tdm/dead_glow.png", "smooth")
 
 hook.Add("ScoreboardShow", "ArcCWTDM_ScoreboardShow", function()
 	SHOWSCORE = true
@@ -107,6 +109,23 @@ hook.Add("HUDDrawScoreBoard", "ArcCWTDM_HUDDrawScoreBoard", function()
 
 			for i, ply in ipairs(players) do
 				GAMEMODE:ShadowText(ply:GetName(), font, ax - (c * 300), ay + (c * yd), teamdata.Color, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, true)
+
+				if !ply:Alive() then
+					surface.SetMaterial(dead)
+					local sz = (c * 32)
+					surface.SetDrawColor(CLR_B2)
+					surface.DrawTexturedRect(ax - (c * 302) - (sz * 0.75) + (c * 4), ay + (c * yd) - (sz * 0.47) + (c * 4), sz, sz)
+
+					surface.SetMaterial(dead_glow)
+					surface.SetDrawColor(CLR_B2)
+					surface.DrawTexturedRect(ax - (c * 302) - (sz * 0.75), ay + (c * yd) - (sz * 0.47), sz, sz)
+					surface.DrawTexturedRect(ax - (c * 302) - (sz * 0.75), ay + (c * yd) - (sz * 0.47), sz, sz)
+					surface.DrawTexturedRect(ax - (c * 302) - (sz * 0.75), ay + (c * yd) - (sz * 0.47), sz, sz)
+
+					surface.SetMaterial(dead)
+					surface.SetDrawColor(teamdata.Color)
+					surface.DrawTexturedRect(ax - (c * 302) - (sz * 0.75), ay + (c * yd) - (sz * 0.47), sz, sz)
+				end
 
 				if teamnum ~= 1002 then
 					if utime_installed then GAMEMODE:ShadowText(utime_timeToStr( ply:GetUTimeTotalTime() ), font2, ax + (c * 80), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true) end
