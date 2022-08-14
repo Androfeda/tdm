@@ -86,7 +86,11 @@ hook.Add("simfphysPostTakeDamage", "tdm_vehicle", function(ent, dmginfo)
 
 	local vt = GAMEMODE:GetVehicleTeam(ent)
 	if vt and vt ~= attacker:Team() then
-		local reward = math.floor(dmginfo:GetDamage() * GetConVar("tdm_money_vehicle_damage"):GetFloat())
+		local reward = dmginfo:GetDamage() * GetConVar("tdm_money_vehicle_damage"):GetFloat()
+		if not attacker:InVehicle() then
+			reward = reward * GetConVar("tdm_money_vehicle_onfoot"):GetFloat()
+		end
+		reward = math.floor(reward)
 		if reward > 0 then
 			attacker:AddMoney(reward)
 		end
@@ -99,7 +103,11 @@ hook.Add("simfphysVehicleDestroyed", "tdm_vehicle", function(ent, dmginfo)
 
 	local vt = GAMEMODE:GetVehicleTeam(ent)
 	if vt and vt ~= attacker:Team() then
-		local reward = math.floor((GAMEMODE.Vehicles[ent.VehicleInfo.VehicleName].Points or 300) * GetConVar("tdm_money_vehicle_kill"):GetFloat())
+		local reward = (GAMEMODE.Vehicles[ent.VehicleInfo.VehicleName].Points or 300) * GetConVar("tdm_money_vehicle_kill"):GetFloat()
+		if not attacker:InVehicle() then
+			reward = reward * GetConVar("tdm_money_vehicle_onfoot"):GetFloat()
+		end
+		reward = math.floor(reward)
 		if reward > 0 then
 			attacker:AddMoney(reward)
 		end
