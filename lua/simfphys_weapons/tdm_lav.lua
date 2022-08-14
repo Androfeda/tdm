@@ -31,9 +31,9 @@ local function cannon_fire(ply,vehicle,shootOrigin,shootDirection)
 	projectile.Force = 30
 	projectile.Damage = 80
 	projectile.BlastRadius = 96
-	projectile.BlastDamage = 25
+	projectile.BlastDamage = 50
 	projectile:SetBlastEffect("simfphys_tankweapon_explosion_micro")
-	projectile:SetSize( 2 )
+	projectile:SetSize( 4 )
 	projectile.Filter = table.Copy( vehicle.VehicleData["filter"] )
 	projectile.MuzzleVelocity = 450
 	projectile:Spawn()
@@ -45,7 +45,7 @@ local function atgm_fire(ply,vehicle,shootOrigin,shootDirection)
 
 	vehicle:GetPhysicsObject():ApplyForceOffset( -shootDirection * 10000, shootOrigin )
 
-	vehicle.missile = ents.Create( "avx_tdm_atgm" )
+	vehicle.missile = ents.Create( "tdm_atgm" )
 	vehicle.missile:SetPos( shootOrigin )
 	vehicle.missile:SetAngles( shootDirection:Angle() )
 	vehicle.missile:SetOwner( ply )
@@ -53,7 +53,7 @@ local function atgm_fire(ply,vehicle,shootOrigin,shootDirection)
 	vehicle.missile:Activate()
 	vehicle.missile.DirVector = shootDirection
 
-	vehicle.missile:SetVelocity(shootDirection * 6000)
+	vehicle.missile:SetVelocity(shootDirection * 9000)
 
 	vehicle.MissileTracking = vehicle.MissileTracking or {}
 
@@ -61,7 +61,7 @@ local function atgm_fire(ply,vehicle,shootOrigin,shootDirection)
 end
 
 function simfphys.weapon:ValidClasses()
-	return { "avx_tdm_lav" }
+	return { "tdm_lav" }
 end
 
 function simfphys.weapon:Initialize( vehicle )
@@ -220,6 +220,15 @@ function simfphys.weapon:PrimaryAttack( vehicle, ply, shootOrigin, Attachment )
 
 	if not self:CanPrimaryAttack( vehicle ) then return end
 
+	if self.GunClip <= 0 then
+		self.GunClip = self.GunClipsize
+		vehicle:EmitSound("simulated_vehicles/weapons/apc_reload.wav")
+		self:SetNextPrimaryFire(vehicle, CurTime() + 2)
+		vehicle:SetNWInt("CurWPNAmmo", self.GunClip)
+		--vehicle:SetNWString("WeaponMode", tostring(self.GunClip) .. " | " .. tostring(self.ATGMClip))
+		return
+	end
+
 	self.GunClip = self.GunClip - 1
 	vehicle:SetNWInt("CurWPNAmmo", self.GunClip)
 	--vehicle:SetNWString("WeaponMode", tostring(self.GunClip) .. " | " .. tostring(self.ATGMClip))
@@ -233,15 +242,7 @@ function simfphys.weapon:PrimaryAttack( vehicle, ply, shootOrigin, Attachment )
 		effectdata:SetEntity( vehicle )
 	util.Effect( "arctic_apc_muzzle", effectdata, true, true )
 
-	if self.GunClip <= 0 then
-		self.GunClip = self.GunClipsize
-		vehicle:EmitSound("simulated_vehicles/weapons/apc_reload.wav")
-		self:SetNextPrimaryFire(vehicle, CurTime() + 2)
-		vehicle:SetNWInt("CurWPNAmmo", self.GunClip)
-		--vehicle:SetNWString("WeaponMode", tostring(self.GunClip) .. " | " .. tostring(self.ATGMClip))
-	else
-		self:SetNextPrimaryFire( vehicle, CurTime() + 0.3 )
-	end
+	self:SetNextPrimaryFire( vehicle, CurTime() + 0.3 )
 end
 
 function simfphys.weapon:SecondaryAttack( vehicle, ply, shootOrigin, Attachment )
@@ -369,7 +370,7 @@ function simfphys.weapon:Think( vehicle )
 			targetdir:Normalize()
 			missile.DirVector = missile.DirVector + (targetdir - missile.DirVector) * 1
 
-			local vel = -missile:GetVelocity() + missile.DirVector * 10000
+			local vel = -missile:GetVelocity() + missile.DirVector * 9000
 
 			local phys = missile:GetPhysicsObject()
 

@@ -13,14 +13,14 @@ HELO_TYPE_HEAVY = 22
 
 GM.Vehicles = {
 
-	["avx_tdm_bulldog"] = {
+	["tdm_bulldog"] = {
 		Team = TEAM_CMB,
 		Type = VEHICLE_TYPE_UNARMED,
 		Points = 150,
 
 		Description = "Light armored recon vehicle",
 	},
-	["avx_tdm_hmmvv"] = {
+	["tdm_hmmvv"] = {
 		Team = TEAM_HECU,
 		Type = VEHICLE_TYPE_UNARMED,
 		Points = 150,
@@ -28,7 +28,7 @@ GM.Vehicles = {
 		Description = "Light armored recon vehicle",
 	},
 
-	["avx_tdm_bulldog_mg"] = {
+	["tdm_bulldog_mg"] = {
 		Team = TEAM_CMB,
 		Type = VEHICLE_TYPE_LIGHT,
 		Points = 300,
@@ -37,7 +37,7 @@ GM.Vehicles = {
 		Description2 = "Armed with top-mounted machine gun",
 
 	},
-	["avx_tdm_hmmvv_mg"] = {
+	["tdm_hmmvv_mg"] = {
 		Team = TEAM_HECU,
 		Type = VEHICLE_TYPE_LIGHT,
 		Points = 300,
@@ -46,16 +46,24 @@ GM.Vehicles = {
 		Description2 = "Armed with top-mounted machine gun",
 	},
 
-	["avx_tdm_lav"] = {
+	["tdm_lav"] = {
 		Team = TEAM_CMB,
 		Type = VEHICLE_TYPE_MEDIUM,
 		Points = 600,
 
-		Description = "Anti-vehicle armored personnel carrier",
+		Description = "Anti-vehicle infantry fighting vehicle",
 		Description2 = "Fires two high velocity ATGMs rapidly",
 	},
+	["tdm_bradley"] = {
+		Team = TEAM_HECU,
+		Type = VEHICLE_TYPE_MEDIUM,
+		Points = 600,
 
-	["avx_tdm_combineapc"] = {
+		Description = "Flexible infantry fighting vehicle",
+		Description2 = "ALT to fire ATGM missiles",
+	},
+
+	["tdm_combineapc"] = {
 		Team = TEAM_CMB,
 		Type = VEHICLE_TYPE_MEDIUM,
 		Points = 800,
@@ -63,7 +71,7 @@ GM.Vehicles = {
 		Description = "Mobile and versatile armored car",
 		Description2 = "Pulse gun penetrates armor",
 	},
-	["avx_tdm_hecuapc"] = {
+	["tdm_hecuapc"] = {
 		Team = TEAM_HECU,
 		Type = VEHICLE_TYPE_MEDIUM,
 		Points = 800,

@@ -51,7 +51,7 @@ end
 local function atgm_fire(ply, vehicle, shootOrigin, shootDirection)
 	vehicle:EmitSound("PropAPC.FireCannon", 125)
 	vehicle:GetPhysicsObject():ApplyForceOffset(-shootDirection * 100000, shootOrigin)
-	vehicle.missile = ents.Create("avx_tdm_atgm")
+	vehicle.missile = ents.Create("tdm_atgm")
 	vehicle.missile:SetPos(shootOrigin)
 	vehicle.missile:SetAngles(shootDirection:Angle())
 	vehicle.missile:SetOwner(ply)
@@ -66,7 +66,7 @@ local function atgm_fire(ply, vehicle, shootOrigin, shootDirection)
 end
 
 function simfphys.weapon:ValidClasses()
-	local classes = {"avx_tdm_combineapc"}
+	local classes = {"tdm_combineapc"}
 
 	return classes
 end

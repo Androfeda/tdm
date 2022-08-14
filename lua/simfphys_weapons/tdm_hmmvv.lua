@@ -8,7 +8,7 @@ local function mg_fire(ply, vehicle, shootOrigin, shootDirection)
 	local s = 0.005 + (vehicle.weaponheat or 0) * 0.025 * 0.01
 	bullet.Spread = Vector(s, s, 0)
 	bullet.Tracer = 1
-	bullet.TracerName = "simfphys_tracer"
+	bullet.TracerName = "Tracer"
 	bullet.Force = 8
 	bullet.Damage = 65
 	bullet.HullSize = 2
@@ -27,7 +27,7 @@ local function mg_fire(ply, vehicle, shootOrigin, shootDirection)
 end
 
 function simfphys.weapon:ValidClasses()
-	local classes = {"avx_tdm_hmmvv_mg"}
+	local classes = {"tdm_hmmvv_mg"}
 
 	return classes
 end

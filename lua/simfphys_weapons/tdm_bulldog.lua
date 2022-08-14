@@ -8,7 +8,7 @@ local function mg_fire(ply, vehicle, shootOrigin, shootDirection)
 	local s = 0.005 + (vehicle.weaponheat or 0) * 0.025 * 0.01
 	bullet.Spread = Vector(s, s, 0)
 	bullet.Tracer = 1
-	bullet.TracerName = "simfphys_tracer"
+	bullet.TracerName = "Tracer"
 	bullet.Force = 8
 	bullet.Damage = 65
 	bullet.HullSize = 2
@@ -28,7 +28,7 @@ end
 
 
 function simfphys.weapon:ValidClasses()
-	local classes = {"avx_tdm_bulldog_mg"}
+	local classes = {"tdm_bulldog_mg"}
 
 	return classes
 end
@@ -120,7 +120,7 @@ function simfphys.weapon:PrimaryAttack(vehicle, ply)
 	local deltapos = vehicle:GetPos() - vehicle.wOldPos
 	vehicle.wOldPos = vehicle:GetPos()
 
-	local AttachmentID = vehicle.swapMuzzle and vehicle:LookupAttachment("muzzle") or vehicle:LookupAttachment("muzzle")
+	local AttachmentID = vehicle:LookupAttachment("muzzle")
 	local Attachment = vehicle:GetAttachment(AttachmentID)
 	local shootOrigin = Attachment.Pos + deltapos * engine.TickInterval()
 	local shootDirection = Attachment.Ang:Forward()

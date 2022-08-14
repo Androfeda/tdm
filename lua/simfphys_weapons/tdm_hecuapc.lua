@@ -14,7 +14,7 @@ local function mg_fire(ply,vehicle,shootOrigin,shootDirection)
 	projectile.BlastRadius = 96
 	projectile.BlastDamage = 50
 	projectile:SetBlastEffect("simfphys_tankweapon_explosion_micro")
-	projectile:SetSize( 2 )
+	projectile:SetSize( 4 )
 	projectile.Filter = table.Copy( vehicle.VehicleData["filter"] )
 	projectile.MuzzleVelocity = 400
 	projectile:Spawn()
@@ -54,7 +54,7 @@ local function mg_fire2(ply,vehicle,shootOrigin,shootDirection)
 	projectile.BlastDamage = 80
 	projectile.MuzzleVelocity = 250
 	projectile:SetBlastEffect("simfphys_tankweapon_explosion_small")
-	projectile:SetSize( 5 )
+	projectile:SetSize( 6 )
 	projectile.Filter = table.Copy( vehicle.VehicleData["filter"] )
 	projectile:Spawn()
 	projectile:Activate()
@@ -84,7 +84,7 @@ end
 function simfphys.weapon:ValidClasses()
 
 	local classes = {
-		"avx_tdm_hecuapc"
+		"tdm_hecuapc"
 	}
 
 	return classes
