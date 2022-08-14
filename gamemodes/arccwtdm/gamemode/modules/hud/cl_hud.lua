@@ -92,7 +92,7 @@ local toop = {
 	},
 	["cannon"] = {
 		Texture = am_cn,
-		gap_hor = 8,
+		gap_hor = 9,
 		gap_ver = 32,
 		rep = 40,
 		size = 32,
