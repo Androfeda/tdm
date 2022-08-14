@@ -27,6 +27,9 @@ CreateConVar("tdm_money_vehicle_onfoot", 1.5, FCVAR_ARCHIVE, "Reward multiplier 
 
 local function set_cvar(cvar, value)
 	if GetConVar(cvar) then
+
+		if CLIENT and GetConVar(cvar):IsFlagSet(FCVAR_REPLICATED) then return end
+
 		if isbool(value) then
 			GetConVar(cvar):SetBool(value)
 		elseif isstring(value) then
