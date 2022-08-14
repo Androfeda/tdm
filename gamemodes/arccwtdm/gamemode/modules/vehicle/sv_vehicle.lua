@@ -20,7 +20,7 @@ net.Receive("tdm_vehicle", function(len, ply)
 		pad:SetNextReady(CurTime() + GAMEMODE.VehiclePadTypes[pad:GetPadType()].Cooldown or 5)
 		GAMEMODE.SpawnedVehicles[pad:EntIndex()] = {
 			Entity = ent,
-			LastOccupied = CurTime(),
+			DespawnTries = 0,
 			VehicleName = veh,
 			Team = ply:Team(),
 		}
@@ -36,13 +36,47 @@ net.Receive("tdm_vehicle", function(len, ply)
 	end
 end)
 
+local interval = 3
+timer.Create("tdm_vehicle", interval, 0, function()
+	if GetConVar("tdm_vehicle_despawn"):GetInt() == 0 then return end
+
+	local occupied = {}
+	for _, ply in pairs(player.GetAll()) do
+		if simfphys and IsValid(ply:GetSimfphys()) then
+			occupied[ply:GetSimfphys()] = true
+		end
+		if IsValid(ply:GetVehicle()) then
+			occupied[ply:GetVehicle()] = true
+		end
+	end
+
+	for i, tbl in pairs(GAMEMODE.SpawnedVehicles) do
+		local ent = tbl.Entity
+		if not IsValid(ent) then
+			GAMEMODE.SpawnedVehicles[i] = nil
+			continue
+		end
+
+		local despawn = not occupied[ent]
+		if despawn then
+			tbl.DespawnTries = (tbl.DespawnTries or 0) + 1
+			if GetConVar("tdm_vehicle_despawn"):GetInt() < tbl.DespawnTries * interval then
+				ent:Remove()
+				GAMEMODE.SpawnedVehicles[i] = nil
+			end
+		else
+			tbl.DespawnTries = 0
+		end
+	end
+end)
+
 hook.Add("simfphysOnTakeDamage", "tdm_vehicle", function(ent, dmginfo)
 	local attacker = dmginfo:GetAttacker()
 	if not ent.VehicleInfo or not attacker:IsPlayer() then return end
 
 	local vt = GAMEMODE:GetVehicleTeam(ent)
 	if vt == attacker:Team() then
-		dmginfo:ScaleDamage(math.Clamp(GetConVar("tdm_ff_vehicle"):GetFloat(), 0, 1))
+		dmginfo:ScaleDamage(math.Clamp(GetConVar("tdm_vehicle_ff"):GetFloat(), 0, 1))
 	end
 end)
 
