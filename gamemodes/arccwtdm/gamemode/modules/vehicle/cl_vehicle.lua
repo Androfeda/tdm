@@ -42,8 +42,11 @@ end)
 
 hook.Add("KeyPress", "tdm_vehicle", function( ply, key )
 	if IsValid(LocalPlayer().VehiclePad) and key == IN_USE and LocalPlayer().VehiclePad:CanSpawn() and LocalPlayer().VehiclePad:GetTeam() == ply:Team() then
-		local vehList = vgui.Create("TDMVehicleList")
-		vehList:SetPadType(LocalPlayer().VehiclePad:GetPadType())
+		if GAMEMODE.VehicleListMenu then
+			GAMEMODE.VehicleListMenu:Remove()
+		end
+		GAMEMODE.VehicleListMenu = vgui.Create("TDMVehicleList")
+		GAMEMODE.VehicleListMenu:SetPadType(LocalPlayer().VehiclePad:GetPadType())
 	end
 end)
 
