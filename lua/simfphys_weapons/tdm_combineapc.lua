@@ -34,7 +34,7 @@ local function cAPCFire(ply, vehicle, shootOrigin, Attachment, damage, ID)
 		util.Effect("AR2Impact", effectdata, true, true)
 
 		if IsValid(tr.Entity) and tr.Entity:IsVehicle() then
-			dmginfo:ScaleDamage(1.5)
+			-- dmginfo:ScaleDamage(1.5)
 			effectdata:SetOrigin(tr.HitPos + tr.HitNormal)
 			effectdata:SetNormal(-tr.Normal)
 			util.Effect("ManhackSparks", effectdata)
@@ -154,7 +154,7 @@ function simfphys.weapon:Think(vehicle)
 	end
 
 	if vehicle.NextShoot < curtime and fire then
-		cAPCFire(ply, vehicle, shootOrigin, Attachment, 50, ID)
+		cAPCFire(ply, vehicle, shootOrigin, Attachment, 40, ID)
 		vehicle:EmitSound("^npc/strider/strider_minigun.wav", 120, 100 - (1 - vehicle.charge / 100) * 20)
 		vehicle.charge = vehicle.charge - 1
 		if vehicle.charge <= 0 then
@@ -183,7 +183,7 @@ function simfphys.weapon:Think(vehicle)
 			shootOrigin = Attachment.Pos
 			local shootDirection = Attachment.Ang:Forward()
 			atgm_fire(ply, vehicle, shootOrigin + shootDirection * 96, shootDirection)
-			vehicle.NextSecondaryShoot = curtime + 2
+			vehicle.NextSecondaryShoot = curtime + 2.5
 			vehicle.UnlockMissle = curtime + 0.5
 		end
 	end
