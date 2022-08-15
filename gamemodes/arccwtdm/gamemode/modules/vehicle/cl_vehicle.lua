@@ -19,6 +19,7 @@ end, "Spawn the specified vehicle. You must be standing in an approproate spawn 
 
 local nexttick = 0
 hook.Add("Think", "tdm_vehiclepad", function()
+	if not IsValid(LocalPlayer()) then return end
 	if LocalPlayer():InVehicle() then
 		LocalPlayer().VehiclePad = nil
 		return

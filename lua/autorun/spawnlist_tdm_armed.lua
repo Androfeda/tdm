@@ -1119,7 +1119,7 @@ local V = {
 
 		FuelFillPos = Vector(-40,50,50),
 		FuelType = FUELTYPE_DIESEL,
-		FuelTankSize = 50,
+		FuelTankSize = 20,
 
 		PowerBias = 0,
 
@@ -1312,7 +1312,7 @@ local V = {
 
 		FuelFillPos = Vector(139.42,-3.68,38.38),
 		FuelType = FUELTYPE_DIESEL,
-		FuelTankSize = 50,
+		FuelTankSize = 20,
 
 		PowerBias = -0.3,
 
