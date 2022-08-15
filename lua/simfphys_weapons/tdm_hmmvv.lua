@@ -65,7 +65,7 @@ function simfphys.weapon:AimWeapon(ply, vehicle, pod)
 	vehicle.sm_dir = vehicle.sm_dir or Vector(0, 0, 0)
 	local L_Right = Angle(0, Aimang.y, 0):Right()
 	local La_Right = Angle(0, Attachment.Ang.y, 0):Forward()
-	local AimRate = 60
+	local AimRate = math.huge
 	local Yaw_Diff = math.Clamp(math.acos(math.Clamp(L_Right:Dot(La_Right), -1, 1)) * (180 / math.pi) - 90, -AimRate, AimRate)
 	local TargetPitch = podangles.p + Aimang.p --Angles.p + 2
 	local TargetYaw = vehicle.sm_dir:Angle().y - Yaw_Diff
