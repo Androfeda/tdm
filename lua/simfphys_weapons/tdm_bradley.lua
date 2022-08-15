@@ -368,11 +368,6 @@ end
 function simfphys.weapon:Think(vehicle)
 	if not IsValid(vehicle) or not vehicle:IsInitialized() then return end
 
-	local pod = vehicle.gunnerseat
-	if not IsValid(pod) then return end
-	local ply = pod:GetDriver()
-	if not IsValid(ply) then return end
-
 	vehicle.wOldPos = vehicle.wOldPos or Vector(0, 0, 0)
 	local deltapos = vehicle:GetPos() - vehicle.wOldPos
 	vehicle.wOldPos = vehicle:GetPos()

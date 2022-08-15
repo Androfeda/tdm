@@ -7,6 +7,7 @@ CreateConVar("tdm_simfphys_arcade", "0", "If set, drivers use guns instead of th
 SIMF_TDM = {}
 
 local function manip(ply, bones)
+	if not IsValid(ply) then return end
 	if bones then
 		local Bone
 		ply.TankManipulatedBones = ply.TankManipulatedBones or {}
@@ -26,6 +27,9 @@ local function manip(ply, bones)
 		ply.TankManipulatedBones = nil
 	end
 end
+hook.Add("PlayerDeath", "simfphys_tdm", function(ply)
+	manip(ply)
+end)
 
 local function killhooks(ply, vehicle)
 	local sid = ply:SteamID()
@@ -126,7 +130,7 @@ local function tiredamage(self, dmginfo)
 	if IsValid(BaseEnt) then
 		if BaseEnt:GetBulletProofTires() then return end
 
-		local odds = math.Clamp((Damage - (self.TireDamageBlock or 25)) / (self.TireDamageThreshold or 100), 0, 1) ^ 2
+		local odds = math.Clamp((Damage - (self.TireDamageBlock or 35)) / (self.TireDamageThreshold or 100), 0, 1) ^ 2
 		if math.random() < odds then
 			if not self.PreBreak then
 				self.PreBreak = CreateSound(self, "ambient/gas/cannister_loop.wav")
@@ -258,17 +262,21 @@ function SIMF_TDM.OnTakeDamage(ent, dmginfo)
 			skipthreshold = true
 		elseif dmginfo:GetDamageType() == 0 then
 			-- physics damage
+			skipthreshold = true
 			if dmginfo:GetDamage() > 5 then
 				dmginfo:ScaleDamage(4)
-				skipthreshold = true
 			end
-		elseif dmginfo:IsDamageType(DMG_BURN) or dmginfo:IsDamageType(DMG_SLOWBURN) then
-			local factor = (dmginfo:GetDamageType() == DMG_BURN) and 3 or 1 -- pure fire gets bonus factor
+		elseif dmginfo:GetDamageType() == DMG_BURN then
+			local factor = 3 -- pure fire gets bonus factor
 			dmginfo:ScaleDamage(2 + math.Clamp((ent:GetCurHealth() / ent:GetMaxHealth()) * factor, 0, factor))
 			skipthreshold = true
 		elseif dmginfo:IsExplosionDamage() then
-			-- resistance against HE
+			-- partial resistance against HE
 			dmginfo:SetDamage(dmginfo:GetDamage() - ent.DamageBlock / 2)
+		elseif dmginfo:IsDamageType(DMG_BURN) then
+			-- mixed burn damage
+			local factor = 1.5
+			dmginfo:ScaleDamage(1 + math.Clamp((ent:GetCurHealth() / ent:GetMaxHealth()) * factor, 0, factor))
 		elseif not dmginfo:IsDamageType(DMG_DIRECT) then
 			-- DMG_DIRECT is used by simfphys_projectiles, skips block but affected by threshold
 			dmginfo:SetDamage(dmginfo:GetDamage() - ent.DamageBlock)
