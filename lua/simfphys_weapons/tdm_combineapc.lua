@@ -72,8 +72,14 @@ function simfphys.weapon:ValidClasses()
 end
 
 function simfphys.weapon:Initialize(vehicle)
-	local pod = vehicle:GetDriverSeat()
-	simfphys.RegisterCrosshair(pod)
+	if GetConVar("tdm_simfphys_arcade"):GetBool() then
+		vehicle.gunnerseat = vehicle:GetDriverSeat()
+		simfphys.RegisterCamera( vehicle.pSeat[1], Vector(-4,26,24), Vector(0,45,100), true, "muzzle_up" )
+	else
+		vehicle.gunnerseat = vehicle.pSeat[1]
+	end
+
+	simfphys.RegisterCrosshair(vehicle.gunnerseat)
 	if not istable(vehicle.PassengerSeats) or not istable(vehicle.pSeat) then return end
 
 	for i = 1, table.Count(vehicle.pSeat) do
@@ -108,7 +114,7 @@ function simfphys.weapon:AimWeapon(ply, vehicle, pod)
 end
 
 function simfphys.weapon:Think(vehicle)
-	local pod = vehicle:GetDriverSeat()
+	local pod = vehicle.gunnerseat
 	if not IsValid(pod) then return end
 	local ply = pod:GetDriver()
 	local curtime = CurTime()

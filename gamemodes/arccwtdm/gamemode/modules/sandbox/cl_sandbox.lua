@@ -2,17 +2,45 @@ function GM:ContextMenuOpen()
 	return GetConVar("tdm_spawn"):GetBool()
 end
 
+SPAWN_Destroy = {
+	["#spawnmenu.category.dupes"] = true,
+	["#spawnmenu.category.saves"] = true,
+	["#spawnmenu.category.npcs"] = true,
+	["#spawnmenu.category.vehicles"] = true,
+	["#spawnmenu.category.entities"] = true,
+	["#spawnmenu.category.postprocess"] = true,
+	["#spawnmenu.content_tab"] = true,
+	["simfphys"] = true,
+}
+
+SPAWN_Save = {
+}
+
 hook.Add("SpawnMenuEnabled", "TDM_SpawnMenuEnabled", function()
-	if !GetConVar("tdm_spawn"):GetBool() then
-		spawnmenu.GetCreationTabs()["#spawnmenu.category.dupes"] = nil
-		spawnmenu.GetCreationTabs()["#spawnmenu.category.saves"] = nil
-		spawnmenu.GetCreationTabs()["#spawnmenu.category.npcs"] = nil
-		spawnmenu.GetCreationTabs()["#spawnmenu.category.vehicles"] = nil
-		spawnmenu.GetCreationTabs()["#spawnmenu.category.entities"] = nil
-		spawnmenu.GetCreationTabs()["#spawnmenu.category.postprocess"] = nil
-		spawnmenu.GetCreationTabs()["#spawnmenu.content_tab"] = nil
-		spawnmenu.GetCreationTabs()["simfphys"] = nil
-	end
+		for item, destroy in pairs(SPAWN_Destroy) do
+			print( "item: ", item )
+			if !GetConVar("tdm_spawn"):GetBool() then
+				print("\t- item destroying")
+				if spawnmenu.GetCreationTabs()[item] then
+					print("\t- save: success")
+					SPAWN_Save[item] = spawnmenu.GetCreationTabs()[item]
+				else
+					print("\t- save: failure")
+				end
+				spawnmenu.GetCreationTabs()[item] = nil
+			else
+				print("\t- item restoring")
+				if spawnmenu.GetCreationTabs()[item] then
+					print("\t- restore: not missing, saved")
+					SPAWN_Save[item] = spawnmenu.GetCreationTabs()[item]
+				elseif SPAWN_Save[item] then
+					print("\t- restore: successful")
+					spawnmenu.GetCreationTabs()[item] = SPAWN_Save[item]
+				else
+					print("\t- restore: failure")
+				end
+			end
+		end
 end)
 
 hook.Add("PopulateWeapons", "AddWeaponContent", function(pnlContent, tree, node)
