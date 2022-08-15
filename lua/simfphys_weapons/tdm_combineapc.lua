@@ -133,8 +133,8 @@ function simfphys.weapon:Think(vehicle)
 	table.Add(filter, {vehicle})
 
 	local tr = util.TraceLine({
-		start = Attachment.Pos,
-		endpos = Attachment.Pos + Aimang:Forward() * 10000,
+		start = ply:EyePos(),
+		endpos = ply:EyePos() + ply:GetAimVector() * 10000,
 		filter = filter
 	})
 

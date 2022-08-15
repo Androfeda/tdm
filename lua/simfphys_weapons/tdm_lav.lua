@@ -68,10 +68,16 @@ function simfphys.weapon:Initialize( vehicle )
 	vehicle:SetNWBool( "SpecialCam_Loader", false )
 	vehicle:SetNWFloat( "SpecialCam_LoaderTime", 5 )
 
-	simfphys.RegisterCrosshair( vehicle:GetDriverSeat(), { Attachment = "muzzle", Direction = Vector(0, 0, -1), Type = 3 } )
-	simfphys.RegisterCamera( vehicle:GetDriverSeat(), Vector(15,53,-20), Vector(0,45,100), true, "muzzle_up" )
+	if GetConVar("tdm_simfphys_arcade"):GetBool() then
+		vehicle.gunnerseat = vehicle:GetDriverSeat()
+		simfphys.RegisterCamera( vehicle.pSeat[1], Vector(-4,26,24), Vector(0,45,100), true, "muzzle_up" )
+	else
+		vehicle.gunnerseat = vehicle.pSeat[1]
+	end
 
-	simfphys.RegisterCamera( vehicle.pSeat[1], Vector(-4,26,24), Vector(0,45,100), true, "muzzle_up" )
+	simfphys.RegisterCrosshair( vehicle.gunnerseat, { Attachment = "muzzle", Direction = Vector(0, 0, -1), Type = 3 } )
+	simfphys.RegisterCamera( vehicle.gunnerseat, Vector(22, 20, -16), Vector(0,45,100), true, "muzzle_up" )
+
 
 	vehicle:SetNWString( "WeaponMode", "Cannon | ATGM")
 	vehicle:SetNWInt("MaxWPNAmmo", self.GunClipsize)
@@ -146,15 +152,32 @@ end
 function simfphys.weapon:AimCannon( ply, vehicle, pod, Attachment )
 	if not IsValid( pod ) then return end
 
+	-- local aimdir = ply:EyeAngles()
+	-- aimdir:RotateAroundAxis(aimdir:Up(), 90)
+	-- local eyetrace = util.TraceLine({
+	-- 	start = ply:EyePos(),
+	-- 	endpos = ply:EyePos() + aimdir:Forward() * 32768,
+	-- 	filter = vehicle,
+	-- })
+
+	--local Aimang = pod:WorldToLocalAngles( (ply:GetEyeTrace().HitPos - Attachment.Pos):GetNormalized():Angle() )
 	local Aimang = pod:WorldToLocalAngles( ply:EyeAngles() )
 	Aimang:Normalize()
 
-	local AimRate = 50
+	-- debugoverlay.Axis(eyetrace.HitPos, aimdir, 8, FrameTime() * 2, true)
+	-- debugoverlay.Line(ply:EyePos(), eyetrace.HitPos, FrameTime() * 2, color_white, true)
+
+	local AimRate = 60
 
 	local Angles = vehicle:WorldToLocalAngles( Aimang + Angle(-2.3,-90,0) )
 
 	vehicle.sm_pp_yaw = vehicle.sm_pp_yaw and math.ApproachAngle( vehicle.sm_pp_yaw, Angles.y, AimRate * FrameTime() ) or 0
-	vehicle.sm_pp_pitch = vehicle.sm_pp_pitch and math.ApproachAngle( vehicle.sm_pp_pitch, -Angles.p, AimRate * FrameTime() ) or 0
+	vehicle.sm_pp_pitch = vehicle.sm_pp_pitch and math.ApproachAngle( vehicle.sm_pp_pitch, -Angles.p - 3, AimRate * FrameTime() ) or 0
+
+	local n = math.abs(math.NormalizeAngle(vehicle.sm_pp_yaw))
+	if n < 30 or n > (180 - 30) then
+		vehicle.sm_pp_pitch = math.max(-4, vehicle.sm_pp_pitch)
+	end
 
 	local TargetAng = Angle(vehicle.sm_pp_pitch,vehicle.sm_pp_yaw,0)
 	TargetAng:Normalize()
@@ -166,7 +189,7 @@ end
 function simfphys.weapon:ControlTurret( vehicle, deltapos )
 	if not istable( vehicle.PassengerSeats ) or not istable( vehicle.pSeat ) then return end
 
-	local pod = vehicle:GetDriverSeat()
+	local pod = vehicle.gunnerseat --vehicle:GetDriverSeat()
 
 	if not IsValid( pod ) then return end
 

@@ -58,21 +58,21 @@ function simfphys.weapon:AimWeapon(ply, vehicle, pod)
 	if not IsValid(pod) then return end
 	local ID = vehicle:LookupAttachment("muzzle")
 	local Attachment = vehicle:GetAttachment(ID)
-	local Aimang = pod:WorldToLocalAngles(ply:EyeAngles())
+	local Aimang = pod:WorldToLocalAngles(ply:GetAimVector():Angle())
 	local Angles = vehicle:WorldToLocalAngles(Aimang)
+	local podangles = vehicle:GetAngles()
 	Angles:Normalize()
 	vehicle.sm_dir = vehicle.sm_dir or Vector(0, 0, 0)
 	local L_Right = Angle(0, Aimang.y, 0):Right()
 	local La_Right = Angle(0, Attachment.Ang.y, 0):Forward()
-	local AimRate = 40
+	local AimRate = 60
 	local Yaw_Diff = math.Clamp(math.acos(math.Clamp(L_Right:Dot(La_Right), -1, 1)) * (180 / math.pi) - 90, -AimRate, AimRate)
-	local TargetPitch = Angles.p
+	local TargetPitch = podangles.p + Aimang.p --Angles.p + 2
 	local TargetYaw = vehicle.sm_dir:Angle().y - Yaw_Diff
 	vehicle.sm_dir = vehicle.sm_dir + (Angle(0, TargetYaw, 0):Forward() - vehicle.sm_dir) * 0.05
 	vehicle.sm_pitch = vehicle.sm_pitch and (vehicle.sm_pitch + (TargetPitch - vehicle.sm_pitch) * 0.50) or 0
 	vehicle:SetPoseParameter("mg_aim_yaw", vehicle.sm_dir:Angle().y)
 	vehicle:SetPoseParameter("mg_aim_pitch", -vehicle.sm_pitch)
-	local podangles = vehicle:GetAngles()
 	podangles:RotateAroundAxis(vehicle:GetAngles():Up(), vehicle.sm_dir:Angle().y - 90)
 	pod:SetAngles(podangles)
 end
@@ -100,7 +100,7 @@ function simfphys.weapon:Think(vehicle)
 		self:PrimaryAttack(vehicle, ply, shootOrigin)
 	else
 		vehicle.weaponheat = math.max(0, (vehicle.weaponheat or 0) - 0.5)
-		vehicle:SetNWInt("CurWPNAmmo", 100 - vehicle.weaponheat)
+		--vehicle:SetNWInt("CurWPNAmmo", 100 - vehicle.weaponheat)
 	end
 end
 

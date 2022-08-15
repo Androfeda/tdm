@@ -413,7 +413,7 @@ local V = {
 
 		CustomMassCenter = Vector(0,0,10),		-- custom masscenter offset. The script creates a counter weight to make the masscenter exactly in the center of the wheels. However you can add an offset to this to create more body roll if you really have to...
 
-		CustomSteerAngle = 15,				-- max clamped steering angle,
+		CustomSteerAngle = 30,				-- max clamped steering angle,
 
 		SeatOffset = Vector(-1,-28,68),
 		SeatPitch = 0,
@@ -558,7 +558,7 @@ local V = {
 
 		CustomMassCenter = Vector(0,0,10),		-- custom masscenter offset. The script creates a counter weight to make the masscenter exactly in the center of the wheels. However you can add an offset to this to create more body roll if you really have to...
 
-		CustomSteerAngle = 15,				-- max clamped steering angle,
+		CustomSteerAngle = 30,				-- max clamped steering angle,
 
 		SeatOffset = Vector(-1,-28,68),
 		SeatPitch = 0,
@@ -705,7 +705,7 @@ local V = {
 
 		CustomMassCenter = Vector(0,0,10),		-- custom masscenter offset. The script creates a counter weight to make the masscenter exactly in the center of the wheels. However you can add an offset to this to create more body roll if you really have to...
 
-		CustomSteerAngle = 15,				-- max clamped steering angle,
+		CustomSteerAngle = 25,				-- max clamped steering angle,
 
 		SeatOffset = Vector(2,-30,58),
 		SeatPitch = 0,
@@ -849,7 +849,7 @@ local V = {
 
 		CustomMassCenter = Vector(0,0,10),		-- custom masscenter offset. The script creates a counter weight to make the masscenter exactly in the center of the wheels. However you can add an offset to this to create more body roll if you really have to...
 
-		CustomSteerAngle = 15,				-- max clamped steering angle,
+		CustomSteerAngle = 25,				-- max clamped steering angle,
 
 		SeatOffset = Vector(2,-30,58),
 		SeatPitch = 0,
@@ -1024,7 +1024,7 @@ local V = {
 
 		NoWheelGibs = true,
 
-		FirstPersonViewPos = Vector(0,-50,50),
+		FirstPersonViewPos = Vector(-16,-60,24),
 
 		FrontWheelRadius = 29,
 		RearWheelRadius = 29,
@@ -1048,7 +1048,7 @@ local V = {
 
 		CustomSteerAngle = 30,
 
-		SeatOffset = Vector(60,1,34),
+		SeatOffset = Vector(60,16,34),
 		SeatPitch = -15,
 		SeatYaw = 0,
 
@@ -1058,7 +1058,7 @@ local V = {
 
 		PassengerSeats = {
 			{
-				pos = Vector(0,-10,26),
+				pos = Vector(-16,-10,26),
 				ang = Angle(0,0,0)
 			},
 			{
@@ -1216,7 +1216,7 @@ local V = {
 
 		NoWheelGibs = true,
 
-		FirstPersonViewPos = Vector(100,100,100),
+		FirstPersonViewPos = Vector(0, -16, 18), --Vector(-24,-100,16),
 
 		FrontWheelRadius = 40,
 		RearWheelRadius = 40,
@@ -1241,7 +1241,7 @@ local V = {
 
 		CustomSteerAngle = 60,
 
-		SeatOffset = Vector(0,0,48),
+		SeatOffset = Vector(64,-24,50),
 		SeatPitch = -15,
 		SeatYaw = 90,
 
@@ -1251,32 +1251,32 @@ local V = {
 
 		PassengerSeats = {
 			{
-				pos = Vector(0,0,32),
+				pos = Vector(50,-24,32),
 				ang = Angle(0,-90,0)
 			},
 			{
-				pos = Vector(0,0,32),
-				ang = Angle(0,-90,0)
+				pos = Vector(-36, -24, 24),
+				ang = Angle(0,0,0)
 			},
 			{
-				pos = Vector(0,0,32),
-				ang = Angle(0,-90,0)
+				pos = Vector(-36, 24, 24),
+				ang = Angle(0,180,0)
 			},
 			{
-				pos = Vector(0,0,32),
-				ang = Angle(0,-90,0)
+				pos = Vector(-36 - 28, -24, 24),
+				ang = Angle(0,0,0)
 			},
 			{
-				pos = Vector(0,0,32),
-				ang = Angle(0,-90,0)
+				pos = Vector(-36 - 28, 24, 24),
+				ang = Angle(0,180,0)
 			},
 			{
-				pos = Vector(0,0,32),
-				ang = Angle(0,-90,0)
+				pos = Vector(-36 - 56, -24, 24),
+				ang = Angle(0,0,0)
 			},
 			{
-				pos = Vector(0,0,32),
-				ang = Angle(0,-90,0)
+				pos = Vector(-36 - 56, 24, 24),
+				ang = Angle(0,180,0)
 			},
 		},
 

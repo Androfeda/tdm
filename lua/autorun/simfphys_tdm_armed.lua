@@ -2,6 +2,8 @@ AddCSLuaFile()
 
 if not simfphys then return end
 
+CreateConVar("tdm_simfphys_arcade", "0", "If set, drivers use guns instead of the gunner. Only affects APCs and tanks.", 0, 1)
+
 SIMF_TDM = {}
 
 local function manip(ply, bones)
