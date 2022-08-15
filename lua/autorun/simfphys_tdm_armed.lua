@@ -2,7 +2,7 @@ AddCSLuaFile()
 
 if not simfphys then return end
 
-CreateConVar("tdm_simfphys_arcade", "0", "If set, drivers use guns instead of the gunner. Only affects APCs and tanks.", 0, 1)
+CreateConVar("tdm_simfphys_arcade", "0", FCVAR_ARCHIVE + FCVAR_REPLICATED, "If set, drivers use guns instead of the gunner. Only affects APCs and tanks.", 0, 1)
 
 SIMF_TDM = {}
 
@@ -264,7 +264,7 @@ function SIMF_TDM.OnTakeDamage(ent, dmginfo)
 			-- physics damage
 			skipthreshold = true
 			if dmginfo:GetDamage() > 5 then
-				dmginfo:ScaleDamage(4)
+				dmginfo:ScaleDamage(6)
 			end
 		elseif dmginfo:GetDamageType() == DMG_BURN then
 			local factor = 3 -- pure fire gets bonus factor
