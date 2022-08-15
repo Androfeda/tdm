@@ -79,6 +79,14 @@ GM.Vehicles = {
 		Description = "Durable armored personnel carrier",
 		Description2 = "Can switch between AP and HE rounds",
 	},
+
+	["lunasflightschool_cessna"] = {
+		Team = nil,
+		Type = PLANE_TYPE_LIGHT,
+		Points = 100,
+
+		Description = "Unarmed civilian plane",
+	},
 }
 
 GM.VehiclePadTypes = {
@@ -177,21 +185,18 @@ function GM:GetVehicleTeam(ent, count_unoccupied)
 	end
 
 	local occupied = false
-	if simfphys and simfphys.IsCar(ent) then
-		for _, ply in pairs(player.GetAll()) do
-			if ply:GetSimfphys() == ent then
-				occupied = true
-				if ply:Team() == vehtbl.Team then
-					-- if anyone in the original team is in the vehicle, it is their team's even if enemies are on board
-					cur_team = ply:Team()
-					break
-				elseif cur_team == nil then
-					cur_team = ply:Team()
-				end
+	for _, ply in pairs(player.GetAll()) do
+		if (ply.GetSimfphys and ply:GetSimfphys() == ent) or (ply.lfsGetPlane and ply:lfsGetPlane() == ent) then
+			occupied = true
+			if ply:Team() == vehtbl.Team then
+				-- if anyone in the original team is in the vehicle, it is their team's even if enemies are on board
+				cur_team = ply:Team()
+				break
+			elseif cur_team == nil then
+				cur_team = ply:Team()
 			end
 		end
 	end
-
 	if not occupied and count_unoccupied then
 		return vehtbl.Team, false
 	else

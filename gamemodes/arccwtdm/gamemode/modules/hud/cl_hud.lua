@@ -31,6 +31,7 @@ local am_fr = Material("tdm/frag.png", "smooth")
 local am_he = Material("tdm/flame.png", "smooth")
 local am_ms = Material("tdm/missile.png", "smooth")
 local am_cn = Material("tdm/cannon.png", "smooth")
+local am_rk = Material("tdm/rocket.png", "smooth")
 
 local diamond = Material("tdm/diamond.png", "smooth")
 local skull = Material("tdm/skull.png", "smooth")
@@ -83,6 +84,13 @@ local toop = {
 	},
 
 	-- vehicles
+	["veh_gun"] = {
+		Texture = am_ri,
+		gap_hor = 4,
+		gap_ver = 16,
+		rep = 50,
+		size = 16,
+	},
 	["missile"] = {
 		Texture = am_ms,
 		gap_hor = 14,
@@ -90,9 +98,16 @@ local toop = {
 		rep = 5,
 		size = 32,
 	},
+	["rocket"] = {
+		Texture = am_rk,
+		gap_hor = 10,
+		gap_ver = 32,
+		rep = 20,
+		size = 32,
+	},
 	["cannon"] = {
 		Texture = am_cn,
-		gap_hor = 9,
+		gap_hor = 10,
 		gap_ver = 32,
 		rep = 40,
 		size = 32,
@@ -113,7 +128,8 @@ local refer = {
 
 local HUToM = 0.0254
 
-local wtfsimfphys = 0
+local type_simfphys = 1
+local type_lfs = 2
 
 hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 	local w, h = ScrW(), ScrH()
@@ -125,9 +141,14 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 		PW = false
 	end
 
-	local VW = false
-	if IsValid(LocalPlayer():GetVehicle()) and LocalPlayer().GetSimfphys then
+	local VW = nil
+	local vw_type = nil
+	if LocalPlayer().GetSimfphys and IsValid(LocalPlayer():GetSimfphys()) then
 		VW = LocalPlayer():GetSimfphys()
+		vw_type = type_simfphys
+	elseif LocalPlayer().lfsGetPlane and IsValid(LocalPlayer():lfsGetPlane()) then
+		VW = LocalPlayer():lfsGetPlane()
+		vw_type = type_lfs
 	end
 
 	if IsValid(P) then
@@ -162,33 +183,46 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 			surface.SetDrawColor(CLR_W)
 			surface.DrawRect(c * 128, h - (c * 46), (c * 200) * (P:Health() / P:GetMaxHealth()), c * 18)
 
-			if VW then
-				GAMEMODE:ShadowText("   " .. math.Round((VW:GetCurHealth() / VW:GetMaxHealth())*100), "CGHUD_2", (c * 16), (c * 48) + (c * 16), CLR_W, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+			if IsValid(VW) then
+
+				local cur_health, max_health
+				if vw_type == type_simfphys then
+					cur_health, max_health = VW:GetCurHealth(), VW:GetMaxHealth()
+				elseif vw_type == type_lfs then
+					cur_health, max_health = VW:GetHP(), VW:GetMaxHP()
+					-- LFS has shields. Maybe draw it somewhere?
+				end
+
+				local mult_h = cur_health / max_health
+
+				GAMEMODE:ShadowText("   " .. math.Round(mult_h * 100), "CGHUD_2", (c * 16), (c * 48) + (c * 16), CLR_W, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
 				surface.SetMaterial(veh)
 				surface.SetDrawColor(CLR_B2)
 				surface.DrawTexturedRect( (c * 14) + (c * 4), (c * 29) + (c * 4), (c * 26), (c * 26) ) -- wrench
 				surface.DrawOutlinedRect((c * 128) + (c * 4), (c * 36) + (c * 4), c * 200, c * 18, c * 4)
 
-				if (VW:GetCurHealth() / VW:GetMaxHealth()) != 1 then
+				if mult_h != 1 then
 					surface.SetDrawColor(CLR_B2)
-					surface.DrawRect((c * 128) + (c * 4), (c * 36) + (c * 8), (c * 200) * (VW:GetCurHealth() / VW:GetMaxHealth()), c * 10)
+					surface.DrawRect((c * 128) + (c * 4), (c * 36) + (c * 8), (c * 200) * mult_h, c * 10)
 				end
 
 				surface.SetDrawColor(CLR_W)
 				surface.DrawTexturedRect( (c * 14), (c * 29), (c * 26), (c * 26) ) -- wrench
 				surface.DrawOutlinedRect(c * 128, (c * 36), c * 200, c * 18, c * 4)
 				surface.SetDrawColor(CLR_W)
-				surface.DrawRect(c * 128, (c * 36), (c * 200) * (VW:GetCurHealth() / VW:GetMaxHealth()), c * 18)
+				surface.DrawRect(c * 128, (c * 36), (c * 200) * mult_h, c * 18)
 
 				GAMEMODE:ShadowText( math.Round( VW:GetVelocity():Length() * HUToM / 0.277778 ) .. "km/h", "CGHUD_2", (c * 16), (c * 48) + (c * 16) + (c * 48), CLR_W, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
 				GAMEMODE:ShadowText( math.Round( VW:GetVelocity():Length() ) .. "hU/s", "CGHUD_4", (c * 16), (c * 48) + (c * 16) + (c * 48) + (c * 24), CLR_W, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
 
 				-- Fuel
 				-- GAMEMODE:ShadowText( math.Round( (VW:GetFuel() / VW:GetMaxFuel())*100 ) .. "%", "CGHUD_7", (c * 128), (c * 36) - (c * 10), CLR_FUEL, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
-				surface.SetDrawColor(CLR_B2)
-				surface.DrawRect((c * 128) + (c * 4), (c * 36) - (c * 8) + (c * 4), (c * 200) * (VW:GetFuel() / VW:GetMaxFuel()), c * 4)
-				surface.SetDrawColor(CLR_FUEL)
-				surface.DrawRect(c * 128, (c * 36) - (c * 8), (c * 200) * (VW:GetFuel() / VW:GetMaxFuel()), c * 4)
+				if vw_simfphys then
+					surface.SetDrawColor(CLR_B2)
+					surface.DrawRect((c * 128) + (c * 4), (c * 36) - (c * 8) + (c * 4), (c * 200) * (VW:GetFuel() / VW:GetMaxFuel()), c * 4)
+					surface.SetDrawColor(CLR_FUEL)
+					surface.DrawRect(c * 128, (c * 36) - (c * 8), (c * 200) * (VW:GetFuel() / VW:GetMaxFuel()), c * 4)
+				end
 			end
 
 			-- stamina
@@ -209,7 +243,10 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 			local iAmmoCount2
 			local iFiremode
 
-			if VW then
+			local iSimpleClip1
+			local iSimpleClip2
+
+			if vw_type == type_simfphys then
 				iClip1		= VW:GetNWInt( "CurWPNAmmo", -1 )
 				iClip2		= VW:GetNWInt( "CurWPNAmmo2", -1 )
 				-- wtfsimfphys = math.max( wtfsimfphys, VW:GetNWInt( "CurWPNAmmo", -1 ) )
@@ -220,8 +257,20 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 				iAmmoCount1	= 13
 				iAmmoCount2	= 13
 				iFiremode = VW:GetNWString( "WeaponMode" )
-				iAmmoIcon1 = VW:GetNWString( "WPNType", "rifle" )
-				iAmmoIcon2 = VW:GetNWString( "WPNType2", "rifle" )
+				iAmmoIcon1 = VW:GetNWString( "WPNType", "veh_gun" )
+				iAmmoIcon2 = VW:GetNWString( "WPNType2", "veh_gun" )
+			elseif vw_type == type_lfs then
+				iClip1		= VW:GetAmmoPrimary()
+				iClip2		= VW:GetAmmoSecondary()
+				iMaxClip1	= VW:GetMaxAmmoPrimary()
+				iMaxClip2	= VW:GetMaxAmmoSecondary()
+				iAmmoType1	= 13
+				iAmmoType2	= 13
+				iAmmoCount1	= 13
+				iAmmoCount2	= 13
+				iFiremode = VW:GetNWString( "WeaponMode" )
+				iAmmoIcon1 = VW:GetNWString( "WPNType", "veh_gun" )
+				iAmmoIcon2 = VW:GetNWString( "WPNType2", "rocket" )
 			elseif PW then
 				iClip1		= PW:Clip1()
 				iClip2		= PW:Clip2()
@@ -236,12 +285,15 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 				end
 			end
 
+			iSimpleClip1 = (math.max(iClip1, iMaxClip1) >= 100)
+
 			if PW or VW then
 				local si = 32
 				local lg = 8 -- lr distance
 				local hg = 34 -- ud distance
 				local rep = 30 -- repeating
 				local dat = (VW and toop[iAmmoIcon1 or ""]) or refer[game.GetAmmoName(iAmmoType1)] or toop.frag
+				local ci = 3 --math.Clamp(math.floor(math.sqrt(iMaxClip1)) - 2, 3, 10) -- colored bullet interval
 
 				if dat then
 					si = dat.size
@@ -263,20 +315,25 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 				local li = 0 -- leftright
 				local hi = 0 -- updown
 
-				for i = 1, math.max(iMaxClip1, iClip1) do
-					surface.SetDrawColor(CLR_B2)
-					surface.DrawTexturedRect(ax - (c * li * lg) + (c * 4), ay - (c * hi * hg) + (c * 4), c * si, c * si)
+				if not iSimpleClip1 then
+					for i = 1, math.max(iMaxClip1, iClip1) do
+						surface.SetDrawColor(CLR_B2)
+						surface.DrawTexturedRect(ax - (c * li * lg) + (c * 4), ay - (c * hi * hg) + (c * 4), c * si, c * si)
 
-					if i ~= math.max(iMaxClip1, iClip1) and (i % rep == 0) then
-						hi = hi + 1
-						li = -1
+						if i ~= math.max(iMaxClip1, iClip1) and (i % rep == 0) then
+							hi = hi + 1
+							li = -1
+						end
+
+						li = li + 1
 					end
-
-					li = li + 1
-				end
-				if not GAMEMODE:WeaponHasInfiniteAmmo(PW) then
-					GAMEMODE:ShadowText(iAmmoCount1, "CGHUD_5", ax + (c * 1) - (c * li * lg), h - (c * 44) - (c * hi * hg), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
-					GAMEMODE:ShadowText("+", "CGHUD_5", ax + (c * 15) - (c * li * lg), h - (c * 44) - (c * hi * hg), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+					if not GAMEMODE:WeaponHasInfiniteAmmo(PW) then
+						GAMEMODE:ShadowText(iAmmoCount1, "CGHUD_5", ax + (c * 1) - (c * li * lg), h - (c * 44) - (c * hi * hg), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+						GAMEMODE:ShadowText("+", "CGHUD_5", ax + (c * 15) - (c * li * lg), h - (c * 44) - (c * hi * hg), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+					end
+				else
+					GAMEMODE:ShadowText(iClip1, "CGHUD_4", w - c * 16, h - (c * 25), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+					hi = 0.25
 				end
 
 				do
@@ -309,7 +366,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 					end
 
 					local li = 0
-					local hi = hi + 1
+					hi = hi + 1
 
 					for i = 1, math.max(iMaxClip2, iClip2) do
 						surface.SetDrawColor(CLR_B2)
@@ -322,7 +379,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 
 						li = li + 1
 					end
-					if iMaxClip2 > 0 and iAmmoType2 != -1 and GAMEMODE.AmmoBlacklist[string.lower(game.GetAmmoName(iAmmoType2))] then
+					if iMaxClip2 > 0 and iAmmoType2 ~= -1 and GAMEMODE.AmmoBlacklist[string.lower(game.GetAmmoName(iAmmoType2))] then
 						GAMEMODE:ShadowText(iAmmoCount2, "CGHUD_5", ax + (c * 1) - (c * li * lg), h - (c * hi * hg) - (c * 44), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
 						GAMEMODE:ShadowText("+", "CGHUD_5", ax + (c * 15) - (c * li * lg), h - (c * hi * hg) - (c * 44), CLR_W, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
 					end
@@ -349,27 +406,28 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 					end
 				end
 
-				surface.SetMaterial(dat.Texture)
-				li = 0
-				hi = 0
+				if not iSimpleClip1 then
+					surface.SetMaterial(dat.Texture)
+					li = 0
+					hi = 0
+					for i = 1, iClip1 do
+						if (iClip1 - i) >= iMaxClip1 then
+							surface.SetDrawColor(CLR_R)
+						elseif (iClip1 - i) % ci == 0 then
+							surface.SetDrawColor(CLR_W)
+						else
+							surface.SetDrawColor(CLR_W2)
+						end
 
-				for i = 1, iClip1 do
-					if (iClip1 - i) >= iMaxClip1 then
-						surface.SetDrawColor(CLR_R)
-					elseif (iClip1 - i) % 3 == 0 then
-						surface.SetDrawColor(CLR_W)
-					else
-						surface.SetDrawColor(CLR_W2)
+						surface.DrawTexturedRect(ax - (c * li * lg), ay - (c * hi * hg), c * si, c * si)
+
+						if i % rep == 0 then
+							hi = hi + 1
+							li = -1
+						end
+
+						li = li + 1
 					end
-
-					surface.DrawTexturedRect(ax - (c * li * lg), ay - (c * hi * hg), c * si, c * si)
-
-					if i % rep == 0 then
-						hi = hi + 1
-						li = -1
-					end
-
-					li = li + 1
 				end
 			end
 
@@ -386,18 +444,6 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 				if not IsValid(v) then continue end
 				if LocalPlayer():GetSimfphys() == v then continue end
 				class = t.VehicleName
-				--[[]
-				local occupied = false
-				local hasally = false
-				if simfphys and simfphys.IsCar(v) then
-					for _, ply in pairs( player.GetAll() ) do
-						if ply:GetSimfphys() == v then
-							occupied = true
-							hasally = hasally or ply:Team() == LocalPlayer():Team()
-						end
-					end
-				end
-				]]
 
 				local cur_team, occupied = GAMEMODE:GetVehicleTeam(v, true)
 				if GAMEMODE.Vehicles[class] and cur_team == LocalPlayer():Team() then --(hasally or (not occupied and t.Team == LocalPlayer():Team())) then

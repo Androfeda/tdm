@@ -13,6 +13,11 @@ net.Receive("tdm_vehicle", function(len, ply)
 	if simfphys and list.Get("simfphys_vehicles")[veh] then
 		local vehtbl = list.Get("simfphys_vehicles")[veh]
 		ent = simfphys.SpawnVehicleSimple(veh, pad:GetPos() + (vehtbl.SpawnOffset or Vector()) + Vector(0, 0, 25), pad:GetAngles() + Angle(0, 90, 0))
+	elseif scripted_ents.Get(veh) then
+		ent = ents.Create(veh)
+		ent:SetPos(pad:GetPos())
+		ent:SetAngles(pad:GetAngles() + Angle(0, 90, 0))
+		ent:Spawn()
 	end
 
 	if IsValid(ent) then
@@ -42,11 +47,8 @@ timer.Create("tdm_vehicle", interval, 0, function()
 
 	local occupied = {}
 	for _, ply in pairs(player.GetAll()) do
-		if simfphys and IsValid(ply:GetSimfphys()) then
+		if (ply.GetSimfphys and IsValid(ply:GetSimfphys())) or (ply.lfsGetPlane and IsValid(ply:lfsGetPlane())) then
 			occupied[ply:GetSimfphys()] = true
-		end
-		if IsValid(ply:GetVehicle()) then
-			occupied[ply:GetVehicle()] = true
 		end
 	end
 
@@ -101,8 +103,8 @@ hook.Add("simfphysVehicleDestroyed", "tdm_vehicle", function(ent, dmginfo)
 	local attacker = dmginfo:GetAttacker()
 	if not ent.VehicleInfo or not attacker:IsPlayer() then return end
 
-	local vt = GAMEMODE:GetVehicleTeam(ent)
-	if vt and vt ~= attacker:Team() then
+	local vt = GAMEMODE:GetVehicleTeam(ent, true)
+	if vt and vt ~= attacker:Team() and ent.VehicleInfo.DespawnTries < 4 then -- count kill if vehicle recently abandoned
 		local reward = (GAMEMODE.Vehicles[ent.VehicleInfo.VehicleName].Points or 300) * GetConVar("tdm_money_vehicle_kill"):GetFloat()
 		if not attacker:InVehicle() then
 			reward = reward * GetConVar("tdm_money_vehicle_onfoot"):GetFloat()
