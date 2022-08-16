@@ -378,7 +378,7 @@ function SIMF_TDM.OnTakeDamage(ent, dmginfo)
 end
 
 local function override_hook()
-	if engine.ActiveGamemode() ~= "arccwtdm" then return end
+	if SERVER or engine.ActiveGamemode() ~= "arccwtdm" then return end
 	timer.Simple(1, function()
 		local old_hook = hook.GetTable()["HUDPaint"]["simfphys_HUD"]
 		if old_hook then
