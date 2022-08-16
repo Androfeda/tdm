@@ -105,8 +105,14 @@ function simfphys.weapon:Initialize( vehicle )
 	vehicle:SetNWInt("CurWPNAmmo", vehicle.CurMag)
 	vehicle:SetNWString("WPNType", "cannon")
 
-	simfphys.RegisterCrosshair( vehicle:GetDriverSeat(), data )
+	if GetConVar("tdm_simfphys_arcade"):GetBool() then
+		vehicle.gunnerseat = vehicle:GetDriverSeat()
+	else
+		vehicle.gunnerseat = vehicle.pSeat[1]
+	end
 	simfphys.RegisterCamera( vehicle:GetDriverSeat(), Vector(13,45,50), Vector(13,45,50), true )
+	simfphys.RegisterCamera( vehicle.gunnerseat, Vector(13,45,50), Vector(13,45,50), true )
+	simfphys.RegisterCrosshair( vehicle.gunnerseat, data )
 
 	if not istable( vehicle.PassengerSeats ) or not istable( vehicle.pSeat ) then return end
 
@@ -132,7 +138,7 @@ function simfphys.weapon:AimWeapon( ply, vehicle, pod )
 end
 
 function simfphys.weapon:Think( vehicle )
-	local pod = vehicle:GetDriverSeat()
+	local pod = vehicle.gunnerseat
 	if not IsValid( pod ) then return end
 
 	local ply = pod:GetDriver()
