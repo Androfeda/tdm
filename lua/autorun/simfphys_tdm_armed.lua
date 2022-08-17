@@ -161,8 +161,8 @@ end
 function SIMF_TDM.OnSpawned(self)
 	for _, ent in pairs(self.Wheels) do
 		ent.OnTakeDamage = tiredamage
-		ent:SetCustomCollisionCheck(true)
 	end
+	self:SetCollisionGroup(COLLISION_GROUP_VEHICLE) -- This will block wheels (COLLISION_GROUP_WEAPON) from colliding. Awkward when on top of one another, but prevents wheels from getting in the way of vehicle collisions
 	self.OnTakeDamage = SIMF_TDM.OnTakeDamage
 	self.PhysicsCollide = SIMF_TDM.PhysicsCollide
 	self.HurtPlayerInfo = SIMF_TDM.HurtPlayerInfo
@@ -398,16 +398,11 @@ end
 function SIMF_TDM.PhysicsCollide(ent, data, physobj)
 	if hook.Run("simfphysPhysicsCollide", ent, data, physobj) then return end
 
-	print(ent:GetSpawn_List(), data.HitEntity, data.OurOldVelocity:Length())
-	if data.HitEntity:GetClass() == "gmod_sent_vehicle_fphysics_wheel" then
-		return
-	end
 
 	local speed = data.OurOldVelocity:Length()
 	if data.HitEntity:IsVehicle() then
 		-- In vehicle on vehicle collisions, favor attackers
-		speed = data.TheirOldVelocity:Length() * 2 + speed * 1
-
+		speed = data.TheirOldVelocity:Length() * 1.5 + speed * 0.5
 		-- More durable vehicles take less damage on collisions
 		-- if data.HitEntity:GetClass() == ent:GetClass() then
 		-- 	speed = speed * math.Clamp(data.HitEntity:GetMaxHealth() / ent:GetMaxHealth(), 0.5, 1)
@@ -442,26 +437,34 @@ function SIMF_TDM.PhysicsCollide(ent, data, physobj)
 		dmginfo:SetDamageType(DMG_CRUSH)
 
 		local plydmg = 0
+		local factor = 0.5
 
-		if speed > 1000 then
+		if speed > 800 then
 			Spark(pos, data.HitNormal, "MetalVehicle.ImpactHard")
 			plydmg = 10
-			dmginfo:SetDamage((speed / 5) * simfphys.DamageMul)
+			factor = 0.9
 		else
 			Spark(pos, data.HitNormal, "MetalVehicle.ImpactSoft")
 
-			if speed > 500 then
-				plydmg = 5
-				dmginfo:SetDamage((speed / 20) * simfphys.DamageMul)
-			elseif speed > 250 then
-				dmginfo:SetDamage((speed / 10) * simfphys.DamageMul)
+			if speed > 400 then
+				factor = 0.75
 			end
 		end
+
+		dmginfo:SetDamage((speed * factor) ^ factor * simfphys.DamageMul)
 
 		if dmginfo:GetDamage() > 0 then
 
 			dmginfo:ScaleDamage(1 + ent:GetMaxHealth() * 0.0005)
 			--print(ent:GetSpawn_List(), math.Round(data.OurOldVelocity:Length()), math.Round(speed), dmginfo:GetDamage())
+
+			-- if data.HitEntity:IsVehicle() then
+			-- 	print("us:", ent:GetSpawn_List(),data.OurOldVelocity:Length())
+			-- 	print("them:", data.HitEntity:GetSpawn_List(), data.TheirOldVelocity:Length())
+			-- 	print(speed, dmginfo:GetDamage())
+			-- else
+			-- 	print(data.HitEntity)
+			-- end
 
 			ent:TakeDamageInfo(dmginfo)
 
@@ -517,9 +520,3 @@ local function cust_damage(ent, dmginfo)
 	end
 end
 hook.Add("EntityTakeDamage", "tdm_simfphys", cust_damage)
-
-local wheel = "gmod_sent_vehicle_fphysics_wheel"
-hook.Add( "ShouldCollide", "tdm_simfphys", function( ent1, ent2 )
-	if ent1:GetClass() == wheel and (ent2:GetClass() == wheel or ent2:IsPlayer()) then return false end
-	if ent2:GetClass() == wheel and (ent1:GetClass() == wheel or ent1:IsPlayer()) then return false end
-end )
