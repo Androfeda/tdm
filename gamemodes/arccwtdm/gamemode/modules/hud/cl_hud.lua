@@ -362,7 +362,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 				surface.SetDrawColor(tc)
 				surface.DrawTexturedRect( (c * 36), (c * 172) + (c * (i-1) * 22) + (c * 3), (c * siiiize), (c * siiiize) )
 	
-				GAMEMODE:ShadowText( i, "CGHUD_5", (c * 26), (c * 172) + (c * (i-1) * 22), tc, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
+				GAMEMODE:ShadowText( i, "CGHUD_5", (c * 24), (c * 172) + (c * (i-1) * 22), tc, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 				GAMEMODE:ShadowText( naame, "CGHUD_5", (c * 64), (c * 172) + (c * (i-1) * 22), tc, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 			end
 		end
