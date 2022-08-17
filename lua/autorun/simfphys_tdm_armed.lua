@@ -433,13 +433,13 @@ function SIMF_TDM.PhysicsCollide(ent, data, physobj)
 
 		if speed > 1000 then
 			Spark(pos, data.HitNormal, "MetalVehicle.ImpactHard")
-			plydmg = 25
+			plydmg = 10
 			dmginfo:SetDamage((speed / 6) * simfphys.DamageMul)
 		else
 			Spark(pos, data.HitNormal, "MetalVehicle.ImpactSoft")
 
 			if speed > 500 then
-				plydmg = 25
+				plydmg = 5
 				dmginfo:SetDamage((speed / 12) * simfphys.DamageMul)
 			elseif speed > 250 then
 				dmginfo:SetDamage((speed / 20) * simfphys.DamageMul)
