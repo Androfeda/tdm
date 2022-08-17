@@ -283,11 +283,12 @@ function SIMF_TDM.OnTakeDamage(ent, dmginfo)
 		end
 	end
 
+	if dmginfo:GetDamage() <= 0 then return end
+
 	if ent.DamageThreshold and not skipthreshold and dmginfo:GetDamage() < ent.DamageThreshold then
 		dmginfo:ScaleDamage(dmginfo:GetDamage() / ent.DamageThreshold)
 	end
 
-	if dmginfo:GetDamage() <= 0 then return end
 
 	ent:TakePhysicsDamage( dmginfo )
 
