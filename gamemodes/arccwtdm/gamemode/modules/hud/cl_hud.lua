@@ -25,6 +25,7 @@ local CLR_FUEL = Color(255, 255, 150, 255)
 
 local mat_vhp = Material("tdm/vehiclehealth.png", "smooth")
 local mat_vlock = Material("tdm/vehiclelock.png", "smooth")
+local mat_vunlock = Material("tdm/vehicleunlock.png", "smooth")
 
 local mat_v_driver = Material("tdm/vehicle_driver.png", "smooth")
 local mat_v_gunner = Material("tdm/vehicle_gunner.png", "smooth")
@@ -211,6 +212,11 @@ local nooo = {
 	["tdm_hmmvv"] = true,
 }
 
+local nooo2 = {
+	["tdm_bulldog_mg"] = true,
+	["tdm_hmmvv_mg"] = true,
+}
+
 hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 	local dzx, dzy = GetConVar("tdm_hud_deadzone_x"):GetFloat() * 0.25, GetConVar("tdm_hud_deadzone_y"):GetFloat() * 0.25
 	local w, h = ScrW() * (1 - dzx * 2), ScrH() * (1 - dzy * 2)
@@ -303,12 +309,13 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 			surface.SetDrawColor(CLR_FUEL)
 			surface.DrawRect(c * 128, (c * 36) - (c * 8), (c * 200) * (veh:GetFuel() / veh:GetMaxFuel()), c * 4)
 
-			if veh:GetIsVehicleLocked() then
-				surface.SetMaterial(mat_vlock)
+			if true then
+				surface.SetMaterial( veh:GetIsVehicleLocked() and mat_vlock or mat_vunlock) 
 				surface.SetDrawColor(CLR_B2)
 				surface.DrawTexturedRect( (c * 14) + (c * 4), (c * 142) + (c * 4), (c * 26), (c * 26) )
 				surface.SetDrawColor(CLR_W)
 				surface.DrawTexturedRect( (c * 14), (c * 142), (c * 26), (c * 26) )
+				GAMEMODE:ShadowText( veh:GetIsVehicleLocked() and "LOCKED" or "UNLOCKED", "CGHUD_5", (c * 42), (c * 154), CLR_W, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 			end
 
 			local pSeats = veh:GetPassengerSeats()
@@ -318,7 +325,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 			table.insert( realseats, { seat = veh, task = "driver" } )
 
 			for i, v in SortedPairs(pSeats, true) do
-				table.insert( realseats, { seat = v, task = (veh.pSeat[1] == v and "gunner" or "passenger") } )
+				table.insert( realseats, { seat = v, task = "passenger" } )
 			end
 
 			for i, v in ipairs(realseats) do
@@ -333,7 +340,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 				end
 				if v.task == "driver" then
 					surface.SetMaterial(mat_v_driver)
-				elseif !GetConVar("tdm_simfphys_arcade"):GetBool() and i == 2 and !nooo[veh:GetSpawn_List()] then-- fuck you simfphys v.task == "gunner" then
+				elseif i == 2 and !nooo[veh:GetSpawn_List()] then -- i dont CARE for arcade!!
 					surface.SetMaterial(mat_v_gunner)
 				else
 					surface.SetMaterial(mat_v_passenger)
