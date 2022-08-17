@@ -319,7 +319,7 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 			table.insert( realseats, { seat = veh, task = seatinfo[0] or "driver" } )
 
 			for i, v in SortedPairs(pSeats, true) do
-				local task = seatinfo[i] or "passenger"
+				local task = seatinfo[#realseats] or "passenger"
 				if task == "gunner" and GetConVar("tdm_simfphys_arcade"):GetBool() then
 					task = "passenger"
 				end
