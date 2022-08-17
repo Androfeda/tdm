@@ -27,9 +27,12 @@ local mat_vhp = Material("tdm/vehiclehealth.png", "smooth")
 local mat_vlock = Material("tdm/vehiclelock.png", "smooth")
 local mat_vunlock = Material("tdm/vehicleunlock.png", "smooth")
 
-local mat_v_driver = Material("tdm/vehicle_driver.png", "smooth")
-local mat_v_gunner = Material("tdm/vehicle_gunner.png", "smooth")
-local mat_v_passenger = Material("tdm/vehicle_passenger.png", "smooth")
+local mat_v = {
+	driver = Material("tdm/vehicle_driver.png", "smooth"),
+	gunner = Material("tdm/vehicle_gunner.png", "smooth"),
+	passenger = Material("tdm/vehicle_passenger.png", "smooth"),
+}
+
 local spawnpro = Material("tdm/spawnpro.png", "smooth")
 
 local am_he = Material("tdm/flame.png", "smooth")
@@ -207,16 +210,6 @@ local function drawbullets(info, x, y, count, count_max)
 	return height * info.gap_ver * c, (limit + 0.5) * info.gap_hor * c
 end
 
-local nooo = {
-	["tdm_bulldog"] = true,
-	["tdm_hmmvv"] = true,
-}
-
-local nooo2 = {
-	["tdm_bulldog_mg"] = true,
-	["tdm_hmmvv_mg"] = true,
-}
-
 hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 	local dzx, dzy = GetConVar("tdm_hud_deadzone_x"):GetFloat() * 0.25, GetConVar("tdm_hud_deadzone_y"):GetFloat() * 0.25
 	local w, h = ScrW() * (1 - dzx * 2), ScrH() * (1 - dzy * 2)
@@ -279,6 +272,8 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 			-- LFS has shields. Maybe draw it somewhere?
 		end
 
+		local vtbl = GAMEMODE.Vehicles[veh:GetSpawn_List()]
+
 		local mult_h = cur_health / max_health
 
 		GAMEMODE:ShadowText("   " .. math.Round(mult_h * 100), "CGHUD_2", (c * 16), (c * 48) + (c * 16), CLR_W, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
@@ -309,23 +304,26 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 			surface.SetDrawColor(CLR_FUEL)
 			surface.DrawRect(c * 128, (c * 36) - (c * 8), (c * 200) * (veh:GetFuel() / veh:GetMaxFuel()), c * 4)
 
-			if true then
-				surface.SetMaterial( veh:GetIsVehicleLocked() and mat_vlock or mat_vunlock) 
-				surface.SetDrawColor(CLR_B2)
-				surface.DrawTexturedRect( (c * 14) + (c * 4), (c * 142) + (c * 4), (c * 26), (c * 26) )
-				surface.SetDrawColor(CLR_W)
-				surface.DrawTexturedRect( (c * 14), (c * 142), (c * 26), (c * 26) )
-				GAMEMODE:ShadowText( veh:GetIsVehicleLocked() and "LOCKED" or "UNLOCKED", "CGHUD_5", (c * 42), (c * 154), CLR_W, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
-			end
+			surface.SetMaterial(veh:GetIsVehicleLocked() and mat_vlock or mat_vunlock)
+			surface.SetDrawColor(CLR_B2)
+			surface.DrawTexturedRect((c * 14) + (c * 4), (c * 142) + (c * 4), c * 26, c * 26)
+			surface.SetDrawColor(CLR_W)
+			surface.DrawTexturedRect(c * 14, c * 142, c * 26, c * 26)
+			GAMEMODE:ShadowText(veh:GetIsVehicleLocked() and "LOCKED" or "UNLOCKED", "CGHUD_5", c * 42, c * 154, CLR_W, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 
 			local pSeats = veh:GetPassengerSeats()
 			local SeatCount = table.Count( pSeats )
+			local seatinfo = vtbl.Seats or {}
 
 			local realseats = {}
-			table.insert( realseats, { seat = veh, task = "driver" } )
+			table.insert( realseats, { seat = veh, task = seatinfo[0] or "driver" } )
 
 			for i, v in SortedPairs(pSeats, true) do
-				table.insert( realseats, { seat = v, task = "passenger" } )
+				local task = seatinfo[i] or "passenger"
+				if task == "gunner" and GetConVar("tdm_simfphys_arcade"):GetBool() then
+					task = "passenger"
+				end
+				table.insert( realseats, { seat = v, task = task } )
 			end
 
 			for i, v in ipairs(realseats) do
@@ -338,13 +336,9 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 				else
 					pla = false
 				end
-				if v.task == "driver" then
-					surface.SetMaterial(mat_v_driver)
-				elseif i == 2 and !nooo[veh:GetSpawn_List()] then -- i dont CARE for arcade!!
-					surface.SetMaterial(mat_v_gunner)
-				else
-					surface.SetMaterial(mat_v_passenger)
-				end
+
+				surface.SetMaterial(mat_v[v.task])
+
 				--print(veh.pSeat[1])
 				local siiiize = 20
 				local tc = Color( CLR_W.r, CLR_W.g, CLR_W.b, CLR_W.a )

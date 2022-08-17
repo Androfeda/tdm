@@ -6,6 +6,9 @@ CreateConVar("tdm_simfphys_arcade", "0", FCVAR_ARCHIVE + FCVAR_REPLICATED, "If s
 
 SIMF_TDM = {}
 
+-- Custom damage bit flag to indicate damage came from vehicle.
+SIMF_TDM.FROM_VEHICLE = 128
+
 local function manip(ply, bones)
 	if not IsValid(ply) then return end
 	if bones then
@@ -159,6 +162,8 @@ function SIMF_TDM.OnSpawned(self)
 		ent.OnTakeDamage = tiredamage
 	end
 	self.OnTakeDamage = SIMF_TDM.OnTakeDamage
+	self.PhysicsCollide = SIMF_TDM.PhysicsCollide
+	self.HurtPlayerInfo = SIMF_TDM.HurtPlayerInfo
 end
 
 
@@ -177,7 +182,7 @@ local function DestroyVehicle( ent, dmginfo )
 	Col.g = Col.g * 0.8
 	Col.b = Col.b * 0.8
 
-	local bprop = ents.Create( "gmod_sent_vehicle_fphysics_gib" )
+	local bprop = ents.Create( "tdm_simfphys_gib" )
 	bprop:SetModel( ent:GetModel() )
 	bprop:SetPos( ent:GetPos() )
 	bprop:SetAngles( ent:GetAngles() )
@@ -189,6 +194,11 @@ local function DestroyVehicle( ent, dmginfo )
 	bprop.MakeSound = true
 	bprop:SetColor( Col )
 	bprop:SetSkin( skin )
+
+	local i, a, p, h = dmginfo:GetInflictor(), dmginfo:GetAttacker(), ent:GetPos(), ent:GetMaxHealth()
+	timer.Simple(0.1, function()
+		util.BlastDamage(IsValid(i) and i or game.GetWorld(), IsValid(a) and a or game.GetWorld(), p, 250 + h ^ 0.6, 500 + h * 0.25)
+	end)
 
 	ent.Gib = bprop
 
@@ -224,21 +234,22 @@ local function DestroyVehicle( ent, dmginfo )
 		end
 	end
 
-	local Driver = ent:GetDriver()
-	if IsValid( Driver ) then
-		if ent.RemoteDriver ~= Driver then
-			Driver:TakeDamage( Driver:Health() + Driver:Armor(), ent.LastAttacker or Entity(0), ent.LastInflictor or Entity(0) )
-		end
-	end
+	-- the explosion gonna kill them anyways
+	-- local Driver = ent:GetDriver()
+	-- if IsValid( Driver ) then
+	-- 	if ent.RemoteDriver ~= Driver then
+	-- 		Driver:TakeDamage( Driver:Health() + Driver:Armor(), ent.LastAttacker or Entity(0), ent.LastInflictor or Entity(0) )
+	-- 	end
+	-- end
 
-	if ent.PassengerSeats then
-		for i = 1, table.Count( ent.PassengerSeats ) do
-			local Passenger = ent.pSeat[i]:GetDriver()
-			if IsValid( Passenger ) then
-				Passenger:TakeDamage( Passenger:Health() + Passenger:Armor(), ent.LastAttacker or Entity(0), ent.LastInflictor or Entity(0) )
-			end
-		end
-	end
+	-- if ent.PassengerSeats then
+	-- 	for i = 1, table.Count( ent.PassengerSeats ) do
+	-- 		local Passenger = ent.pSeat[i]:GetDriver()
+	-- 		if IsValid( Passenger ) then
+	-- 			Passenger:TakeDamage( Passenger:Health() + Passenger:Armor(), ent.LastAttacker or Entity(0), ent.LastInflictor or Entity(0) )
+	-- 		end
+	-- 	end
+	-- end
 
 	ent:Extinguish()
 
@@ -254,33 +265,27 @@ function SIMF_TDM.OnTakeDamage(ent, dmginfo)
 	if hook.Run( "simfphysOnTakeDamage", ent, dmginfo ) then return end
 
 	-- Armor
-
 	local skipthreshold = false
-	if ent.DamageBlock then
-		if dmginfo:IsDamageType(DMG_AIRBOAT) then
-			-- "pure" damage
-			skipthreshold = true
-		elseif dmginfo:GetDamageType() == 0 then
-			-- physics damage
-			skipthreshold = true
-			if dmginfo:GetDamage() > 5 then
-				dmginfo:ScaleDamage(6)
-			end
-		elseif dmginfo:GetDamageType() == DMG_BURN then
-			local factor = 3 -- pure fire gets bonus factor
-			dmginfo:ScaleDamage(2 + math.Clamp((ent:GetCurHealth() / ent:GetMaxHealth()) * factor, 0, factor))
-			skipthreshold = true
-		elseif dmginfo:IsExplosionDamage() then
-			-- partial resistance against HE
-			dmginfo:SetDamage(dmginfo:GetDamage() - ent.DamageBlock / 2)
-		elseif dmginfo:IsDamageType(DMG_BURN) then
-			-- mixed burn damage
-			local factor = 1.5
-			dmginfo:ScaleDamage(1 + math.Clamp((ent:GetCurHealth() / ent:GetMaxHealth()) * factor, 0, factor))
-		elseif not dmginfo:IsDamageType(DMG_DIRECT) then
-			-- DMG_DIRECT is used by simfphys_projectiles, skips block but affected by threshold
-			dmginfo:SetDamage(dmginfo:GetDamage() - ent.DamageBlock)
-		end
+	if dmginfo:IsDamageType(DMG_AIRBOAT) then
+		-- "pure" damage
+		skipthreshold = true
+	elseif dmginfo:GetDamageType() == DMG_CRUSH then
+		-- physics damage
+		skipthreshold = true
+	elseif dmginfo:GetDamageType() == DMG_BURN then
+		local factor = 3 -- pure fire gets bonus factor
+		dmginfo:ScaleDamage(2 + math.Clamp((ent:GetCurHealth() / ent:GetMaxHealth()) * factor, 0, factor))
+		skipthreshold = true
+	elseif dmginfo:IsExplosionDamage() then
+		-- partial resistance against HE
+		dmginfo:SetDamage(dmginfo:GetDamage() - (ent.DamageBlock or 0) / 2)
+	elseif dmginfo:IsDamageType(DMG_BURN) then
+		-- mixed burn damage
+		local factor = 1.5
+		dmginfo:ScaleDamage(1 + math.Clamp((ent:GetCurHealth() / ent:GetMaxHealth()) * factor, 0, factor))
+	elseif not dmginfo:IsDamageType(DMG_DIRECT) then
+		-- DMG_DIRECT is used by simfphys_projectiles, skips block but affected by threshold
+		dmginfo:SetDamage(dmginfo:GetDamage() - (ent.DamageBlock or 0))
 	end
 
 	if dmginfo:GetDamage() <= 0 then return end
@@ -323,7 +328,7 @@ function SIMF_TDM.OnTakeDamage(ent, dmginfo)
 	end
 
 	if NewHealth <= 0 then
-		if type ~= DMG_GENERIC and type ~= DMG_CRUSH or damage > 400 then
+		if type ~= DMG_GENERIC and type ~= DMG_CRUSH or dmginfo:GetDamage() > 400 then
 
 			DestroyVehicle( ent, dmginfo )
 
@@ -378,6 +383,107 @@ function SIMF_TDM.OnTakeDamage(ent, dmginfo)
 	end
 end
 
+local function Spark( pos , normal , snd )
+	local effectdata = EffectData()
+	effectdata:SetOrigin( pos - normal )
+	effectdata:SetNormal( -normal )
+	util.Effect( "stunstickimpact", effectdata, true, true )
+
+	if snd then
+		sound.Play( Sound( snd ), pos, 75)
+	end
+end
+function SIMF_TDM.PhysicsCollide(ent, data, physobj)
+	if hook.Run("simfphysPhysicsCollide", ent, data, physobj) then return end
+
+	local speed = data.OurOldVelocity:Length()
+	if data.HitEntity:IsVehicle() then
+		-- In vehicle on vehicle collisions, favor attackers
+		speed = data.TheirOldVelocity:Length() * 1.5 + speed * 0.5
+
+		-- More durable vehicles take less damage on collisions
+		if data.HitEntity:GetClass() == ent:GetClass() then
+			speed = speed * math.Clamp(data.HitEntity:GetMaxHealth() / ent:GetMaxHealth(), 0.5, 1)
+		end
+	end
+
+	--debugoverlay.Line(data.HitPos, data.HitPos + data.HitNormal * 24, 5, Color(0, 255, 255), true)
+	--debugoverlay.Line(data.HitPos, data.HitPos + data.OurOldVelocity:GetNormalized() * math.log(data.Speed) * 10, 5, Color(255, 255, 0), true)
+
+	local dot = math.abs(data.HitNormal:Dot(data.OurOldVelocity:GetNormalized()))
+	speed = speed * math.Clamp(dot, 0.25, 1) ^ 0.5
+
+	if IsValid(data.HitEntity) and (data.HitEntity:IsNPC() or data.HitEntity:IsNextBot() or data.HitEntity:IsPlayer())  then
+		Spark(data.HitPos, data.HitNormal, "MetalVehicle.ImpactSoft")
+		return
+	end
+
+	if speed > 60 and data.DeltaTime > 0.2 then
+		local pos = data.HitPos
+
+		local dmginfo = DamageInfo()
+		dmginfo:SetDamageForce(data.OurNewVelocity)
+		dmginfo:SetDamagePosition(data.HitPos)
+		dmginfo:SetAttacker(data.HitEntity)
+		dmginfo:SetInflictor(data.HitEntity)
+		dmginfo:SetDamage(0)
+		dmginfo:SetDamageType(DMG_CRUSH)
+
+		local plydmg = 0
+
+		if speed > 1000 then
+			Spark(pos, data.HitNormal, "MetalVehicle.ImpactHard")
+			plydmg = 25
+			dmginfo:SetDamage((speed / 6) * simfphys.DamageMul)
+		else
+			Spark(pos, data.HitNormal, "MetalVehicle.ImpactSoft")
+
+			if speed > 500 then
+				plydmg = 25
+				dmginfo:SetDamage((speed / 12) * simfphys.DamageMul)
+			elseif speed > 250 then
+				dmginfo:SetDamage((speed / 20) * simfphys.DamageMul)
+			end
+		end
+
+		if dmginfo:GetDamage() > 0 then
+
+			dmginfo:ScaleDamage(1 + ent:GetMaxHealth() * 0.0005)
+			--print(ent:GetSpawn_List(), math.Round(data.OurOldVelocity:Length()), math.Round(speed), dmginfo:GetDamage())
+
+			ent:TakeDamageInfo(dmginfo)
+
+			dmginfo:SetDamage(plydmg)
+			ent:HurtPlayerInfo(dmginfo)
+		end
+	end
+end
+
+function SIMF_TDM.HurtPlayerInfo(ent, dmginfo)
+	if not simfphys.pDamageEnabled then return end
+
+	local oldc = dmginfo:GetDamageCustom()
+	dmginfo:SetDamageCustom(SIMF_TDM.FROM_VEHICLE)
+
+	local Driver = ent:GetDriver()
+
+	if IsValid( Driver ) and ent.RemoteDriver ~= Driver then
+		Driver:TakeDamageInfo(dmginfo)
+	end
+
+	if ent.PassengerSeats then
+		for i = 1, table.Count( ent.PassengerSeats ) do
+			local Passenger = ent.pSeat[i]:GetDriver()
+
+			if IsValid(Passenger) then
+				Passenger:TakeDamageInfo(dmginfo)
+			end
+		end
+	end
+
+	dmginfo:SetDamageCustom(oldc)
+end
+
 local function override_hook()
 	if SERVER or engine.ActiveGamemode() ~= "arccwtdm" then return end
 	timer.Simple(1, function()
@@ -389,3 +495,13 @@ local function override_hook()
 	end)
 end
 hook.Add("InitPostEntity", "tdm_simfphysoverride", override_hook)
+
+local candamage = DMG_BURN + DMG_DISSOLVE + DMG_NERVEGAS + DMG_SONIC
+
+-- rogue blast damage may damage the player when it shouldn't
+local function cust_damage(ent, dmginfo)
+	if ent:IsPlayer() and (ent.GetSimfphys and IsValid(ent:GetSimfphys())) and bit.band(dmginfo:GetDamageType(), candamage) == 0 and bit.band(dmginfo:GetDamageCustom(), SIMF_TDM.FROM_VEHICLE) ~= SIMF_TDM.FROM_VEHICLE then
+		return true
+	end
+end
+hook.Add("EntityTakeDamage", "tdm_simfphys", cust_damage)

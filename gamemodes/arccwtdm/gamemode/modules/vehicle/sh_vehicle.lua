@@ -36,6 +36,9 @@ GM.Vehicles = {
 		Description = "Light armored recon vehicle",
 		Description2 = "Armed with top-mounted machine gun",
 
+		Seats = {
+			[1] = "gunner",
+		}
 	},
 	["tdm_hmmvv_mg"] = {
 		Team = TEAM_HECU,
@@ -44,6 +47,10 @@ GM.Vehicles = {
 
 		Description = "Light armored recon vehicle",
 		Description2 = "Armed with top-mounted machine gun",
+
+		Seats = {
+			[1] = "gunner",
+		}
 	},
 
 	["tdm_lav"] = {
@@ -53,6 +60,10 @@ GM.Vehicles = {
 
 		Description = "Anti-vehicle infantry fighting vehicle",
 		Description2 = "Fires two high velocity ATGMs rapidly",
+
+		Seats = {
+			[1] = "gunner",
+		}
 	},
 	["tdm_bradley"] = {
 		Team = TEAM_HECU,
@@ -61,6 +72,10 @@ GM.Vehicles = {
 
 		Description = "Flexible infantry fighting vehicle",
 		Description2 = "ALT to fire ATGM missiles",
+
+		Seats = {
+			[1] = "gunner",
+		}
 	},
 
 	["tdm_combineapc"] = {
