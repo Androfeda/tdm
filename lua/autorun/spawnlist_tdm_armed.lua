@@ -1229,12 +1229,12 @@ local V = {
 		CustomWheelModel = "models/props_c17/canisterchunk01g.mdl",
 		--CustomWheelModel = "models/props_vehicles/apc_tire001.mdl",
 
-		CustomWheelPosRL = Vector(-122,-50,30),
-		CustomWheelPosRR = Vector(-122,50,30),
-		CustomWheelPosML = Vector(0,-50,30),
-		CustomWheelPosMR = Vector(0,50,30),
-		CustomWheelPosFL = Vector(110,-50,30),
-		CustomWheelPosFR = Vector(110,50,30),
+		CustomWheelPosRL = Vector(-122,-30,30),
+		CustomWheelPosRR = Vector(-122,30,30),
+		CustomWheelPosML = Vector(0,-30,30),
+		CustomWheelPosMR = Vector(0,30,30),
+		CustomWheelPosFL = Vector(110,-30,30),
+		CustomWheelPosFR = Vector(110,30,30),
 		CustomWheelAngleOffset = Angle(0,0,90),
 
 		CustomMassCenter = Vector(0,0,0),

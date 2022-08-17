@@ -157,9 +157,11 @@ local function tiredamage(self, dmginfo)
 	end
 end
 
+
 function SIMF_TDM.OnSpawned(self)
 	for _, ent in pairs(self.Wheels) do
 		ent.OnTakeDamage = tiredamage
+		ent:SetCustomCollisionCheck(true)
 	end
 	self.OnTakeDamage = SIMF_TDM.OnTakeDamage
 	self.PhysicsCollide = SIMF_TDM.PhysicsCollide
@@ -396,25 +398,35 @@ end
 function SIMF_TDM.PhysicsCollide(ent, data, physobj)
 	if hook.Run("simfphysPhysicsCollide", ent, data, physobj) then return end
 
+	print(ent:GetSpawn_List(), data.HitEntity, data.OurOldVelocity:Length())
+	if data.HitEntity:GetClass() == "gmod_sent_vehicle_fphysics_wheel" then
+		return
+	end
+
 	local speed = data.OurOldVelocity:Length()
 	if data.HitEntity:IsVehicle() then
 		-- In vehicle on vehicle collisions, favor attackers
-		speed = data.TheirOldVelocity:Length() * 1.5 + speed * 0.5
+		speed = data.TheirOldVelocity:Length() * 2 + speed * 1
 
 		-- More durable vehicles take less damage on collisions
-		if data.HitEntity:GetClass() == ent:GetClass() then
-			speed = speed * math.Clamp(data.HitEntity:GetMaxHealth() / ent:GetMaxHealth(), 0.5, 1)
-		end
+		-- if data.HitEntity:GetClass() == ent:GetClass() then
+		-- 	speed = speed * math.Clamp(data.HitEntity:GetMaxHealth() / ent:GetMaxHealth(), 0.5, 1)
+		-- end
+	elseif data.OurNewVelocity:Length() / data.OurOldVelocity:Length() >= 0.9 then
+		speed = 0
 	end
 
 	--debugoverlay.Line(data.HitPos, data.HitPos + data.HitNormal * 24, 5, Color(0, 255, 255), true)
 	--debugoverlay.Line(data.HitPos, data.HitPos + data.OurOldVelocity:GetNormalized() * math.log(data.Speed) * 10, 5, Color(255, 255, 0), true)
 
 	local dot = math.abs(data.HitNormal:Dot(data.OurOldVelocity:GetNormalized()))
-	speed = speed * math.Clamp(dot, 0.25, 1) ^ 0.5
+	speed = speed * math.Clamp(dot, 0, 1) ^ 0.5
 
-	if IsValid(data.HitEntity) and (data.HitEntity:IsNPC() or data.HitEntity:IsNextBot() or data.HitEntity:IsPlayer())  then
-		Spark(data.HitPos, data.HitNormal, "MetalVehicle.ImpactSoft")
+
+	if IsValid(data.HitEntity) and (data.HitEntity:IsNPC() or data.HitEntity:IsNextBot() or data.HitEntity:IsPlayer()) then
+		if speed > 100 then
+			Spark(data.HitPos, data.HitNormal, "MetalVehicle.ImpactSoft")
+		end
 		return
 	end
 
@@ -434,15 +446,15 @@ function SIMF_TDM.PhysicsCollide(ent, data, physobj)
 		if speed > 1000 then
 			Spark(pos, data.HitNormal, "MetalVehicle.ImpactHard")
 			plydmg = 10
-			dmginfo:SetDamage((speed / 6) * simfphys.DamageMul)
+			dmginfo:SetDamage((speed / 5) * simfphys.DamageMul)
 		else
 			Spark(pos, data.HitNormal, "MetalVehicle.ImpactSoft")
 
 			if speed > 500 then
 				plydmg = 5
-				dmginfo:SetDamage((speed / 12) * simfphys.DamageMul)
-			elseif speed > 250 then
 				dmginfo:SetDamage((speed / 20) * simfphys.DamageMul)
+			elseif speed > 250 then
+				dmginfo:SetDamage((speed / 10) * simfphys.DamageMul)
 			end
 		end
 
@@ -505,3 +517,9 @@ local function cust_damage(ent, dmginfo)
 	end
 end
 hook.Add("EntityTakeDamage", "tdm_simfphys", cust_damage)
+
+local wheel = "gmod_sent_vehicle_fphysics_wheel"
+hook.Add( "ShouldCollide", "tdm_simfphys", function( ent1, ent2 )
+	if ent1:GetClass() == wheel and (ent2:GetClass() == wheel or ent2:IsPlayer()) then return false end
+	if ent2:GetClass() == wheel and (ent1:GetClass() == wheel or ent1:IsPlayer()) then return false end
+end )
