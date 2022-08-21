@@ -8,6 +8,7 @@ GM.SecondsBetweenTeamSwitches = 0 -- YOU ARE A WILLY RIDER
 
 TEAM_HECU = 1
 TEAM_CMB = 2
+TEAM_FFA = 3
 
 DeriveGamemode("sandbox")
 
@@ -103,6 +104,8 @@ function GM:CreateTeams()
 	team.SetSpawnPoint(TEAM_HECU, "tdm_spawn_hecu")
 	team.SetUp(TEAM_CMB, "CMB", Color(152, 169, 255))
 	team.SetSpawnPoint(TEAM_CMB, "tdm_spawn_cmb")
+	team.SetUp(TEAM_FFA, "Participant", Color(255, 255, 255))
+	team.SetSpawnPoint(TEAM_FFA, "tdm_spawn_ffa")
 	team.SetSpawnPoint(TEAM_SPECTATOR, "worldspawn")
 end
 function GM:PlayerJoinTeam( ply, teamid )

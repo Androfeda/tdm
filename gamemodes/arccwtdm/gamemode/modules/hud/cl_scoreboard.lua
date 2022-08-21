@@ -1,18 +1,47 @@
-local CLR_B2 = Color(0, 0, 0, 127)
-local CLR_W2 = Color(255, 255, 255, 255)
+local SCORE_B = Color(0, 0, 0, 127)
+local SCORE_W = Color(255, 255, 255, 255)
+local SCORE_BG = Color(41*1, 46*1, 76*1, 200)
 
-local SHOWSCORE = false
+local SHOWSCORE2 = false
+local SCORE_FADE = 0
 local dead = Material("tdm/dead.png", "smooth")
 local dead_glow = Material("tdm/dead_glow.png", "smooth")
 
-hook.Add("ScoreboardShow", "ArcCWTDM_ScoreboardShow", function()
-	SHOWSCORE = true
+if Pixie then Pixie:Remove() end
+Pixie = nil
+
+local playee = {}
+for i=1, 20 do
+	local teeam = math.random(1, 3)
+	table.insert(playee, {
+		Name = "Subject #" .. i,
+		Score = i * 10000,
+		Kills = 100,
+		Deaths = 100,
+		Ping = 500,
+		Team = teeam == 1 and 1 or teeam == 2 and 2 or 1002,
+		Entity = NULL,
+	})
+end
+
+local pliskin = {}
+
+hook.Add("ScoreboardShow", "TDMScore2_ScoreboardShow", function()
+	SHOWSCORE2 = true
+
+	if Pixie then
+		Pixie:SetMouseInputEnabled( true )
+	end
 
 	return true
 end)
 
-hook.Add("ScoreboardHide", "ArcCWTDM_ScoreboardHide", function()
-	SHOWSCORE = false
+hook.Add("ScoreboardHide", "TDMScore2_ScoreboardHide", function()
+	SHOWSCORE2 = false
+
+	if Pixie then
+		Pixie:SetMouseInputEnabled( false )
+	end
 
 	return true
 end)
@@ -23,130 +52,139 @@ local tshow = {
 	[1002] = true
 }
 
-local function utime_timeToStr( time )
-	local tmp = time
-	local s = tmp % 60
-	tmp = math.floor( tmp / 60 )
-	local m = tmp % 60
-	tmp = math.floor( tmp / 60 )
-	local h = tmp % 24
-	tmp = math.floor( tmp / 24 )
-	local d = tmp-- / 7
+local function ShadowText(text, font, x, y, color, t, l, glow)
+	local c = CGSS(1)
+	draw.SimpleText(text, font .. "_Shadow", x + (c*3), y + (c*3), SCORE_B, t, l)
 
-	if d > 0 then
-		return string.format( "%id %02ih %01im", d, h, m )
-	elseif h > 0 then
-		return string.format( "%01ih %01im", h, m )
-	else
-		return string.format( "%01im", m )
+	if glow then
+		draw.SimpleText(text, font .. "_Glow", x, y, CLR_B, t, l)
+		draw.SimpleText(text, font .. "_Glow", x, y, CLR_B, t, l)
 	end
+
+	draw.SimpleText(text, font, x, y, color, t, l)
 end
 
+local function ShadowBox(x, y, w, h, color)
+	local c = CGSS(1)
+	surface.SetDrawColor(SCORE_B)
+	surface.DrawRect(x + (c*3), y + (c*3), w, h)
+	surface.SetDrawColor(color)
+	surface.DrawRect(x, y, w, h)
+end
 
-hook.Add("HUDDrawScoreBoard", "ArcCWTDM_HUDDrawScoreBoard", function()
-	if SHOWSCORE then
-		local plycnt = player.GetCount()
+hook.Add("HUDDrawScoreBoard", "TDMScore2_HUDDrawScoreBoard", function()
+	SCORE_FADE = math.Approach( SCORE_FADE, SHOWSCORE2 and 1 or 0, FrameTime() / 0.15 )
+	SCORE_B.a = Lerp( SCORE_FADE, 0, 127 )
+	SCORE_W.a = Lerp( SCORE_FADE, 0, 255 )
+	SCORE_BG.a = Lerp( SCORE_FADE, 0, 200 )
 
-		-- line size is reduced with high player count
-		local font, font2 = "CGHUD_5", "CGHUD_6"
-		local add = 24
-		local y_offset = 196
-		if plycnt >= 64 then
-			font, font2 = "CGHUD_7", "CGHUD_8"
-			add = 10
-			y_offset = 256
-		elseif plycnt >= 32 then
-			font, font2 = "CGHUD_7", "CGHUD_8"
-			add = 12
-			y_offset = 256
-		elseif plycnt >= 16 then
-			font, font2 = "CGHUD_6", "CGHUD_7"
-			add = 18
-		end
+	local c = CGSS(1)
 
-		local w, h = ScrW(), ScrH()
-		local c = CGSS(1)
-		local ax, ay = w / 2, (h / 2) - (c * y_offset)
-		surface.SetDrawColor(CLR_B2)
-		local yd = 0
-		GAMEMODE:ShadowText(GetHostName(), "CGHUD_3", ax, ay + (c * 0), CLR_W2, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, true)
-		GAMEMODE:ShadowText("Team Deathmatch", "CGHUD_5", ax, ay + (c * 16), CLR_W2, CLR_B2, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM, true)
-		-- GAMEMODE:ShadowText("Score", "CGHUD_3", ax - (c * 200), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM, true)
-		local utime_installed = false
-		if FindMetaTable( "Player" ).GetUTimeTotalTime then
-			utime_installed = true
-		end
+	local brd = (c*12)
+	local bbl = (c*20)
+
+	-- Begin
+	if SCORE_FADE > 0 then
+		if !Pixie then
+			-- create "pixie"
+			Pixie = vgui.Create( "DFrame" )
+			Pixie:SetSize( ScrW() - (c*32), ScrH() - (c*32) )
+			Pixie:Center()
+			Pixie:SetTitle( "" )
+			Pixie:ShowCloseButton( false )
+			Pixie:MakePopup()
+			Pixie:SetDraggable( false )
+			Pixie:SetSizable( false )
+			Pixie:SetKeyboardInputEnabled( false )
+			function Pixie:Paint(w, h)
+				local bog_x, bog_y, bog_w, bog_h = 0, 0, w, h
+				draw.RoundedBox( brd, bog_x, bog_y, bog_w, bog_h, SCORE_BG )
+		
+				ShadowText(GetHostName(), "CGHUD_3", bog_x + bbl, bog_y + bbl, SCORE_W, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+				ShadowText(game.GetMap(), "CGHUD_5", bog_x + bbl, bog_y + bbl + (c*34), SCORE_W, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+		
+				-- Middle bar
+				ShadowBox(bog_x + (bog_w*0.5) - (c*2*0.5), bog_y + bbl, (c*2), bog_h - (bbl*2), SCORE_W)
+		
+				-- Middle left
+				ShadowBox(bog_x + bbl, bog_y + (bog_h*0.5) - (c*2*0.5), (bog_w*0.5) - (bbl*2), (c*2), SCORE_W)
+
+				for index, p in ipairs(player.GetAll()) do
+					if !IsValid(pliskin[p]) then
+						local Poncho = vgui.Create( "DButton", Pixie )
+						pliskin[p] = Poncho
+						Poncho.Player = p
+						Poncho:SetSize( 9999, (c*28) )
+						function Poncho:Paint(w, h)
+							--ShadowBox(0, 0, w, h, SCORE_BG)
+							local tc = team.GetColor(self.Player:Team())
+							tc = Color( Lerp(0.5, 255, tc.r), Lerp(0.5, 255, tc.g), Lerp(0.5, 255, tc.b), Lerp( SCORE_FADE, 0, 255 ) )
+							ShadowText(self.Player:Nick(), "CGHUD_5", (c*38), h*0.5, tc, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+							return true
+						end
+						function Poncho:DoRightClick()
+							local MenuButtonOptions = DermaMenu()
+							MenuButtonOptions:AddOption( "hello", function() end )
+							MenuButtonOptions:Open()
+						end
+
+						local Av = vgui.Create( "AvatarImage", Poncho )
+						local ico = (c*28)
+						Av:SetPlayer( p, 64 )
+						Av:SetSize( ico, ico )
+						Av:SetPos( 0, 0 + (Poncho:GetTall()*0.5) - (ico*0.5) )
+					end
+				end
+				
+				local ybump = 0
+				for t, __ in pairs(tshow) do
+					local tc = team.GetColor(t)
+					tc = Color( Lerp(0.5, 255, tc.r), Lerp(0.5, 255, tc.g), Lerp(0.5, 255, tc.b), Lerp( SCORE_FADE, 0, 255 ) )
+				end
+
+				for t, __ in pairs(tshow) do
+					local collect = {}
+					for index, p in ipairs(player.GetAll()) do
+						if p:Team() != t then continue end
+						table.insert(collect, p)
+					end
+
+					if #collect > 0 then
+						local tc = team.GetColor(t)
+						tc = Color( Lerp(0.5, 255, tc.r), Lerp(0.5, 255, tc.g), Lerp(0.5, 255, tc.b), Lerp( SCORE_FADE, 0, 255 ) )
+				
+						ShadowText(team.GetName(t), "CGHUD_5", bog_x + (bog_w*0.5) + bbl, bog_y + bbl + ybump, tc, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+						ybump = ybump + (c*28)
+						ShadowBox(bog_x + (bog_w*0.5) + bbl, bog_y + bbl + ybump, (bog_w*0.5) - (bbl*2), (c*2), tc)
+						ybump = ybump + (c*4)
 			
-		if utime_installed then GAMEMODE:ShadowText("Time", "CGHUD_7", ax + (c * 80), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, true) end
-		GAMEMODE:ShadowText("Earnings", "CGHUD_7", ax + (c * 140), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, true)
-		GAMEMODE:ShadowText("KDR", "CGHUD_7", ax + (c * 180), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, true)
-		GAMEMODE:ShadowText("Frags", "CGHUD_7", ax + (c * 220), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, true)
-		GAMEMODE:ShadowText("Deaths", "CGHUD_7", ax + (c * 260), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, true)
-		GAMEMODE:ShadowText("Ping", "CGHUD_7", ax + (c * 300), ay + (c * 36), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, true)
-		yd = yd + 36
-
-
-		for teamnum, teamdata in SortedPairs(team.GetAllTeams()) do
-			if not tshow[teamnum] then continue end
-			if #team.GetPlayers(teamnum) == 0 then continue end
-
-			if teamnum == 1002 then
-				teamdata.Color = CLR_W2
-			end
-
-			GAMEMODE:ShadowText(teamdata.Name, "CGHUD_6", ax - (c * 300), ay + (c * yd), teamdata.Color, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true)
-
-			surface.SetDrawColor(CLR_B2)
-			surface.DrawRect(ax - (c * 300) + CGSS(2), ay + (c * yd) + CGSS(18) + CGSS(2), c * 600, CGSS(2))
-			surface.SetDrawColor(teamdata.Color)
-			surface.DrawRect(ax - (c * 300), ay + (c * yd) + CGSS(18), c * 600, CGSS(2))
-
-			yd = yd + 30 + CGSS(2)
-
-			local players = team.GetPlayers(teamnum)
-
-			table.sort(players, function(a, b) return (math.max(a:Frags(), 0) / math.max(a:Deaths(), 1)) > (math.max(b:Frags(), 0) / math.max(b:Deaths(), 1)) end)
-
-			for i, ply in ipairs(players) do
-				GAMEMODE:ShadowText(ply:GetName(), font, ax - (c * 300), ay + (c * yd), teamdata.Color, CLR_B2, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, true)
-
-				if !ply:Alive() then
-					surface.SetMaterial(dead)
-					local sz = (c * 32)
-					surface.SetDrawColor(CLR_B2)
-					surface.DrawTexturedRect(ax - (c * 302) - (sz * 0.75) + (c * 4), ay + (c * yd) - (sz * 0.47) + (c * 4), sz, sz)
-
-					surface.SetMaterial(dead_glow)
-					surface.SetDrawColor(CLR_B2)
-					surface.DrawTexturedRect(ax - (c * 302) - (sz * 0.75), ay + (c * yd) - (sz * 0.47), sz, sz)
-					surface.DrawTexturedRect(ax - (c * 302) - (sz * 0.75), ay + (c * yd) - (sz * 0.47), sz, sz)
-					surface.DrawTexturedRect(ax - (c * 302) - (sz * 0.75), ay + (c * yd) - (sz * 0.47), sz, sz)
-
-					surface.SetMaterial(dead)
-					surface.SetDrawColor(teamdata.Color)
-					surface.DrawTexturedRect(ax - (c * 302) - (sz * 0.75), ay + (c * yd) - (sz * 0.47), sz, sz)
+						-- Draw user info
+						for index, p in ipairs(collect) do
+							--ShadowText(p:Nick(), "CGHUD_5", bog_x + (bog_w*0.5) + bbl, bog_y + bbl + ybump, tc, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+							if pliskin[p] then
+								local bas = pliskin[p]
+								bas:SetPos( bog_x + (bog_w*0.5) + bbl, bog_y + bbl + ybump )
+							end
+			
+							-- Bump y
+							if index == #collect then
+								ybump = ybump + (c*30)
+							else
+								ybump = ybump + (c*30)
+							end
+						end
+					end
 				end
-
-				if teamnum ~= 1002 then
-					if utime_installed then GAMEMODE:ShadowText(utime_timeToStr( ply:GetUTimeTotalTime() ), font2, ax + (c * 80), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true) end
-					GAMEMODE:ShadowText(GAMEMODE:FormatMoney(ply:GetEarnings()), font2, ax + (c * 140), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
-					-- k/d
-					local kd = math.max(ply:Frags(), 0) / math.max(ply:Deaths(), 1)
-					--if ply:Deaths() < ply:Frags() then
-					--	kd = ply:Frags()
-					--else
-					--	kd = math.Round(kd, 2)
-					--end
-					GAMEMODE:ShadowText(string.format("%f", kd):Left(4), font2, ax + (c * 180), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
-					GAMEMODE:ShadowText(ply:Frags(), font2, ax + (c * 220), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
-					GAMEMODE:ShadowText(ply:Deaths(), font2, ax + (c * 260), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
-					GAMEMODE:ShadowText(ply:Ping(), font2, ax + (c * 300), ay + (c * yd), CLR_W2, CLR_B2, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, true)
-				end
-
-				yd = yd + add
+		
+				ShadowText("Domination", "CGHUD_3", bog_x + bbl, bog_y + (bog_h*0.5) + bbl, SCORE_W, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+				ShadowText("Winning 1000 to 100", "CGHUD_4", bog_x + bbl, bog_y + (bog_h*0.5) + bbl + (c*34), SCORE_W, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+				ShadowText("10000 points to win", "CGHUD_5", bog_x + bbl, bog_y + (bog_h*0.5) + bbl + (c*62), SCORE_W, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 			end
-
-			yd = yd
+		end
+	else
+		if Pixie then
+			Pixie:Remove()
+			Pixie = nil
 		end
 	end
 end)
