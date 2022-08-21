@@ -156,7 +156,7 @@ hook.Add("HUDDrawScoreBoard", "TDMScore2_HUDDrawScoreBoard", function()
 						ShadowText(team.GetName(t), "CGHUD_5", bog_x + (bog_w*0.5) + bbl, bog_y + bbl + ybump, tc, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 						ybump = ybump + (c*28)
 						ShadowBox(bog_x + (bog_w*0.5) + bbl, bog_y + bbl + ybump, (bog_w*0.5) - (bbl*2), (c*2), tc)
-						ybump = ybump + (c*4)
+						ybump = ybump + (c*8)
 			
 						-- Draw user info
 						for index, p in ipairs(collect) do
