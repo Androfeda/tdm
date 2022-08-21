@@ -117,9 +117,11 @@ hook.Add("HUDDrawScoreBoard", "TDMScore2_HUDDrawScoreBoard", function()
 						Poncho:SetSize( 9999, (c*28) )
 						function Poncho:Paint(w, h)
 							--ShadowBox(0, 0, w, h, SCORE_BG)
+							local old = DisableClipping( true )
 							local tc = team.GetColor(self.Player:Team())
 							tc = Color( Lerp(0.5, 255, tc.r), Lerp(0.5, 255, tc.g), Lerp(0.5, 255, tc.b), Lerp( SCORE_FADE, 0, 255 ) )
 							ShadowText(self.Player:Nick(), "CGHUD_5", (c*38), h*0.5, tc, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+							DisableClipping( old )
 							return true
 						end
 						function Poncho:DoRightClick()
@@ -135,13 +137,20 @@ hook.Add("HUDDrawScoreBoard", "TDMScore2_HUDDrawScoreBoard", function()
 						Av:SetPos( 0, 0 + (Poncho:GetTall()*0.5) - (ico*0.5) )
 					end
 				end
-				
-				local ybump = 0
-				for t, __ in pairs(tshow) do
-					local tc = team.GetColor(t)
-					tc = Color( Lerp(0.5, 255, tc.r), Lerp(0.5, 255, tc.g), Lerp(0.5, 255, tc.b), Lerp( SCORE_FADE, 0, 255 ) )
-				end
 
+				-- who is invalid
+				for i, v in pairs(pliskin) do
+					if !IsValid(v.Player) then
+						v:Remove()
+					end
+				end
+				
+				local ybump = (c*0)
+				ShadowText("", "CGHUD_6", bog_x + (bog_w*0.5) + bbl, bog_y + bbl, SCORE_W, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+				ShadowText("Ping", "CGHUD_6", bog_x + (bog_w) - bbl		- (c*0), bog_y + bbl, SCORE_W, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
+				ShadowText("Deaths", "CGHUD_6", bog_x + (bog_w) - bbl	- (c*50), bog_y + bbl, SCORE_W, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
+				ShadowText("Kills", "CGHUD_6", bog_x + (bog_w) - bbl	- (c*110), bog_y + bbl, SCORE_W, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
+				ShadowText("Score", "CGHUD_6", bog_x + (bog_w) - bbl	- (c*170), bog_y + bbl, SCORE_W, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
 				for t, __ in pairs(tshow) do
 					local collect = {}
 					for index, p in ipairs(player.GetAll()) do
@@ -165,6 +174,10 @@ hook.Add("HUDDrawScoreBoard", "TDMScore2_HUDDrawScoreBoard", function()
 								local bas = pliskin[p]
 								bas:SetPos( bog_x + (bog_w*0.5) + bbl, bog_y + bbl + ybump )
 							end
+							ShadowText(p:Ping(), "CGHUD_6", bog_x + (bog_w) - bbl - (c*0), bog_y + bbl + ybump, SCORE_W, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
+							ShadowText(p:Deaths(), "CGHUD_6", bog_x + (bog_w) - bbl - (c*50), bog_y + bbl + ybump, SCORE_W, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
+							ShadowText(p:Frags(), "CGHUD_6", bog_x + (bog_w) - bbl - (c*110), bog_y + bbl + ybump, SCORE_W, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
+							ShadowText("0", "CGHUD_6", bog_x + (bog_w) - bbl - (c*170), bog_y + bbl + ybump, SCORE_W, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
 			
 							-- Bump y
 							if index == #collect then
