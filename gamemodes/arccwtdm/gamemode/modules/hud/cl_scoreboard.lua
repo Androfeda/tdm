@@ -150,7 +150,7 @@ hook.Add("HUDDrawScoreBoard", "TDMScore2_HUDDrawScoreBoard", function()
 				ShadowText("Ping", "CGHUD_6", bog_x + (bog_w) - bbl		- (c*0), bog_y + bbl, SCORE_W, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
 				ShadowText("Deaths", "CGHUD_6", bog_x + (bog_w) - bbl	- (c*50), bog_y + bbl, SCORE_W, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
 				ShadowText("Kills", "CGHUD_6", bog_x + (bog_w) - bbl	- (c*110), bog_y + bbl, SCORE_W, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
-				ShadowText("Score", "CGHUD_6", bog_x + (bog_w) - bbl	- (c*170), bog_y + bbl, SCORE_W, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
+				--ShadowText("Score", "CGHUD_6", bog_x + (bog_w) - bbl	- (c*170), bog_y + bbl, SCORE_W, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
 				for t, __ in pairs(tshow) do
 					local collect = {}
 					for index, p in ipairs(player.GetAll()) do
@@ -177,7 +177,7 @@ hook.Add("HUDDrawScoreBoard", "TDMScore2_HUDDrawScoreBoard", function()
 							ShadowText(p:Ping(), "CGHUD_6", bog_x + (bog_w) - bbl - (c*0), bog_y + bbl + ybump, SCORE_W, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
 							ShadowText(p:Deaths(), "CGHUD_6", bog_x + (bog_w) - bbl - (c*50), bog_y + bbl + ybump, SCORE_W, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
 							ShadowText(p:Frags(), "CGHUD_6", bog_x + (bog_w) - bbl - (c*110), bog_y + bbl + ybump, SCORE_W, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
-							ShadowText("0", "CGHUD_6", bog_x + (bog_w) - bbl - (c*170), bog_y + bbl + ybump, SCORE_W, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
+							--ShadowText("0", "CGHUD_6", bog_x + (bog_w) - bbl - (c*170), bog_y + bbl + ybump, SCORE_W, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
 			
 							-- Bump y
 							if index == #collect then
