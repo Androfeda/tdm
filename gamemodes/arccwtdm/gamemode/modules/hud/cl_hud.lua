@@ -265,14 +265,16 @@ hook.Add("HUDPaint", "HUDPaint_DrawABox", function()
 
 	if IsValid(veh) then
 		local cur_health, max_health
+		local class = veh:GetClass()
 		if vtyp == "simfphys" then
 			cur_health, max_health = veh:GetCurHealth(), veh:GetMaxHealth()
+			class = veh:GetSpawn_List()
 		elseif vtyp == "lfs" then
 			cur_health, max_health = veh:GetHP(), veh:GetMaxHP()
 			-- LFS has shields. Maybe draw it somewhere?
 		end
 
-		local vtbl = GAMEMODE.Vehicles[veh:GetSpawn_List()]
+		local vtbl = GAMEMODE.Vehicles[class]
 
 		local mult_h = cur_health / max_health
 

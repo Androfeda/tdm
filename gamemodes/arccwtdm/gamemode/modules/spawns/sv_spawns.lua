@@ -35,8 +35,10 @@ function GM:SendSpawnAreaFull(ply)
 		end
 	if not ply then net.Broadcast() else net.Send(ply) end
 end
+
 net.Receive("tdm_fullupdatespawnareas", function(len, ply)
 	GAMEMODE:SendSpawnAreaFull(ply)
+	GAMEMODE:SendObjAreaFull(ply)
 end)
 
 function GM:LoadSpawnSet(name)
@@ -54,14 +56,15 @@ function GM:LoadSpawnSet(name)
 	end
 
 	local spawns = util.JSONToTable(file.Read(f))
-	GAMEMODE.SpawnAreas = spawns.Areas
+	GAMEMODE.SpawnAreas = spawns.Areas or {}
+	GAMEMODE.ObjectiveAreas = spawns.ObjAreas or {}
 	for _, v in pairs(spawns.Points) do
 		local spawn = ents.Create(v[2])
 		spawn:SetPos(v[1])
 		spawn:Spawn()
 	end
 
-	for _, v in pairs(spawns.VehiclePads) do
+	for _, v in pairs(spawns.VehiclePads or {}) do
 		local spawn = ents.Create("tdm_vehiclepad")
 		spawn:SetPos(v[1])
 		spawn:SetAngles(v[2])
@@ -78,6 +81,8 @@ function GM:SaveSpawnSet(name)
 		Areas = GAMEMODE.SpawnAreas,
 		Points = {},
 		VehiclePads = {},
+		ObjAreas = GAMEMODE.ObjectiveAreas,
+		ObjEntities = {},
 	}
 	for _, spawn in pairs(ents.FindByClass("tdm_spawn_hecu")) do
 		table.insert(spawns.Points, {spawn:GetPos(), spawn:GetClass()})

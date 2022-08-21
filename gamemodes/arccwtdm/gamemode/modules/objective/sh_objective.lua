@@ -1,0 +1,3 @@
+GM.ObjectiveAreas = {}
+
+GM.ObjectiveEntities = {}
