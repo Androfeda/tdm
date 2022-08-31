@@ -134,6 +134,7 @@ local refer = {
 	["SniperRound"] = toop["ar2"],
 	["plinking"] = toop["pistol"],
 	["Pistol"] = toop["pistol"],
+	["RPG_Rocket"] = toop["rocket"],
 	["357"] = toop["357"],
 	["Buckshot"] = toop["buckshot"],
 	["Grenade"] = toop["frag"],
